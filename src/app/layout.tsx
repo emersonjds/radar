@@ -1,25 +1,27 @@
 import type { Metadata } from "next";
-import { Toaster } from "sonner";
-import { QueryProvider } from "@/shared/providers/query-provider";
+import { Inter } from "next/font/google";
 import "./globals.css";
+import { QueryProvider } from "@/shared/providers/query-provider";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
-  title: "Radar",
-  description: "Controle de frequência escolar",
+  title: "Radar — presença escolar",
+  description:
+    "Chamada e acompanhamento de frequência escolar para professores e coordenação.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={inter.variable}>
       <body>
-        <QueryProvider>
-          {children}
-          <Toaster />
-        </QueryProvider>
+        <QueryProvider>{children}</QueryProvider>
       </body>
     </html>
   );
