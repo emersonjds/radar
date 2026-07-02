@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
-# Executa lint-staged nos arquivos em stage antes de cada commit.
-# Garante que código com erros de lint ou fora do padrão de formatação não entre no repositório.
+# Roda o ESLint apenas nos arquivos TS/TSX em stage antes de cada commit.
+# Impede que código com erros de lint entre no repositório (avisos não bloqueiam).
 
 set -e
 
-# Se npx não estiver disponível, deixar o commit passar sem bloquear
-if ! command -v npx &> /dev/null; then
-  echo "warn pre-commit: npx não encontrado, pulando lint-staged" >&2
+files=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx)$' || true)
+[ -z "$files" ] && exit 0
+
+if [ ! -x ./node_modules/.bin/eslint ]; then
+  echo "warn pre-commit: eslint não encontrado, pulando lint" >&2
   exit 0
 fi
 
-npx lint-staged
+# shellcheck disable=SC2086
+./node_modules/.bin/eslint $files

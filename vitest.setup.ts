@@ -1,5 +1,8 @@
-import "@testing-library/jest-dom";
-import path from "node:path";
+import "@testing-library/jest-dom/vitest";
+import { afterEach } from "vitest";
+import { cleanup } from "@testing-library/react";
 
-// Dummy Supabase env vars for tests (see .env.test — never real credentials).
-process.loadEnvFile(path.resolve(process.cwd(), ".env.test"));
+afterEach(() => {
+  cleanup();
+  if (typeof localStorage !== "undefined") localStorage.clear();
+});

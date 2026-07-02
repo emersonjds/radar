@@ -29,3 +29,9 @@ next-env.d.ts
 # AI tooling (local/session state, never versioned)
 .claude/settings.local.json
 .serena/
+
+# Third-party agent skills (installed via `npx skills add`, re-installable)
+/.agents/
+/.claude/skills/vercel-react-best-practices
+/.claude/skills/frontend-design
+/.claude/skills/ui-ux-pro-max
