@@ -14,8 +14,8 @@ const USUARIOS_SEED: { nome: string; email: string; papel: Papel }[] = [
 ];
 
 const ROTA_POR_PAPEL: Record<Papel, string> = {
-  professor: "/turmas",
-  admin: "/dashboard",
+  professor: "/professor/turmas",
+  admin: "/admin/dashboard",
 };
 
 export default function LoginPage() {
@@ -29,7 +29,7 @@ export default function LoginPage() {
     setCarregando(true);
     try {
       const perfil = await entrar(emailParaEntrar);
-      router.push(ROTA_POR_PAPEL[perfil.papel]);
+      router.replace(ROTA_POR_PAPEL[perfil.papel]);
     } catch {
       setErro("Nenhum perfil encontrado para este e-mail.");
     } finally {

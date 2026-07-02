@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { useSessao } from "@/features/auth/use-sessao";
 import { AppShell } from "@/widgets/app-shell";
 
-interface AdminLayoutProps {
+interface ProfessorLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AdminLayout({ children }: AdminLayoutProps) {
+export default function ProfessorLayout({ children }: ProfessorLayoutProps) {
   const { perfil, carregando } = useSessao();
   const router = useRouter();
 
@@ -19,14 +19,14 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       router.replace("/login");
       return;
     }
-    if (perfil.papel !== "admin") {
-      router.replace("/turmas");
+    if (perfil.papel !== "professor") {
+      router.replace("/admin/dashboard");
     }
   }, [carregando, perfil, router]);
 
-  if (carregando || !perfil || perfil.papel !== "admin") {
+  if (carregando || !perfil || perfil.papel !== "professor") {
     return <div className="flex min-h-dvh items-center justify-center text-sm text-gray-500">Carregando...</div>;
   }
 
-  return <AppShell variant="admin" perfil={perfil}>{children}</AppShell>;
+  return <AppShell variant="professor" perfil={perfil}>{children}</AppShell>;
 }

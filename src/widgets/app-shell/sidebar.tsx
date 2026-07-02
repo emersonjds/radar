@@ -6,9 +6,9 @@ import { LayoutDashboard, School, Users, X } from "lucide-react";
 import { cn } from "@/shared/lib/utils";
 
 const LINKS = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/turmas", label: "Turmas", icon: School },
-  { href: "/alunos", label: "Alunos", icon: Users },
+  { href: "/admin/dashboard", label: "Painel", icon: LayoutDashboard },
+  { href: "/admin/turmas", label: "Turmas", icon: School },
+  { href: "/admin/alunos", label: "Alunos", icon: Users },
 ];
 
 interface SidebarProps {

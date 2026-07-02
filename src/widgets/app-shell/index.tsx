@@ -21,7 +21,7 @@ export function AppShell({ variant, perfil, children }: AppShellProps) {
 
   function handleSair() {
     sair();
-    router.push("/login");
+    router.replace("/login");
   }
 
   if (variant === "admin") {
@@ -41,7 +41,7 @@ export function AppShell({ variant, perfil, children }: AppShellProps) {
       <Header nome={perfil.nome} onSair={handleSair} />
       <nav className="flex border-b border-gray-200 bg-white px-2 py-1">
         <Link
-          href="/turmas"
+          href="/professor/turmas"
           className="flex items-center gap-2 rounded px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100"
         >
           <School size={18} />
