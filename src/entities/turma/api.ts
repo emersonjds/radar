@@ -7,7 +7,7 @@ export async function listarTurmasDoProfessor(professorId: string): Promise<Turm
 
 export async function listarTodasTurmas(): Promise<Turma[]> {
   const db = loadDb();
-  return Promise.resolve(db.turmas);
+  return Promise.resolve([...db.turmas]);
 }
 
 export async function criarTurma(input: Omit<Turma, "id">): Promise<Turma> {
