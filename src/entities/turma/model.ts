@@ -1,11 +1,14 @@
 import { z } from "zod";
 
+export const turnoSchema = z.enum(["manhã", "tarde", "noite"]);
+export type Turno = z.infer<typeof turnoSchema>;
+
 export const turmaSchema = z.object({
   id: z.string(),
-  nome: z.string().min(1),
-  serie: z.string().min(1),
-  turno: z.enum(["manha", "tarde", "noite"]),
+  nome: z.string(),
+  serie: z.string(),
+  turno: turnoSchema,
   professorId: z.string(),
 });
 
-export type TurmaInput = z.infer<typeof turmaSchema>;
+export type Turma = z.infer<typeof turmaSchema>;

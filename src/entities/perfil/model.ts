@@ -1,10 +1,14 @@
 import { z } from "zod";
 
+export const papelSchema = z.enum(["professor", "admin"]);
+export type Papel = z.infer<typeof papelSchema>;
+
 export const perfilSchema = z.object({
   id: z.string(),
-  nome: z.string().min(1),
+  nome: z.string(),
   email: z.string().email(),
-  papel: z.enum(["professor", "admin"]),
+  papel: papelSchema,
+  cargo: z.string().optional(),
 });
 
-export type PerfilInput = z.infer<typeof perfilSchema>;
+export type Perfil = z.infer<typeof perfilSchema>;

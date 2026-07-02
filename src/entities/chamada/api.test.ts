@@ -1,19 +1,32 @@
-import { describe, it, expect, beforeEach } from "vitest";
-import { resetDb, loadDb } from "@/shared/lib/store/db";
-import { abrirOuObterChamada } from "./api";
+import { beforeEach, describe, expect, it } from "vitest";
+import { resetDb } from "@/shared/lib/storage/db";
+import { criarChamada, fetchChamadasPorTurma } from "./api";
 
-describe("abrirOuObterChamada", () => {
-  beforeEach(() => {
-    resetDb();
+describe("chamada api", () => {
+  beforeEach(async () => {
+    await resetDb();
   });
 
-  it("is idempotent for the same turma and date", async () => {
-    const primeira = await abrirOuObterChamada("turma-1", "2026-07-01", "professor-1");
-    const segunda = await abrirOuObterChamada("turma-1", "2026-07-01", "professor-1");
+  it("is unique per (turma, data) — creating twice does not duplicate", async () => {
+    const input = {
+      turmaId: "turma-mat-b",
+      data: "2026-07-02",
+      professorId: "perfil-ricardo",
+    };
+    await criarChamada(input);
+    await criarChamada(input);
+    const chamadas = await fetchChamadasPorTurma("turma-mat-b");
+    const doDia = chamadas.filter((chamada) => chamada.data === "2026-07-02");
+    expect(doDia).toHaveLength(1);
+  });
 
-    expect(segunda.id).toBe(primeira.id);
-    const db = loadDb();
-    const rows = db.chamadas.filter((chamada) => chamada.turmaId === "turma-1" && chamada.data === "2026-07-01");
-    expect(rows).toHaveLength(1);
+  it("rejects a malformed date", async () => {
+    await expect(
+      criarChamada({
+        turmaId: "turma-mat-b",
+        data: "02/07/2026",
+        professorId: "perfil-ricardo",
+      }),
+    ).rejects.toThrow();
   });
 });
