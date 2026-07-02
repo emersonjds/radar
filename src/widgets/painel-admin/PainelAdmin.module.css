@@ -1,0 +1,139 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .row {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+
+.chartCard,
+.sideCard,
+.tableCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.cardTitle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.cardSubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.vazio {
+  padding: var(--space-8) 0;
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+}
+
+.alertList,
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  list-style: none;
+  padding: 0;
+}
+
+.alertItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.alertInfo {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.alertNome {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.alertTurma {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.alertMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-1);
+}
+
+.alertFaltas {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+}
+
+.verTodos {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  min-height: 44px;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-primary);
+}
+
+.verTodos:hover {
+  color: var(--color-primary-hover);
+}
+
+.taskItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.tableScroll {
+  overflow-x: auto;
+}
