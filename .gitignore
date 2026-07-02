@@ -25,3 +25,7 @@ npm-debug.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI tooling (local/session state, never versioned)
+.claude/settings.local.json
+.serena/
