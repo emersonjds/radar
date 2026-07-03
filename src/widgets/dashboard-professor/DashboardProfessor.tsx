@@ -31,8 +31,6 @@ const STATUS_TONE = {
 
 const ACESSO_RAPIDO = [
   { label: "Alunos", href: "/alunos", icon: "user" as const },
-  { label: "Relatórios", href: "/relatorios", icon: "relatorios" as const },
-  { label: "Recursos", href: "/recursos", icon: "help" as const },
   { label: "Minhas chamadas", href: "/chamada", icon: "chamada" as const },
 ];
 
