@@ -1,13 +1,14 @@
 "use client";
 
 import { useAluno } from "@/entities/aluno/queries";
+import { useAvaliacoesPorTurma } from "@/entities/avaliacao/queries";
 import { useChamadas } from "@/entities/chamada/queries";
+import { useNotasPorAluno } from "@/entities/nota/queries";
 import type { StatusPresenca } from "@/entities/presenca/model";
 import { usePresencasPorAluno } from "@/entities/presenca/queries";
 import { useTurmas } from "@/entities/turma/queries";
-import { contarFaltas, taxaFrequencia } from "@/features/analytics/model";
+import { contarFaltas, mediaPonderada, taxaFrequencia } from "@/features/analytics/model";
 import { formatarData, formatarPercentual } from "@/shared/lib/format";
-import type { BadgeProps } from "@/shared/ui/Badge/Badge";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Button } from "@/shared/ui/Button/Button";
@@ -16,29 +17,6 @@ import { Icon } from "@/shared/ui/Icon/Icon";
 import { TBody, TD, TH, THead, TR, Table } from "@/shared/ui/Table/Table";
 import { CalendarioPresenca } from "./CalendarioPresenca";
 import styles from "./DetalheAluno.module.css";
-
-interface AtividadeMock {
-  id: string;
-  atividade: string;
-  categoria: string;
-  nota: string;
-  data: string;
-  status: "no-prazo" | "atrasado" | "pendente";
-}
-
-// ponytail: sem entidade de atividades ainda — linhas mockadas só para compor a tela.
-const ATIVIDADES_MOCK: AtividadeMock[] = [
-  { id: "1", atividade: "Prova de Cálculo — Final", categoria: "Matemática", nota: "95/100", data: "2026-06-18", status: "no-prazo" },
-  { id: "2", atividade: "Laboratório de Física — Ondas", categoria: "Física", nota: "82/100", data: "2026-06-23", status: "atrasado" },
-  { id: "3", atividade: "Análise Literária — Hamlet", categoria: "Literatura", nota: "— / 100", data: "2026-06-30", status: "pendente" },
-  { id: "4", atividade: "Revolução Industrial", categoria: "História", nota: "89/100", data: "2026-07-01", status: "no-prazo" },
-];
-
-const STATUS_ATIVIDADE: Record<AtividadeMock["status"], { texto: string; tone: BadgeProps["tone"] }> = {
-  "no-prazo": { texto: "No prazo", tone: "success" },
-  atrasado: { texto: "Atrasado", tone: "warning" },
-  pendente: { texto: "Pendente", tone: "danger" },
-};
 
 /** "YYYY-MM" com mais registros de presença — mês exibido no calendário. */
 function mesComMaisRegistros(datas: string[]): string | null {
@@ -60,6 +38,8 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
   const { data: turmas } = useTurmas();
   const { data: chamadas } = useChamadas();
   const { data: presencas, isLoading: carregandoPresencas } = usePresencasPorAluno(alunoId);
+  const { data: avaliacoes } = useAvaliacoesPorTurma(aluno?.turmaId ?? "");
+  const { data: notas } = useNotasPorAluno(alunoId);
 
   if (carregandoAluno) {
     return (
@@ -86,6 +66,8 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
     if (chamada) statusPorData.set(chamada.data, presenca.status);
   }
   const mes = mesComMaisRegistros([...statusPorData.keys()]);
+  const notaPorAvaliacao = new Map((notas ?? []).map((nota) => [nota.avaliacaoId, nota]));
+  const media = mediaPonderada(notas ?? [], avaliacoes ?? []);
 
   return (
     <div className={styles.pagina}>
@@ -163,6 +145,10 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
               <span className={styles.statValor}>{contarFaltas(presencas ?? [])}</span>
               <span className={styles.statRotulo}>Faltas</span>
             </div>
+            <div className={styles.stat}>
+              <span className={styles.statValor}>{media === null ? "—" : media.toFixed(1)}</span>
+              <span className={styles.statRotulo}>Média</span>
+            </div>
           </div>
         </Card>
 
@@ -179,43 +165,42 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
 
       <Card>
         <h2 className={styles.tituloSecao}>Desempenho por atividade</h2>
-        <div className={styles.tabelaScroll}>
-          <Table>
-            <THead>
-              <TR>
-                <TH>Atividade</TH>
-                <TH>Categoria</TH>
-                <TH>Nota</TH>
-                <TH>Data</TH>
-                <TH>Status</TH>
-                <TH>Ação</TH>
-              </TR>
-            </THead>
-            <TBody>
-              {ATIVIDADES_MOCK.map((item) => (
-                <TR key={item.id}>
-                  <TD>{item.atividade}</TD>
-                  <TD>
-                    <Badge tone="info">{item.categoria}</Badge>
-                  </TD>
-                  <TD>{item.nota}</TD>
-                  <TD>{formatarData(item.data)}</TD>
-                  <TD>
-                    <Badge tone={STATUS_ATIVIDADE[item.status].tone}>
-                      {STATUS_ATIVIDADE[item.status].texto}
-                    </Badge>
-                  </TD>
-                  <TD>
-                    {/* ponytail: sem destino real ainda — abrirá o detalhe da atividade */}
-                    <Button variant="outlined" size="sm" onClick={() => {}}>
-                      Ver detalhes
-                    </Button>
-                  </TD>
+        {(avaliacoes ?? []).length === 0 && (
+          <p className={styles.estado}>Sem avaliações nesta turma.</p>
+        )}
+        {(avaliacoes ?? []).length > 0 && (
+          <div className={styles.tabelaScroll}>
+            <Table>
+              <THead>
+                <TR>
+                  <TH>Avaliação</TH>
+                  <TH>Data</TH>
+                  <TH>Peso</TH>
+                  <TH>Nota</TH>
+                  <TH>Status</TH>
                 </TR>
-              ))}
-            </TBody>
-          </Table>
-        </div>
+              </THead>
+              <TBody>
+                {(avaliacoes ?? []).map((avaliacao) => {
+                  const valor = notaPorAvaliacao.get(avaliacao.id)?.valor ?? null;
+                  return (
+                    <TR key={avaliacao.id}>
+                      <TD>{avaliacao.nome}</TD>
+                      <TD>{formatarData(avaliacao.data)}</TD>
+                      <TD>{avaliacao.peso}</TD>
+                      <TD>{valor === null ? "—" : valor.toFixed(1)}</TD>
+                      <TD>
+                        <Badge tone={valor === null ? "warning" : "success"}>
+                          {valor === null ? "Pendente" : "Lançada"}
+                        </Badge>
+                      </TD>
+                    </TR>
+                  );
+                })}
+              </TBody>
+            </Table>
+          </div>
+        )}
       </Card>
     </div>
   );
