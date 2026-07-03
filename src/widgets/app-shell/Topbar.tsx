@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import type { Papel } from "@/entities/perfil/model";
+import type { Role } from "@/entities/profile/model";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Icon } from "@/shared/ui/Icon/Icon";
 import { IconButton } from "@/shared/ui/IconButton/IconButton";
@@ -11,26 +11,26 @@ import { cx } from "@/shared/ui/cx";
 import styles from "./Topbar.module.css";
 
 export interface TopbarProps {
-  nome: string;
-  cargo: string;
-  papel: Papel;
-  onTrocarPapel: (papel: Papel) => void;
+  name: string;
+  jobTitle: string;
+  role: Role;
+  onSwitchRole: (role: Role) => void;
   onToggleMenu: () => void;
 }
 
-const PERSONAS: { papel: Papel; label: string }[] = [
-  { papel: "professor", label: "Professor" },
-  { papel: "admin", label: "Coordenação" },
+const PERSONAS: { role: Role; label: string }[] = [
+  { role: "teacher", label: "Professor" },
+  { role: "admin", label: "Coordenação" },
 ];
 
-export function Topbar({ nome, cargo, papel, onTrocarPapel, onToggleMenu }: TopbarProps) {
+export function Topbar({ name, jobTitle, role, onSwitchRole, onToggleMenu }: TopbarProps) {
   const router = useRouter();
   const [termo, setTermo] = useState("");
 
   function handleBuscar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const termoLimpo = termo.trim();
-    if (termoLimpo) router.push("/alunos?q=" + encodeURIComponent(termoLimpo));
+    if (termoLimpo) router.push("/students?q=" + encodeURIComponent(termoLimpo));
   }
 
   return (
@@ -55,14 +55,14 @@ export function Topbar({ nome, cargo, papel, onTrocarPapel, onToggleMenu }: Topb
         >
           {PERSONAS.map((persona) => (
             <button
-              key={persona.papel}
+              key={persona.role}
               type="button"
               className={cx(
                 styles.personaOption,
-                papel === persona.papel && styles.personaActive,
+                role === persona.role && styles.personaActive,
               )}
-              aria-pressed={papel === persona.papel}
-              onClick={() => onTrocarPapel(persona.papel)}
+              aria-pressed={role === persona.role}
+              onClick={() => onSwitchRole(persona.role)}
             >
               {persona.label}
             </button>
@@ -76,10 +76,10 @@ export function Topbar({ nome, cargo, papel, onTrocarPapel, onToggleMenu }: Topb
           <Icon name="help" size={18} />
         </IconButton>
         <div className={styles.user}>
-          <Avatar nome={nome} size={40} />
+          <Avatar name={name} size={40} />
           <div className={styles.userInfo}>
-            <span className={styles.userNome}>{nome}</span>
-            <span className={styles.userCargo}>{cargo}</span>
+            <span className={styles.userNome}>{name}</span>
+            <span className={styles.userCargo}>{jobTitle}</span>
           </div>
         </div>
       </div>

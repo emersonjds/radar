@@ -1,6 +1,6 @@
-import type { Papel } from "@/entities/perfil/model";
+import type { Role } from "@/entities/profile/model";
 
-export type NavIcon = "painel" | "chamada" | "relatorios" | "user" | "nota";
+export type NavIcon = "painel" | "session" | "relatorios" | "user" | "grade";
 
 export interface NavItem {
   href: string;
@@ -9,20 +9,20 @@ export interface NavItem {
 }
 
 /** Professor: enxuto — painel das próprias turmas, chamada e dados dos alunos. */
-export const navProfessor: NavItem[] = [
+export const navTeacher: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
-  { href: "/chamada", label: "Chamada", icon: "chamada" },
-  { href: "/avaliacoes", label: "Avaliações", icon: "nota" },
-  { href: "/alunos", label: "Alunos", icon: "user" },
+  { href: "/attendance", label: "Chamada", icon: "session" },
+  { href: "/assessments", label: "Avaliações", icon: "grade" },
+  { href: "/students", label: "Alunos", icon: "user" },
 ];
 
 /** Coordenação: visão ampla — analytics, todos os alunos e relatórios. */
 export const navAdmin: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
-  { href: "/alunos", label: "Alunos", icon: "user" },
-  { href: "/relatorios", label: "Relatórios", icon: "relatorios" },
+  { href: "/students", label: "Alunos", icon: "user" },
+  { href: "/reports", label: "Relatórios", icon: "relatorios" },
 ];
 
-export function navParaPapel(papel: Papel): NavItem[] {
-  return papel === "admin" ? navAdmin : navProfessor;
+export function navForRole(role: Role): NavItem[] {
+  return role === "admin" ? navAdmin : navTeacher;
 }

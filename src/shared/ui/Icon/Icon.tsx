@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 
 export type IconName =
   | "painel"
-  | "chamada"
+  | "session"
   | "relatorios"
   | "admin"
   | "bell"
@@ -18,7 +18,7 @@ export type IconName =
   | "download"
   | "check"
   | "menu"
-  | "nota";
+  | "grade";
 
 export interface IconProps {
   name: IconName;
@@ -35,14 +35,14 @@ const paths: Record<IconName, ReactNode> = {
       <rect x="13" y="13" width="8" height="8" rx="2" />
     </>
   ),
-  chamada: (
+  session: (
     <>
       <rect x="5" y="4" width="14" height="17" rx="2" />
       <path d="M9 2.5h6a1 1 0 0 1 1 1V5H8V3.5a1 1 0 0 1 1-1Z" />
       <path d="m8.5 13 2.2 2.2 4.3-4.4" />
     </>
   ),
-  nota: (
+  grade: (
     <>
       <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z" />
       <path d="M14 3v5h5" />

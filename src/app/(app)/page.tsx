@@ -1,19 +1,19 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { usePapel } from "@/features/sessao/session-store";
+import { useRole } from "@/features/session/session-store";
 
 // Code-split each persona's home so a professor never ships the admin charts.
-const DashboardProfessor = dynamic(() =>
-  import("@/widgets/dashboard-professor/DashboardProfessor").then(
-    (mod) => mod.DashboardProfessor,
+const TeacherDashboard = dynamic(() =>
+  import("@/widgets/teacher-dashboard/TeacherDashboard").then(
+    (mod) => mod.TeacherDashboard,
   ),
 );
-const PainelAdmin = dynamic(() =>
-  import("@/widgets/painel-admin/PainelAdmin").then((mod) => mod.PainelAdmin),
+const AdminPanel = dynamic(() =>
+  import("@/widgets/admin-panel/AdminPanel").then((mod) => mod.AdminPanel),
 );
 
 export default function HomePage() {
-  const papel = usePapel();
-  return papel === "admin" ? <PainelAdmin /> : <DashboardProfessor />;
+  const papel = useRole();
+  return papel === "admin" ? <AdminPanel /> : <TeacherDashboard />;
 }

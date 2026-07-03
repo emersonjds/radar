@@ -1,0 +1,158 @@
+import { useState } from "react";
+import type { AttendanceStatus } from "@/entities/attendance-record/model";
+import type { SchoolEventType } from "@/entities/school-event/model";
+import { IconButton } from "@/shared/ui/IconButton/IconButton";
+import { Icon } from "@/shared/ui/Icon/Icon";
+import { formatDateLong } from "@/shared/lib/format";
+import { cx } from "@/shared/ui/cx";
+import styles from "./AttendanceCalendar.module.css";
+
+export interface DayEvent {
+  type: SchoolEventType | "prova";
+  title: string;
+}
+
+export interface AttendanceCalendarProps {
+  /** Month to render, "YYYY-MM". */
+  mes: string;
+  /** Session date (ISO) → status, for this student. */
+  statusPorData: Map<string, AttendanceStatus>;
+  /** Date (ISO) → important events (provas, férias, recuperação). */
+  eventosPorData?: Map<string, DayEvent[]>;
+}
+
+// Domingo-primeiro, iniciais como no Google Calendar pt-BR.
+const DIAS_SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
+
+const LABEL_STATUS: Record<AttendanceStatus, string> = {
+  present: "Presente",
+  late: "Atrasado",
+  absent: "Ausente",
+  excused: "Justificado",
+};
+
+const LABEL_EVENTO: Record<DayEvent["type"], string> = {
+  prova: "Prova",
+  vacation: "Férias",
+  makeup: "Recuperação",
+  event: "Evento",
+};
+
+/** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
+function deslocarMes(mes: string, delta: number): string {
+  const [ano, mesNumero] = mes.split("-").map(Number);
+  const data = new Date(Date.UTC(ano, mesNumero - 1 + delta, 1));
+  return `${data.getUTCFullYear()}-${String(data.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
+function toneClass(status: AttendanceStatus | undefined): string {
+  if (!status) return styles.semAula;
+  return styles[status];
+}
+
+export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: AttendanceCalendarProps) {
+  const [mesVisivel, setMesVisivel] = useState(mes);
+  const [ano, mesNumero] = mesVisivel.split("-").map(Number);
+  const mesIndex = mesNumero - 1;
+  const diasNoMes = new Date(Date.UTC(ano, mesIndex + 1, 0)).getUTCDate();
+  const primeiraColuna = new Date(Date.UTC(ano, mesIndex, 1)).getUTCDay();
+  const tituloMes = new Intl.DateTimeFormat("pt-BR", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(ano, mesIndex, 1)));
+
+  const celulasVazias = Array.from({ length: primeiraColuna });
+  const dias = Array.from({ length: diasNoMes }, (_, indice) => indice + 1);
+
+  return (
+    <div className={styles.calendario}>
+      <div className={styles.cabecalho}>
+        <h3 className={styles.title}>Resumo de presença</h3>
+        <div className={styles.navegacao}>
+          <IconButton
+            label="Mês anterior"
+            size="sm"
+            onClick={() => setMesVisivel((atual) => deslocarMes(atual, -1))}
+          >
+            <Icon name="chevron-left" size={16} />
+          </IconButton>
+          <span className={styles.mesAtual}>
+            {tituloMes.charAt(0).toUpperCase() + tituloMes.slice(1)}
+          </span>
+          <IconButton
+            label="Próximo mês"
+            size="sm"
+            onClick={() => setMesVisivel((atual) => deslocarMes(atual, 1))}
+          >
+            <Icon name="chevron-right" size={16} />
+          </IconButton>
+        </div>
+      </div>
+
+      <div className={styles.grade}>
+        {DIAS_SEMANA.map((inicialDia, indice) => (
+          <span key={`${inicialDia}-${indice}`} className={styles.diaSemana} aria-hidden="true">
+            {inicialDia}
+          </span>
+        ))}
+        {celulasVazias.map((_, indice) => (
+          <span key={`vazio-${indice}`} aria-hidden="true" />
+        ))}
+        {dias.map((dia) => {
+          const dataIso = `${ano}-${String(mesNumero).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+          const status = statusPorData.get(dataIso);
+          const eventos = eventosPorData?.get(dataIso) ?? [];
+          const partesRotulo = [
+            formatDateLong(dataIso),
+            status ? LABEL_STATUS[status] : "Sem aula",
+            ...eventos.map((evento) => `${LABEL_EVENTO[evento.type]}: ${evento.title}`),
+          ];
+          const rotulo = partesRotulo.join(" — ");
+          return (
+            <span key={dataIso} className={styles.celula} title={rotulo} aria-label={rotulo}>
+              <span className={cx(styles.dia, toneClass(status))}>{dia}</span>
+              {eventos.length > 0 && (
+                <span className={styles.marcadores} aria-hidden="true">
+                  {eventos.slice(0, 3).map((evento, indice) => (
+                    <span
+                      key={`${evento.type}-${indice}`}
+                      className={cx(styles.marcador, styles[`marcador_${evento.type}`])}
+                    />
+                  ))}
+                </span>
+              )}
+            </span>
+          );
+        })}
+      </div>
+
+      <ul className={styles.legenda}>
+        <li>
+          <span className={cx(styles.amostra, styles.present)} aria-hidden="true" />
+          Presente
+        </li>
+        <li>
+          <span className={cx(styles.amostra, styles.late)} aria-hidden="true" />
+          Atrasado
+        </li>
+        <li>
+          <span className={cx(styles.amostra, styles.absent)} aria-hidden="true" />
+          Ausente
+        </li>
+        <li>
+          <span className={cx(styles.marcador, styles.marcador_prova)} aria-hidden="true" />
+          Prova
+        </li>
+        <li>
+          <span className={cx(styles.marcador, styles.marcador_vacation)} aria-hidden="true" />
+          Férias
+        </li>
+        <li>
+          <span className={cx(styles.marcador, styles.marcador_makeup)} aria-hidden="true" />
+          Recuperação
+        </li>
+      </ul>
+    </div>
+  );
+}

@@ -10,14 +10,14 @@ const STORAGE_KEY = "radar.db.v3";
 const LEGACY_KEYS = ["radar.db.v1", "radar.db.v2"];
 
 export type Collection =
-  | "perfis"
-  | "turmas"
-  | "alunos"
-  | "chamadas"
-  | "presencas"
-  | "avaliacoes"
-  | "notas"
-  | "eventosEscolares";
+  | "profiles"
+  | "groups"
+  | "students"
+  | "attendanceSessions"
+  | "attendanceRecords"
+  | "assessments"
+  | "grades"
+  | "schoolEvents";
 
 export type Db = Record<Collection, unknown[]>;
 

@@ -1,86 +1,86 @@
-import type { Avaliacao } from "@/entities/avaliacao/model";
-import type { Nota } from "@/entities/nota/model";
+import type { Assessment } from "@/entities/assessment/model";
+import type { Grade } from "@/entities/grade/model";
 import {
-  STATUS_PRESENTE,
-  type Presenca,
-  type StatusPresenca,
-} from "@/entities/presenca/model";
+  PRESENT_STATUSES,
+  type AttendanceRecord,
+  type AttendanceStatus,
+} from "@/entities/attendance-record/model";
 
 /** Weighted grade average (1 decimal); pending/missing grades are excluded.
     Returns null when no grade has been launched. */
-export function mediaPonderada(
-  notas: Nota[],
-  avaliacoes: Avaliacao[],
+export function weightedAverage(
+  grades: Grade[],
+  assessments: Assessment[],
 ): number | null {
-  const pesoPorAvaliacao = new Map(
-    avaliacoes.map((avaliacao) => [avaliacao.id, avaliacao.peso]),
+  const weightByAssessment = new Map(
+    assessments.map((assessment) => [assessment.id, assessment.weight]),
   );
-  let somaPonderada = 0;
-  let somaPesos = 0;
-  for (const nota of notas) {
-    const peso = pesoPorAvaliacao.get(nota.avaliacaoId);
-    if (nota.valor === null || peso === undefined) continue;
-    somaPonderada += nota.valor * peso;
-    somaPesos += peso;
+  let weightedSum = 0;
+  let weightSum = 0;
+  for (const grade of grades) {
+    const weight = weightByAssessment.get(grade.assessmentId);
+    if (grade.value === null || weight === undefined) continue;
+    weightedSum += grade.value * weight;
+    weightSum += weight;
   }
-  if (somaPesos === 0) return null;
-  return Math.round((somaPonderada / somaPesos) * 10) / 10;
+  if (weightSum === 0) return null;
+  return Math.round((weightedSum / weightSum) * 10) / 10;
 }
 
-/** Attendance rate (0–100) — presente + atrasado count as present. */
-export function taxaFrequencia(presencas: Presenca[]): number {
-  if (presencas.length === 0) return 0;
-  const presentes = presencas.filter((presenca) =>
-    STATUS_PRESENTE.includes(presenca.status),
+/** Attendance rate (0–100) — present + late count as present. */
+export function attendanceRate(records: AttendanceRecord[]): number {
+  if (records.length === 0) return 0;
+  const present = records.filter((record) =>
+    PRESENT_STATUSES.includes(record.status),
   ).length;
-  return Math.round((presentes / presencas.length) * 100);
+  return Math.round((present / records.length) * 100);
 }
 
-export function contarFaltas(presencas: Presenca[]): number {
-  return presencas.filter((presenca) => presenca.status === "ausente").length;
+export function countAbsences(records: AttendanceRecord[]): number {
+  return records.filter((record) => record.status === "absent").length;
 }
 
-export interface AlunoRisco {
-  alunoId: string;
-  faltas: number;
-  frequencia: number;
+export interface StudentAtRisk {
+  studentId: string;
+  absences: number;
+  attendance: number;
 }
 
-/** Students with absences at or above `limiteFaltas`, worst first. */
-export function alunosEmRisco(
-  presencasPorAluno: Map<string, Presenca[]>,
-  limiteFaltas: number,
-): AlunoRisco[] {
-  const risco: AlunoRisco[] = [];
-  for (const [alunoId, presencas] of presencasPorAluno) {
-    const faltas = contarFaltas(presencas);
-    if (faltas >= limiteFaltas) {
-      risco.push({ alunoId, faltas, frequencia: taxaFrequencia(presencas) });
+/** Students with absences at or above `absenceThreshold`, worst first. */
+export function studentsAtRisk(
+  recordsByStudent: Map<string, AttendanceRecord[]>,
+  absenceThreshold: number,
+): StudentAtRisk[] {
+  const atRisk: StudentAtRisk[] = [];
+  for (const [studentId, records] of recordsByStudent) {
+    const absences = countAbsences(records);
+    if (absences >= absenceThreshold) {
+      atRisk.push({ studentId, absences, attendance: attendanceRate(records) });
     }
   }
-  return risco.sort((alunoA, alunoB) => alunoB.faltas - alunoA.faltas);
+  return atRisk.sort((studentA, studentB) => studentB.absences - studentA.absences);
 }
 
-export interface PontoAbsenteismo {
-  data: string;
-  taxaFalta: number;
+export interface AbsenteeismPoint {
+  date: string;
+  absenceRate: number;
 }
 
 /** Absence rate per session date, chronological — feeds the trend chart. */
-export function tendenciaAbsenteismo(
-  registros: { data: string; status: StatusPresenca }[],
-): PontoAbsenteismo[] {
-  const porData = new Map<string, { total: number; ausentes: number }>();
-  for (const registro of registros) {
-    const bucket = porData.get(registro.data) ?? { total: 0, ausentes: 0 };
+export function absenteeismTrend(
+  records: { date: string; status: AttendanceStatus }[],
+): AbsenteeismPoint[] {
+  const byDate = new Map<string, { total: number; absent: number }>();
+  for (const record of records) {
+    const bucket = byDate.get(record.date) ?? { total: 0, absent: 0 };
     bucket.total += 1;
-    if (registro.status === "ausente") bucket.ausentes += 1;
-    porData.set(registro.data, bucket);
+    if (record.status === "absent") bucket.absent += 1;
+    byDate.set(record.date, bucket);
   }
-  return [...porData.entries()]
-    .map(([data, { total, ausentes }]) => ({
-      data,
-      taxaFalta: total === 0 ? 0 : Math.round((ausentes / total) * 100),
+  return [...byDate.entries()]
+    .map(([date, { total, absent }]) => ({
+      date,
+      absenceRate: total === 0 ? 0 : Math.round((absent / total) * 100),
     }))
-    .sort((pontoA, pontoB) => pontoA.data.localeCompare(pontoB.data));
+    .sort((pointA, pointB) => pointA.date.localeCompare(pointB.date));
 }

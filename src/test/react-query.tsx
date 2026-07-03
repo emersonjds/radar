@@ -7,7 +7,7 @@ interface QueryProviderProps {
 }
 
 /** Fresh, isolated QueryClient per call — no cache bleed between tests. */
-export function renderHookComQuery<TResult>(
+export function renderHookWithQuery<TResult>(
   callback: () => TResult,
 ): RenderHookResult<TResult, unknown> {
   const client = new QueryClient({

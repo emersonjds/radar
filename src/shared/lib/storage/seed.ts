@@ -10,9 +10,9 @@ const PROFESSOR_ID = "perfil-ricardo";
 const ADMIN_ID = "perfil-ana";
 
 const TURMAS = [
-  { id: "turma-mat-b", nome: "Matemática Avançada II", serie: "3ª série", turno: "manhã" },
-  { id: "turma-fis-a", nome: "Física I", serie: "2ª série", turno: "manhã" },
-  { id: "turma-cie-c", nome: "Ciências Gerais", serie: "1ª série", turno: "tarde" },
+  { id: "turma-mat-b", name: "Matemática Avançada II", gradeLevel: "3ª série", shift: "manhã" },
+  { id: "turma-fis-a", name: "Física I", gradeLevel: "2ª série", shift: "manhã" },
+  { id: "turma-cie-c", name: "Ciências Gerais", gradeLevel: "1ª série", shift: "afternoon" },
 ];
 
 // Weekday ISO dates leading up to 2026-07-01, oldest first.
@@ -32,75 +32,75 @@ const NOMES = [
   "Lara Nunes", "Mateus Rocha", "Nina Barros",
 ];
 
-type SeedStatus = "presente" | "ausente" | "atrasado" | "justificado";
+type SeedStatus = "present" | "absent" | "late" | "excused";
 
 // Students carrying more absences — drives the "aluno em risco" panels.
 const EM_RISCO = new Set([0, 1, 2]);
 
 function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
   if (EM_RISCO.has(alunoIdx)) {
-    if (dataIdx % 2 === 0) return "ausente";
-    if (dataIdx % 3 === 0) return "atrasado";
-    return "presente";
+    if (dataIdx % 2 === 0) return "absent";
+    if (dataIdx % 3 === 0) return "late";
+    return "present";
   }
   const cycle = (alunoIdx + dataIdx) % 11;
-  if (cycle === 4) return "atrasado";
-  if (cycle === 7) return "justificado";
-  if (cycle === 9) return "ausente";
-  return "presente";
+  if (cycle === 4) return "late";
+  if (cycle === 7) return "excused";
+  if (cycle === 9) return "absent";
+  return "present";
 }
 
 export function seedDb(): Db {
   const perfis = [
-    { id: PROFESSOR_ID, nome: "Ricardo Alves", email: "ricardo@radar.escola", papel: "professor", cargo: "Professor Titular" },
-    { id: ADMIN_ID, nome: "Ana Vance", email: "ana@radar.escola", papel: "admin", cargo: "Coordenação" },
+    { id: PROFESSOR_ID, name: "Ricardo Alves", email: "ricardo@radar.escola", role: "teacher", jobTitle: "Professor Titular" },
+    { id: ADMIN_ID, name: "Ana Vance", email: "ana@radar.escola", role: "admin", jobTitle: "Coordenação" },
   ];
 
-  const turmas = TURMAS.map((turma) => ({ ...turma, professorId: PROFESSOR_ID }));
+  const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: PROFESSOR_ID }));
 
-  const alunos = NOMES.map((nome, index) => ({
+  const alunos = NOMES.map((name, index) => ({
     id: `aluno-${index + 1}`,
-    nome,
-    matricula: `EDU-2026-${String(1000 + index)}`,
-    turmaId: TURMAS[index % TURMAS.length].id,
-    ativo: true,
+    name,
+    enrollment: `EDU-2026-${String(1000 + index)}`,
+    groupId: TURMAS[index % TURMAS.length].id,
+    active: true,
   }));
 
-  const chamadas: Db["chamadas"] = [];
-  const presencas: Db["presencas"] = [];
+  const chamadas: Db["attendanceSessions"] = [];
+  const presencas: Db["attendanceRecords"] = [];
 
   for (const turma of turmas) {
-    const turmaAlunos = alunos.filter((aluno) => aluno.turmaId === turma.id);
+    const turmaAlunos = alunos.filter((aluno) => aluno.groupId === turma.id);
     DATAS.forEach((data, dataIdx) => {
-      const chamadaId = `chamada-${turma.id}-${data}`;
+      const sessionId = `chamada-${turma.id}-${data}`;
       chamadas.push({
-        id: chamadaId,
-        turmaId: turma.id,
-        data,
-        professorId: PROFESSOR_ID,
+        id: sessionId,
+        groupId: turma.id,
+        date: data,
+        teacherId: PROFESSOR_ID,
       });
       turmaAlunos.forEach((aluno) => {
         presencas.push({
-          id: `presenca-${chamadaId}-${aluno.id}`,
-          chamadaId,
-          alunoId: aluno.id,
+          id: `presenca-${sessionId}-${aluno.id}`,
+          sessionId,
+          studentId: aluno.id,
           status: statusFor(Number(aluno.id.split("-")[1]) - 1, dataIdx),
         });
       });
     });
   }
 
-  const avaliacoes: Db["avaliacoes"] = [];
-  const notas: Db["notas"] = [];
+  const avaliacoes: Db["assessments"] = [];
+  const notas: Db["grades"] = [];
 
   for (const turma of turmas) {
     const turmaAvaliacoes = [
-      { id: `avaliacao-${turma.id}-p1-2026-06-20`, turmaId: turma.id, nome: "Prova 1", data: "2026-06-20", peso: 2, professorId: PROFESSOR_ID },
-      { id: `avaliacao-${turma.id}-p2-2026-06-27`, turmaId: turma.id, nome: "Trabalho 1", data: "2026-06-27", peso: 1, professorId: PROFESSOR_ID },
+      { id: `avaliacao-${turma.id}-p1-2026-06-20`, groupId: turma.id, name: "Prova 1", date: "2026-06-20", weight: 2, teacherId: PROFESSOR_ID },
+      { id: `avaliacao-${turma.id}-p2-2026-06-27`, groupId: turma.id, name: "Trabalho 1", date: "2026-06-27", weight: 1, teacherId: PROFESSOR_ID },
     ];
     avaliacoes.push(...turmaAvaliacoes);
 
-    const turmaAlunos = alunos.filter((aluno) => aluno.turmaId === turma.id);
+    const turmaAlunos = alunos.filter((aluno) => aluno.groupId === turma.id);
     turmaAvaliacoes.forEach((avaliacao, avaliacaoIdx) => {
       turmaAlunos.forEach((aluno) => {
         const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
@@ -110,9 +110,9 @@ export function seedDb(): Db {
           Math.round((4 + ((alunoIdx * 3 + avaliacaoIdx * 5) % 61) / 10) * 10) / 10;
         notas.push({
           id: `nota-${avaliacao.id}-${aluno.id}`,
-          avaliacaoId: avaliacao.id,
-          alunoId: aluno.id,
-          valor,
+          assessmentId: avaliacao.id,
+          studentId: aluno.id,
+          value: valor,
         });
       });
     });
@@ -120,9 +120,18 @@ export function seedDb(): Db {
 
   // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
   const eventosEscolares = [
-    { id: "evento-ferias-julho", tipo: "ferias", titulo: "Férias de julho", dataInicio: "2026-07-06", dataFim: "2026-07-24" },
-    { id: "evento-recuperacao-julho", tipo: "recuperacao", titulo: "Recuperação semestral", dataInicio: "2026-07-27", dataFim: "2026-07-31" },
+    { id: "evento-ferias-julho", type: "vacation", title: "Férias de julho", startDate: "2026-07-06", endDate: "2026-07-24" },
+    { id: "evento-recuperacao-julho", type: "makeup", title: "Recuperação semestral", startDate: "2026-07-27", endDate: "2026-07-31" },
   ];
 
-  return { perfis, turmas, alunos, chamadas, presencas, avaliacoes, notas, eventosEscolares };
+  return {
+    profiles: perfis,
+    groups: turmas,
+    students: alunos,
+    attendanceSessions: chamadas,
+    attendanceRecords: presencas,
+    assessments: avaliacoes,
+    grades: notas,
+    schoolEvents: eventosEscolares,
+  };
 }

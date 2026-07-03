@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { useSessao } from "@/features/sessao/use-sessao";
+import { useSession } from "@/features/session/use-session";
 import { cx } from "@/shared/ui/cx";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
@@ -12,16 +12,16 @@ export interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const { papel, perfil, trocarPapel } = useSessao();
+  const { role, profile, switchRole } = useSession();
   const [menuAberto, setMenuAberto] = useState(false);
 
-  const nome = perfil?.nome ?? "—";
-  const cargo = perfil?.cargo ?? (papel === "admin" ? "Coordenação" : "Professor");
+  const nome = profile?.name ?? "—";
+  const cargo = profile?.jobTitle ?? (role === "admin" ? "Coordenação" : "Professor");
 
   return (
     <div className={styles.shell}>
       <div className={cx(styles.sidebarWrap, menuAberto && styles.sidebarOpen)}>
-        <Sidebar papel={papel} onNavegar={() => setMenuAberto(false)} />
+        <Sidebar role={role} onNavigate={() => setMenuAberto(false)} />
       </div>
       {menuAberto && (
         <button
@@ -33,10 +33,10 @@ export function AppShell({ children }: AppShellProps) {
       )}
       <div className={styles.region}>
         <Topbar
-          nome={nome}
-          cargo={cargo}
-          papel={papel}
-          onTrocarPapel={trocarPapel}
+          name={nome}
+          jobTitle={cargo}
+          role={role}
+          onSwitchRole={switchRole}
           onToggleMenu={() => setMenuAberto((aberto) => !aberto)}
         />
         <main className={styles.main}>{children}</main>

@@ -2,22 +2,22 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import type { Papel } from "@/entities/perfil/model";
-import { navParaPapel } from "@/shared/config/navigation";
+import type { Role } from "@/entities/profile/model";
+import { navForRole } from "@/shared/config/navigation";
 import { Button } from "@/shared/ui/Button/Button";
 import { Icon } from "@/shared/ui/Icon/Icon";
 import { cx } from "@/shared/ui/cx";
 import styles from "./Sidebar.module.css";
 
 export interface SidebarProps {
-  papel: Papel;
-  onNavegar?: () => void;
+  role: Role;
+  onNavigate?: () => void;
 }
 
-export function Sidebar({ papel, onNavegar }: SidebarProps) {
+export function Sidebar({ role, onNavigate }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
-  const itens = navParaPapel(papel);
+  const itens = navForRole(role);
 
   return (
     <aside className={styles.sidebar}>
@@ -35,7 +35,7 @@ export function Sidebar({ papel, onNavegar }: SidebarProps) {
               href={item.href}
               className={cx(styles.navItem, ativo && styles.navItemActive)}
               aria-current={ativo ? "page" : undefined}
-              onClick={onNavegar}
+              onClick={onNavigate}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
@@ -44,15 +44,15 @@ export function Sidebar({ papel, onNavegar }: SidebarProps) {
         })}
       </nav>
 
-      {papel === "professor" && (
+      {role === "teacher" && (
         <div className={styles.cta}>
           <Button
             variant="primary"
             fullWidth
             leftIcon={<Icon name="plus" size={16} />}
             onClick={() => {
-              router.push("/chamada");
-              onNavegar?.();
+              router.push("/attendance");
+              onNavigate?.();
             }}
           >
             Nova chamada
@@ -66,7 +66,7 @@ export function Sidebar({ papel, onNavegar }: SidebarProps) {
           <Icon name="settings" />
           <span>Configurações</span>
         </button>
-        <Link href="/login" className={styles.footerItem} onClick={onNavegar}>
+        <Link href="/login" className={styles.footerItem} onClick={onNavigate}>
           <Icon name="logout" />
           <span>Sair</span>
         </Link>

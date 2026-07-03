@@ -1,19 +1,19 @@
 import styles from "./Avatar.module.css";
 
 export interface AvatarProps {
-  nome: string;
+  name: string;
   src?: string;
   size?: number;
 }
 
-function iniciais(nome: string): string {
-  const partes = nome.trim().split(/\s+/);
-  const primeira = partes[0]?.[0] ?? "";
-  const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
-  return (primeira + ultima).toUpperCase();
+function initials(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0]?.[0] ?? "";
+  const last = parts.length > 1 ? parts[parts.length - 1][0] : "";
+  return (first + last).toUpperCase();
 }
 
-export function Avatar({ nome, src, size = 40 }: AvatarProps) {
+export function Avatar({ name, src, size = 40 }: AvatarProps) {
   return (
     <span
       className={styles.avatar}
@@ -21,9 +21,9 @@ export function Avatar({ nome, src, size = 40 }: AvatarProps) {
     >
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element -- SPA static export, avatar source is arbitrary/remote
-        <img src={src} alt={nome} className={styles.image} />
+        <img src={src} alt={name} className={styles.image} />
       ) : (
-        iniciais(nome)
+        initials(name)
       )}
     </span>
   );

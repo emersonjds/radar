@@ -2,28 +2,28 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import type { Papel } from "@/entities/perfil/model";
-import { setPapel } from "@/features/sessao/session-store";
+import type { Role } from "@/entities/profile/model";
+import { setRole } from "@/features/session/session-store";
 import { Button } from "@/shared/ui/Button/Button";
 import { cx } from "@/shared/ui/cx";
 import styles from "./LoginForm.module.css";
 
-const PERSONAS: { papel: Papel; label: string; hint: string }[] = [
-  { papel: "professor", label: "Professor", hint: "Chamada e turmas" },
-  { papel: "admin", label: "Coordenação", hint: "Visão da escola" },
+const PERSONAS: { role: Role; label: string; hint: string }[] = [
+  { role: "teacher", label: "Professor", hint: "Chamada e turmas" },
+  { role: "admin", label: "Coordenação", hint: "Visão da escola" },
 ];
 
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
-  const [papel, setPapelEscolhido] = useState<Papel>("professor");
+  const [papel, setPapelEscolhido] = useState<Role>("teacher");
 
   // ponytail: no real auth yet — the chosen persona sets the session and opens
   // the app. Swap for Supabase auth (role from the JWT) when it lands.
   function entrar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setPapel(papel);
+    setRole(papel);
     router.push("/");
   }
 
@@ -38,14 +38,14 @@ export function LoginForm() {
         <legend className={styles.legend}>Entrar como</legend>
         {PERSONAS.map((persona) => (
           <button
-            key={persona.papel}
+            key={persona.role}
             type="button"
             className={cx(
               styles.persona,
-              papel === persona.papel && styles.personaActive,
+              papel === persona.role && styles.personaActive,
             )}
-            aria-pressed={papel === persona.papel}
-            onClick={() => setPapelEscolhido(persona.papel)}
+            aria-pressed={papel === persona.role}
+            onClick={() => setPapelEscolhido(persona.role)}
           >
             <span className={styles.personaLabel}>{persona.label}</span>
             <span className={styles.personaHint}>{persona.hint}</span>
