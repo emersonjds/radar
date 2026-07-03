@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useSession } from "@/features/session/use-session";
 import { cx } from "@/shared/ui/cx";
+import { BottomNav } from "./BottomNav";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
 import styles from "./AppShell.module.css";
@@ -41,6 +42,7 @@ export function AppShell({ children }: AppShellProps) {
         />
         <main className={styles.main}>{children}</main>
       </div>
+      <BottomNav role={role} />
     </div>
   );
 }

@@ -52,7 +52,15 @@
 .main {
   flex: 1;
   padding: var(--space-6);
+  /* Clear the fixed mobile bottom nav (~56px + safe-area). */
+  padding-bottom: calc(var(--space-6) + 56px + env(safe-area-inset-bottom));
   max-width: 1400px;
   width: 100%;
   margin-inline: auto;
+}
+
+@media (min-width: 1024px) {
+  .main {
+    padding-bottom: var(--space-6);
+  }
 }
