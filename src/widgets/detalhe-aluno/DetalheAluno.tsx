@@ -1,6 +1,6 @@
 "use client";
 
-import { useAlunos } from "@/entities/aluno/queries";
+import { useAluno } from "@/entities/aluno/queries";
 import { useChamadas } from "@/entities/chamada/queries";
 import type { StatusPresenca } from "@/entities/presenca/model";
 import { usePresencasPorAluno } from "@/entities/presenca/queries";
@@ -51,19 +51,20 @@ function mesComMaisRegistros(datas: string[]): string | null {
   return [...contagem.entries()].sort((a, b) => b[1] - a[1])[0][0];
 }
 
-export function DetalheAluno() {
-  const { data: alunos, isLoading: carregandoAlunos } = useAlunos();
+export interface DetalheAlunoProps {
+  alunoId: string;
+}
+
+export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
+  const { data: aluno, isLoading: carregandoAluno } = useAluno(alunoId);
   const { data: turmas } = useTurmas();
   const { data: chamadas } = useChamadas();
+  const { data: presencas, isLoading: carregandoPresencas } = usePresencasPorAluno(alunoId);
 
-  // ponytail: rota real será /relatorios/[alunoId]; por ora usa o primeiro aluno.
-  const aluno = alunos?.[0];
-  const { data: presencas, isLoading: carregandoPresencas } = usePresencasPorAluno(aluno?.id ?? "");
-
-  if (carregandoAlunos) {
+  if (carregandoAluno) {
     return (
       <div className={styles.pagina}>
-        <p className={styles.estado}>Carregando alunos…</p>
+        <p className={styles.estado}>Carregando aluno…</p>
       </div>
     );
   }
@@ -71,7 +72,7 @@ export function DetalheAluno() {
   if (!aluno) {
     return (
       <div className={styles.pagina}>
-        <p className={styles.estado}>Sem alunos.</p>
+        <p className={styles.estado}>Aluno não encontrado</p>
       </div>
     );
   }
@@ -168,7 +169,7 @@ export function DetalheAluno() {
         <Card className={styles.calendarioCard}>
           {carregandoPresencas && <p className={styles.estado}>Carregando registros…</p>}
           {!carregandoPresencas && mes && (
-            <CalendarioPresenca mes={mes} statusPorData={statusPorData} />
+            <CalendarioPresenca key={aluno.id} mes={mes} statusPorData={statusPorData} />
           )}
           {!carregandoPresencas && !mes && (
             <p className={styles.estado}>Sem registros de presença.</p>
