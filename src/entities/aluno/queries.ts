@@ -4,9 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchAlunoPorId, fetchAlunos, fetchAlunosPorTurma } from "./api";
 
 export const alunoKeys = {
-  all: ["alunos"] as const,
-  porTurma: (turmaId: string) => ["alunos", "turma", turmaId] as const,
-  porId: (id: string) => ["alunos", id] as const,
+  all: ["alunos"],
+  porTurma: (turmaId: string) => ["alunos", "turma", turmaId],
+  porId: (id: string) => ["alunos", id],
 };
 
 export function useAlunos() {

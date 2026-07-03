@@ -8,8 +8,8 @@ import {
 import { criarAvaliacao, fetchAvaliacoesPorTurma } from "./api";
 
 export const avaliacaoKeys = {
-  all: ["avaliacoes"] as const,
-  porTurma: (turmaId: string) => ["avaliacoes", "turma", turmaId] as const,
+  all: ["avaliacoes"],
+  porTurma: (turmaId: string) => ["avaliacoes", "turma", turmaId],
 };
 
 export function useAvaliacoesPorTurma(turmaId: string) {

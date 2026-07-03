@@ -12,8 +12,8 @@ import {
 } from "./api";
 
 export const chamadaKeys = {
-  all: ["chamadas"] as const,
-  porTurma: (turmaId: string) => ["chamadas", "turma", turmaId] as const,
+  all: ["chamadas"],
+  porTurma: (turmaId: string) => ["chamadas", "turma", turmaId],
 };
 
 export function useChamadas() {

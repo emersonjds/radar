@@ -5,8 +5,8 @@ import { fetchPerfilPorPapel, fetchPerfis } from "./api";
 import type { Papel } from "./model";
 
 export const perfilKeys = {
-  all: ["perfis"] as const,
-  porPapel: (papel: Papel) => ["perfis", "papel", papel] as const,
+  all: ["perfis"],
+  porPapel: (papel: Papel) => ["perfis", "papel", papel],
 };
 
 export function usePerfis() {

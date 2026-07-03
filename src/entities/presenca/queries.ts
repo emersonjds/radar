@@ -13,10 +13,10 @@ import {
 } from "./api";
 
 export const presencaKeys = {
-  all: ["presencas"] as const,
+  all: ["presencas"],
   porChamada: (chamadaId: string) =>
-    ["presencas", "chamada", chamadaId] as const,
-  porAluno: (alunoId: string) => ["presencas", "aluno", alunoId] as const,
+    ["presencas", "chamada", chamadaId],
+  porAluno: (alunoId: string) => ["presencas", "aluno", alunoId],
 };
 
 export function usePresencas() {

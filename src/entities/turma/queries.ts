@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTurmaPorId, fetchTurmas } from "./api";
 
 export const turmaKeys = {
-  all: ["turmas"] as const,
-  porId: (id: string) => ["turmas", id] as const,
+  all: ["turmas"],
+  porId: (id: string) => ["turmas", id],
 };
 
 export function useTurmas() {

@@ -12,10 +12,10 @@ import {
 } from "./api";
 
 export const notaKeys = {
-  all: ["notas"] as const,
+  all: ["notas"],
   porAvaliacao: (avaliacaoId: string) =>
-    ["notas", "avaliacao", avaliacaoId] as const,
-  porAluno: (alunoId: string) => ["notas", "aluno", alunoId] as const,
+    ["notas", "avaliacao", avaliacaoId],
+  porAluno: (alunoId: string) => ["notas", "aluno", alunoId],
 };
 
 export function useNotasPorAvaliacao(avaliacaoId: string) {

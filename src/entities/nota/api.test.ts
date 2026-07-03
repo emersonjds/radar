@@ -8,7 +8,7 @@ describe("nota api", () => {
   });
 
   it("upserts by (avaliacao, aluno) instead of duplicating", async () => {
-    const base = { avaliacaoId: "avaliacao-x", alunoId: "aluno-1" } as const;
+    const base = { avaliacaoId: "avaliacao-x", alunoId: "aluno-1" };
     await definirNota({ ...base, valor: 6.5 });
     await definirNota({ ...base, valor: 8 });
     const notas = await fetchNotasPorAvaliacao("avaliacao-x");

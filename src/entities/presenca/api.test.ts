@@ -8,7 +8,7 @@ describe("presenca api", () => {
   });
 
   it("upserts by (chamada, aluno) instead of duplicating", async () => {
-    const base = { chamadaId: "chamada-x", alunoId: "aluno-1" } as const;
+    const base = { chamadaId: "chamada-x", alunoId: "aluno-1" };
     await definirPresenca({ ...base, status: "ausente" });
     await definirPresenca({ ...base, status: "presente" });
     const presencas = await fetchPresencasPorChamada("chamada-x");
