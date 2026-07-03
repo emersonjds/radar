@@ -58,7 +58,7 @@ export function alunosEmRisco(
       risco.push({ alunoId, faltas, frequencia: taxaFrequencia(presencas) });
     }
   }
-  return risco.sort((a, b) => b.faltas - a.faltas);
+  return risco.sort((alunoA, alunoB) => alunoB.faltas - alunoA.faltas);
 }
 
 export interface PontoAbsenteismo {
@@ -82,5 +82,5 @@ export function tendenciaAbsenteismo(
       data,
       taxaFalta: total === 0 ? 0 : Math.round((ausentes / total) * 100),
     }))
-    .sort((a, b) => a.data.localeCompare(b.data));
+    .sort((pontoA, pontoB) => pontoA.data.localeCompare(pontoB.data));
 }

@@ -26,7 +26,7 @@ function mesComMaisRegistros(datas: string[]): string | null {
     const mes = data.slice(0, 7);
     contagem.set(mes, (contagem.get(mes) ?? 0) + 1);
   }
-  return [...contagem.entries()].sort((a, b) => b[1] - a[1])[0][0];
+  return [...contagem.entries()].sort((mesA, mesB) => mesB[1] - mesA[1])[0][0];
 }
 
 export interface DetalheAlunoProps {
@@ -57,7 +57,7 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
     );
   }
 
-  const turma = turmas?.find((t) => t.id === aluno.turmaId);
+  const turma = turmas?.find((turmaCandidata) => turmaCandidata.id === aluno.turmaId);
   const chamadaPorId = new Map((chamadas ?? []).map((chamada) => [chamada.id, chamada]));
 
   const statusPorData = new Map<string, StatusPresenca>();
@@ -82,9 +82,9 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
           <label className={styles.campoFiltro}>
             <span>Turma</span>
             <select className={styles.select} defaultValue={aluno.turmaId}>
-              {(turmas ?? []).map((t) => (
-                <option key={t.id} value={t.id}>
-                  {t.nome}
+              {(turmas ?? []).map((opcaoTurma) => (
+                <option key={opcaoTurma.id} value={opcaoTurma.id}>
+                  {opcaoTurma.nome}
                 </option>
               ))}
             </select>

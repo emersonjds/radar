@@ -10,7 +10,7 @@ export async function fetchChamadasPorTurma(turmaId: string): Promise<Chamada[]>
   const chamadas = await fetchChamadas();
   return chamadas
     .filter((chamada) => chamada.turmaId === turmaId)
-    .sort((a, b) => b.data.localeCompare(a.data));
+    .sort((chamadaA, chamadaB) => chamadaB.data.localeCompare(chamadaA.data));
 }
 
 export interface NovaChamada {

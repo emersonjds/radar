@@ -12,7 +12,7 @@ export async function fetchAvaliacoesPorTurma(
   const avaliacoes = await fetchAvaliacoes();
   return avaliacoes
     .filter((avaliacao) => avaliacao.turmaId === turmaId)
-    .sort((a, b) => b.data.localeCompare(a.data));
+    .sort((avaliacaoA, avaliacaoB) => avaliacaoB.data.localeCompare(avaliacaoA.data));
 }
 
 function slug(nome: string): string {
