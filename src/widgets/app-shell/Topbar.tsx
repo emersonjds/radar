@@ -1,5 +1,7 @@
 "use client";
 
+import { useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import type { Papel } from "@/entities/perfil/model";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Icon } from "@/shared/ui/Icon/Icon";
@@ -22,6 +24,15 @@ const PERSONAS: { papel: Papel; label: string }[] = [
 ];
 
 export function Topbar({ nome, cargo, papel, onTrocarPapel, onToggleMenu }: TopbarProps) {
+  const router = useRouter();
+  const [termo, setTermo] = useState("");
+
+  function handleBuscar(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const termoLimpo = termo.trim();
+    if (termoLimpo) router.push("/alunos?q=" + encodeURIComponent(termoLimpo));
+  }
+
   return (
     <header className={styles.topbar}>
       <IconButton
@@ -32,9 +43,9 @@ export function Topbar({ nome, cargo, papel, onTrocarPapel, onToggleMenu }: Topb
         <Icon name="menu" size={18} />
       </IconButton>
 
-      <div className={styles.search}>
-        <SearchInput placeholder="Buscar aluno..." />
-      </div>
+      <form className={styles.search} onSubmit={handleBuscar} role="search">
+        <SearchInput value={termo} onChange={setTermo} placeholder="Buscar aluno..." />
+      </form>
 
       <div className={styles.actions}>
         <div

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useAlunos } from "@/entities/aluno/queries";
 import type { Presenca } from "@/entities/presenca/model";
 import { usePresencas } from "@/entities/presenca/queries";
@@ -26,7 +27,9 @@ export function ListaAlunos() {
   const { data: alunos, isLoading: carregandoAlunos } = useAlunos();
   const { data: turmas, isLoading: carregandoTurmas } = useTurmas();
   const { data: presencas, isLoading: carregandoPresencas } = usePresencas();
-  const [busca, setBusca] = useState("");
+  const searchParams = useSearchParams();
+  const [busca, setBusca] = useState(() => searchParams.get("q") ?? "");
+  const filtroRisco = searchParams.get("filtro") === "risco";
 
   const carregando =
     carregandoSessao || carregandoAlunos || carregandoTurmas || carregandoPresencas;
@@ -47,9 +50,15 @@ export function ListaAlunos() {
     : [];
   const turmaIdsDoProfessor = new Set(turmasDoProfessor.map((turma) => turma.id));
 
-  const alunosEscopo = isProfessor
+  const alunosDaTurma = isProfessor
     ? (alunos ?? []).filter((aluno) => turmaIdsDoProfessor.has(aluno.turmaId))
     : (alunos ?? []);
+
+  const alunosEscopo = filtroRisco
+    ? alunosDaTurma.filter(
+        (aluno) => contarFaltas(presencasPorAluno.get(aluno.id) ?? []) >= LIMITE_FALTAS_RISCO,
+      )
+    : alunosDaTurma;
 
   const termo = busca.trim().toLowerCase();
   const alunosFiltrados = termo
@@ -72,10 +81,12 @@ export function ListaAlunos() {
 
   const semTurmas = isProfessor && turmasDoProfessor.length === 0;
   const colunas = isProfessor ? 5 : 7;
-  const titulo = isProfessor ? "Meus alunos" : "Alunos";
-  const subtitulo = isProfessor
-    ? "Alunos das suas turmas"
-    : `${alunosEscopo.length} aluno${alunosEscopo.length === 1 ? "" : "s"} cadastrados`;
+  const titulo = filtroRisco ? "Alunos em risco" : isProfessor ? "Meus alunos" : "Alunos";
+  const subtitulo = filtroRisco
+    ? `${alunosEscopo.length} aluno${alunosEscopo.length === 1 ? "" : "s"} com ${LIMITE_FALTAS_RISCO} ou mais faltas`
+    : isProfessor
+      ? "Alunos das suas turmas"
+      : `${alunosEscopo.length} aluno${alunosEscopo.length === 1 ? "" : "s"} cadastrados`;
 
   return (
     <div className={styles.pagina}>
@@ -151,7 +162,7 @@ export function ListaAlunos() {
                       {!isProfessor && (
                         <TD>
                           <Link
-                            href="/relatorios"
+                            href={"/relatorios/" + aluno.id}
                             className={cx(buttonStyles.button, buttonStyles.outlined, buttonStyles.sm)}
                           >
                             <Icon name="relatorios" size={16} />

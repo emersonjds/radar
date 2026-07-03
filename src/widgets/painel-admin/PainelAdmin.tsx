@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useAlunos } from "@/entities/aluno/queries";
 import type { Presenca, StatusPresenca } from "@/entities/presenca/model";
 import { usePresencas } from "@/entities/presenca/queries";
@@ -166,9 +167,9 @@ export function PainelAdmin() {
               ))}
             </ul>
           )}
-          <button type="button" className={styles.verTodos}>
+          <Link href="/alunos?filtro=risco" className={styles.verTodos}>
             Ver todos os alunos em risco
-          </button>
+          </Link>
         </Card>
       </div>
 
