@@ -2,18 +2,28 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import type { Papel } from "@/entities/perfil/model";
+import { setPapel } from "@/features/sessao/session-store";
 import { Button } from "@/shared/ui/Button/Button";
+import { cx } from "@/shared/ui/cx";
 import styles from "./LoginForm.module.css";
+
+const PERSONAS: { papel: Papel; label: string; hint: string }[] = [
+  { papel: "professor", label: "Professor", hint: "Chamada e turmas" },
+  { papel: "admin", label: "Coordenação", hint: "Visão da escola" },
+];
 
 export function LoginForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [papel, setPapelEscolhido] = useState<Papel>("professor");
 
-  // ponytail: no real auth yet — entering just opens the app. Swap for the
-  // session feature when Supabase auth lands.
+  // ponytail: no real auth yet — the chosen persona sets the session and opens
+  // the app. Swap for Supabase auth (role from the JWT) when it lands.
   function entrar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setPapel(papel);
     router.push("/");
   }
 
@@ -23,6 +33,25 @@ export function LoginForm() {
         <span className={styles.mark}>Radar</span>
         <span className={styles.sub}>Presença escolar</span>
       </div>
+
+      <fieldset className={styles.personas}>
+        <legend className={styles.legend}>Entrar como</legend>
+        {PERSONAS.map((persona) => (
+          <button
+            key={persona.papel}
+            type="button"
+            className={cx(
+              styles.persona,
+              papel === persona.papel && styles.personaActive,
+            )}
+            aria-pressed={papel === persona.papel}
+            onClick={() => setPapelEscolhido(persona.papel)}
+          >
+            <span className={styles.personaLabel}>{persona.label}</span>
+            <span className={styles.personaHint}>{persona.hint}</span>
+          </button>
+        ))}
+      </fieldset>
 
       <div className={styles.field}>
         <label htmlFor="email">E-mail</label>
