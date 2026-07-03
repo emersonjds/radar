@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { StatusPresenca } from "@/entities/presenca/model";
 import { IconButton } from "@/shared/ui/IconButton/IconButton";
 import { Icon } from "@/shared/ui/Icon/Icon";
@@ -21,6 +22,13 @@ const LABEL_STATUS: Record<StatusPresenca, string> = {
   justificado: "Justificado",
 };
 
+/** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
+function deslocarMes(mes: string, delta: number): string {
+  const [ano, mesNumero] = mes.split("-").map(Number);
+  const data = new Date(Date.UTC(ano, mesNumero - 1 + delta, 1));
+  return `${data.getUTCFullYear()}-${String(data.getUTCMonth() + 1).padStart(2, "0")}`;
+}
+
 function toneClass(status: StatusPresenca | undefined): string {
   if (!status) return styles.semAula;
   // ponytail: spec's palette covers presente/atrasado/ausente/sem aula; justificado
@@ -30,7 +38,8 @@ function toneClass(status: StatusPresenca | undefined): string {
 }
 
 export function CalendarioPresenca({ mes, statusPorData }: CalendarioPresencaProps) {
-  const [ano, mesNumero] = mes.split("-").map(Number);
+  const [mesVisivel, setMesVisivel] = useState(mes);
+  const [ano, mesNumero] = mesVisivel.split("-").map(Number);
   const mesIndex = mesNumero - 1;
   const diasNoMes = new Date(Date.UTC(ano, mesIndex + 1, 0)).getUTCDate();
   // getUTCDay: 0=domingo..6=sábado → desloca para semana começando na segunda.
@@ -52,11 +61,18 @@ export function CalendarioPresenca({ mes, statusPorData }: CalendarioPresencaPro
           <span className={styles.mesAtual}>
             {tituloMes.charAt(0).toUpperCase() + tituloMes.slice(1)}
           </span>
-          {/* ponytail: navegação visual-only, mês vem do dado com mais registros */}
-          <IconButton label="Mês anterior" size="sm">
+          <IconButton
+            label="Mês anterior"
+            size="sm"
+            onClick={() => setMesVisivel((atual) => deslocarMes(atual, -1))}
+          >
             <Icon name="chevron-left" size={16} />
           </IconButton>
-          <IconButton label="Próximo mês" size="sm">
+          <IconButton
+            label="Próximo mês"
+            size="sm"
+            onClick={() => setMesVisivel((atual) => deslocarMes(atual, 1))}
+          >
             <Icon name="chevron-right" size={16} />
           </IconButton>
         </div>
