@@ -10,7 +10,8 @@ import { useGroups } from "@/entities/group/queries";
 import { formatDateLong } from "@/shared/lib/format";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Button } from "@/shared/ui/Button/Button";
-import { Card } from "@/shared/ui/Card/Card";
+import { Icon } from "@/shared/ui/Icon/Icon";
+import { SearchInput } from "@/shared/ui/SearchInput/SearchInput";
 import { cx } from "@/shared/ui/cx";
 import { StudentRow, STATUS_OPTIONS } from "./StudentRow";
 import styles from "./AttendanceForm.module.css";
@@ -43,6 +44,7 @@ export function AttendanceForm() {
 
   const [statusPorAluno, setStatusPorAluno] = useState<Record<string, AttendanceStatus>>({});
   const [chamadaSincronizada, setChamadaSincronizada] = useState<string | null>(null);
+  const [busca, setBusca] = useState("");
 
   // Prefill local edits from the persisted presenças whenever the roll-call
   // session (turma + data) changes — adjust state during render (React's documented
@@ -61,6 +63,14 @@ export function AttendanceForm() {
   const [salvo, setSalvo] = useState(false);
 
   const contagem = contarPorStatus(alunos ?? [], statusPorAluno);
+
+  const termoBusca = busca.trim().toLowerCase();
+  const alunosFiltrados = (alunos ?? []).filter(
+    (aluno) =>
+      !termoBusca ||
+      aluno.name.toLowerCase().includes(termoBusca) ||
+      aluno.enrollment.toLowerCase().includes(termoBusca),
+  );
 
   function selecionarStatus(studentId: string, status: AttendanceStatus) {
     setSalvo(false);
@@ -103,78 +113,83 @@ export function AttendanceForm() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <div className={styles.headerTop}>
-          <div className={styles.campo}>
-            <label className={styles.label} htmlFor="turma-select">
-              Group
-            </label>
-            <select
-              id="turma-select"
-              className={styles.select}
-              value={groupId}
-              disabled={carregandoTurmas}
-              onChange={(event) => setTurmaSelecionada(event.target.value)}
-            >
-              {(turmas ?? []).map((turma) => (
-                <option key={turma.id} value={turma.id}>
-                  {turma.name} — {turma.gradeLevel}
-                </option>
-              ))}
-            </select>
-          </div>
-          <span className={styles.data}>{formatDateLong(HOJE)}</span>
+        <div className={styles.tituloWrap}>
+          <select
+            className={styles.titulo}
+            value={groupId}
+            disabled={carregandoTurmas}
+            onChange={(event) => setTurmaSelecionada(event.target.value)}
+            aria-label="Selecionar turma"
+          >
+            {(turmas ?? []).map((turma) => (
+              <option key={turma.id} value={turma.id}>
+                {turma.name} — {turma.gradeLevel}
+              </option>
+            ))}
+          </select>
+          <p className={styles.data}>
+            <Icon name="calendar" size={16} />
+            {formatDateLong(HOJE)}
+          </p>
         </div>
 
-        <div className={styles.resumo}>
+        <SearchInput
+          value={busca}
+          onChange={setBusca}
+          placeholder="Buscar aluno por nome ou matrícula..."
+        />
+
+        <div className={styles.tiles}>
           {STATUS_OPTIONS.map((opcao) => (
-            <span key={opcao.value} className={styles.resumoItem}>
-              <span className={styles.resumoValor}>{contagem[opcao.value]}</span>
-              {opcao.label.toLowerCase()}
-            </span>
+            <div key={opcao.value} className={styles.tile}>
+              <span className={cx(styles.tileLabel, styles[opcao.value])}>{opcao.label}</span>
+              <span className={styles.tileValor}>{contagem[opcao.value]}</span>
+            </div>
           ))}
         </div>
       </header>
 
-      <Card className={styles.rosterCard}>
-        <div className={styles.rosterHeader}>
-          <h2 className={styles.rosterTitulo}>Alunos</h2>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={marcarTodosPresentes}
-            disabled={!groupId || (alunos?.length ?? 0) === 0}
-          >
-            Marcar todos como presente
-          </Button>
+      <div className={styles.toolbar}>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={marcarTodosPresentes}
+          disabled={!groupId || (alunos?.length ?? 0) === 0}
+        >
+          Marcar todos como presente
+        </Button>
+      </div>
+
+      {!groupId && <p className={styles.estadoVazio}>Selecione uma turma para iniciar a chamada.</p>}
+
+      {groupId && carregandoAlunos && (
+        <div className={styles.lista}>
+          <div className={styles.skeletonRow} />
+          <div className={styles.skeletonRow} />
+          <div className={styles.skeletonRow} />
         </div>
+      )}
 
-        {!groupId && <p className={styles.estadoVazio}>Selecione uma turma para iniciar a chamada.</p>}
+      {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
+        <p className={styles.estadoVazio}>Turma sem alunos cadastrados.</p>
+      )}
 
-        {groupId && carregandoAlunos && (
-          <div>
-            <div className={styles.skeletonRow} />
-            <div className={styles.skeletonRow} />
-            <div className={styles.skeletonRow} />
-          </div>
-        )}
+      {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && alunosFiltrados.length === 0 && (
+        <p className={styles.estadoVazio}>Nenhum aluno encontrado para “{busca.trim()}”.</p>
+      )}
 
-        {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
-          <p className={styles.estadoVazio}>Turma sem alunos cadastrados.</p>
-        )}
-
-        {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && (
-          <div className={styles.lista}>
-            {alunos?.map((aluno) => (
-              <StudentRow
-                key={aluno.id}
-                aluno={aluno}
-                status={statusPorAluno[aluno.id]}
-                onSelectStatus={(status) => selecionarStatus(aluno.id, status)}
-              />
-            ))}
-          </div>
-        )}
-      </Card>
+      {groupId && !carregandoAlunos && alunosFiltrados.length > 0 && (
+        <div className={styles.lista}>
+          {alunosFiltrados.map((aluno) => (
+            <StudentRow
+              key={aluno.id}
+              aluno={aluno}
+              status={statusPorAluno[aluno.id]}
+              onSelectStatus={(status) => selecionarStatus(aluno.id, status)}
+            />
+          ))}
+        </div>
+      )}
 
       {erro && (
         <div className={cx(styles.banner, styles.bannerErro)}>
@@ -188,6 +203,7 @@ export function AttendanceForm() {
       <div className={styles.acoes}>
         {salvo && <Badge tone="success">Chamada salva</Badge>}
         <Button
+          fullWidth
           onClick={salvarChamada}
           disabled={salvando || !groupId || (alunos?.length ?? 0) === 0}
         >
