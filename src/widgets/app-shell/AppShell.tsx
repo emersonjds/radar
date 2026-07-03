@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import type { Papel } from "@/entities/perfil/model";
+import { useSessao } from "@/features/sessao/use-sessao";
 import { cx } from "@/shared/ui/cx";
 import { Sidebar } from "./Sidebar";
 import { Topbar } from "./Topbar";
@@ -9,23 +9,19 @@ import styles from "./AppShell.module.css";
 
 export interface AppShellProps {
   children: ReactNode;
-  nome?: string;
-  cargo?: string;
-  papel?: Papel;
 }
 
-export function AppShell({
-  children,
-  nome = "Ricardo Alves",
-  cargo = "Professor Titular",
-  papel = "professor",
-}: AppShellProps) {
+export function AppShell({ children }: AppShellProps) {
+  const { papel, perfil, trocarPapel } = useSessao();
   const [menuAberto, setMenuAberto] = useState(false);
+
+  const nome = perfil?.nome ?? "—";
+  const cargo = perfil?.cargo ?? (papel === "admin" ? "Coordenação" : "Professor");
 
   return (
     <div className={styles.shell}>
       <div className={cx(styles.sidebarWrap, menuAberto && styles.sidebarOpen)}>
-        <Sidebar papel={papel} />
+        <Sidebar papel={papel} onNavegar={() => setMenuAberto(false)} />
       </div>
       {menuAberto && (
         <button
@@ -36,7 +32,13 @@ export function AppShell({
         />
       )}
       <div className={styles.region}>
-        <Topbar nome={nome} cargo={cargo} onToggleMenu={() => setMenuAberto((aberto) => !aberto)} />
+        <Topbar
+          nome={nome}
+          cargo={cargo}
+          papel={papel}
+          onTrocarPapel={trocarPapel}
+          onToggleMenu={() => setMenuAberto((aberto) => !aberto)}
+        />
         <main className={styles.main}>{children}</main>
       </div>
     </div>

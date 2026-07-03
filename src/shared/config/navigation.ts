@@ -1,22 +1,27 @@
 import type { Papel } from "@/entities/perfil/model";
 
-export type NavIcon = "painel" | "chamada" | "relatorios" | "admin";
+export type NavIcon = "painel" | "chamada" | "relatorios" | "user";
 
 export interface NavItem {
   href: string;
   label: string;
   icon: NavIcon;
-  /** When set, the item only shows for this role. */
-  papel?: Papel;
 }
 
-export const navPrincipal: NavItem[] = [
+/** Professor: enxuto — painel das próprias turmas, chamada e dados dos alunos. */
+export const navProfessor: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
   { href: "/chamada", label: "Chamada", icon: "chamada" },
+  { href: "/alunos", label: "Alunos", icon: "user" },
+];
+
+/** Coordenação: visão ampla — analytics, todos os alunos e relatórios. */
+export const navAdmin: NavItem[] = [
+  { href: "/", label: "Painel", icon: "painel" },
+  { href: "/alunos", label: "Alunos", icon: "user" },
   { href: "/relatorios", label: "Relatórios", icon: "relatorios" },
-  { href: "/admin", label: "Administração", icon: "admin", papel: "admin" },
 ];
 
 export function navParaPapel(papel: Papel): NavItem[] {
-  return navPrincipal.filter((item) => !item.papel || item.papel === papel);
+  return papel === "admin" ? navAdmin : navProfessor;
 }

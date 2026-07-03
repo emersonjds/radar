@@ -11,9 +11,10 @@ import styles from "./Sidebar.module.css";
 
 export interface SidebarProps {
   papel: Papel;
+  onNavegar?: () => void;
 }
 
-export function Sidebar({ papel }: SidebarProps) {
+export function Sidebar({ papel, onNavegar }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const itens = navParaPapel(papel);
@@ -34,6 +35,7 @@ export function Sidebar({ papel }: SidebarProps) {
               href={item.href}
               className={cx(styles.navItem, ativo && styles.navItemActive)}
               aria-current={ativo ? "page" : undefined}
+              onClick={onNavegar}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
@@ -42,16 +44,21 @@ export function Sidebar({ papel }: SidebarProps) {
         })}
       </nav>
 
-      <div className={styles.cta}>
-        <Button
-          variant="primary"
-          fullWidth
-          leftIcon={<Icon name="plus" size={16} />}
-          onClick={() => router.push("/chamada")}
-        >
-          Nova chamada
-        </Button>
-      </div>
+      {papel === "professor" && (
+        <div className={styles.cta}>
+          <Button
+            variant="primary"
+            fullWidth
+            leftIcon={<Icon name="plus" size={16} />}
+            onClick={() => {
+              router.push("/chamada");
+              onNavegar?.();
+            }}
+          >
+            Nova chamada
+          </Button>
+        </div>
+      )}
 
       <div className={styles.footer}>
         {/* ponytail: sem ação real ainda — volta a ligar quando a feature de auth/config retornar */}
@@ -59,10 +66,10 @@ export function Sidebar({ papel }: SidebarProps) {
           <Icon name="settings" />
           <span>Configurações</span>
         </button>
-        <button type="button" className={styles.footerItem}>
+        <Link href="/login" className={styles.footerItem} onClick={onNavegar}>
           <Icon name="logout" />
           <span>Sair</span>
-        </button>
+        </Link>
       </div>
     </aside>
   );
