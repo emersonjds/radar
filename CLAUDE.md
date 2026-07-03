@@ -102,6 +102,8 @@ Regra: **um agent por função, sem duplicação**.
 - **Aluno**: estudante vinculado a uma turma (nome, matrícula, ativo/inativo).
 - **Chamada**: registro de uma aula realizada — única por `(turma, data)`.
 - **Presença**: status de um aluno numa chamada — `presente`, `ausente`, `atrasado` ou `justificado`; única por `(chamada, aluno)`.
+- **Avaliação**: prova/trabalho de uma turma (nome, data, peso 1–3) — única por `(turma, nome, data)`.
+- **Nota**: valor 0–10 (uma casa) de um aluno numa avaliação — única por `(avaliação, aluno)`; `null` = pendente. Média do aluno é ponderada pelo peso.
 - **Frequência**: percentual de presença de um aluno ou de uma turma, agregado no servidor.
 - **Absenteísmo**: tendência/série temporal de faltas ao longo do tempo.
 - **Aluno em risco**: aluno com faltas acima de um limite (indicador de risco de evasão).

@@ -1,7 +1,8 @@
 # Radar
 
-Presença escolar. Professores marcam a chamada da turma (mobile, em sala); a
-coordenação acompanha frequência e absenteísmo em dashboards (mobile + desktop).
+Presença escolar. Professores marcam a chamada da turma (mobile, em sala) e
+lançam notas de avaliações; a coordenação acompanha frequência, absenteísmo e
+desempenho (média ponderada) em dashboards (mobile + desktop).
 
 ## Stack
 
