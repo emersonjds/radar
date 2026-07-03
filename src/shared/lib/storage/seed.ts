@@ -90,5 +90,33 @@ export function seedDb(): Db {
     });
   }
 
-  return { perfis, turmas, alunos, chamadas, presencas };
+  const avaliacoes: Db["avaliacoes"] = [];
+  const notas: Db["notas"] = [];
+
+  for (const turma of turmas) {
+    const turmaAvaliacoes = [
+      { id: `avaliacao-${turma.id}-p1-2026-06-20`, turmaId: turma.id, nome: "Prova 1", data: "2026-06-20", peso: 2, professorId: PROFESSOR_ID },
+      { id: `avaliacao-${turma.id}-p2-2026-06-27`, turmaId: turma.id, nome: "Trabalho 1", data: "2026-06-27", peso: 1, professorId: PROFESSOR_ID },
+    ];
+    avaliacoes.push(...turmaAvaliacoes);
+
+    const turmaAlunos = alunos.filter((aluno) => aluno.turmaId === turma.id);
+    turmaAvaliacoes.forEach((avaliacao, avaliacaoIdx) => {
+      turmaAlunos.forEach((aluno) => {
+        const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
+        // ~1 em 7 fica pendente (sem registro) para exercitar os estados da UI
+        if ((alunoIdx + avaliacaoIdx) % 7 === 3) return;
+        const valor =
+          Math.round((4 + ((alunoIdx * 3 + avaliacaoIdx * 5) % 61) / 10) * 10) / 10;
+        notas.push({
+          id: `nota-${avaliacao.id}-${aluno.id}`,
+          avaliacaoId: avaliacao.id,
+          alunoId: aluno.id,
+          valor,
+        });
+      });
+    });
+  }
+
+  return { perfis, turmas, alunos, chamadas, presencas, avaliacoes, notas };
 }

@@ -31,4 +31,17 @@ describe("storage db", () => {
     const turmas = await readCollection<Turma>("turmas");
     expect(turmas.some((turma) => turma.id === "nova")).toBe(true);
   });
+
+  it("seeds avaliacoes and notas", async () => {
+    const avaliacoes = await readCollection<{ id: string }>("avaliacoes");
+    const notas = await readCollection<{ id: string }>("notas");
+    expect(avaliacoes.length).toBeGreaterThan(0);
+    expect(notas.length).toBeGreaterThan(0);
+  });
+
+  it("tolerates a collection missing from a persisted blob", async () => {
+    // blob antigo (radar.db.v1 sem as coleções novas) não pode quebrar a leitura
+    await mutateCollection("turmas", (rows) => rows);
+    await expect(readCollection("avaliacoes")).resolves.toBeInstanceOf(Array);
+  });
 });

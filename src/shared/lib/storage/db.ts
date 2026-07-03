@@ -12,7 +12,9 @@ export type Collection =
   | "turmas"
   | "alunos"
   | "chamadas"
-  | "presencas";
+  | "presencas"
+  | "avaliacoes"
+  | "notas";
 
 export type Db = Record<Collection, unknown[]>;
 
@@ -53,9 +55,10 @@ function persist(db: Db): void {
   }
 }
 
-/** Read a collection as detached copies, so callers can't mutate the store. */
+/** Read a collection as detached copies, so callers can't mutate the store.
+    A blob persisted before a collection existed yields [] (light migration). */
 export async function readCollection<T>(name: Collection): Promise<T[]> {
-  return (load()[name] as T[]).map((row) => ({ ...row }));
+  return ((load()[name] ?? []) as T[]).map((row) => ({ ...row }));
 }
 
 /** Apply a pure transform to a collection and persist the result. */
@@ -64,7 +67,7 @@ export async function mutateCollection<T>(
   transform: (rows: T[]) => T[],
 ): Promise<T[]> {
   const db = load();
-  const next = transform(db[name] as T[]);
+  const next = transform((db[name] ?? []) as T[]);
   persist({ ...db, [name]: next });
   return next.map((row) => ({ ...row }));
 }
