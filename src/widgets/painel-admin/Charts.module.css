@@ -4,9 +4,10 @@
   gap: var(--space-3);
 }
 
+/* Mesmo aspecto do viewBox (720x268) — o SVG preenche sem esticar nem letterbox. */
 .chartBox {
   width: 100%;
-  aspect-ratio: 16 / 8;
+  aspect-ratio: 720 / 268;
 }
 
 .svg {
@@ -29,8 +30,19 @@
 }
 
 .axisLabel {
-  font-size: 9px;
+  font-size: 12px;
   fill: var(--color-text-muted);
+}
+
+.tickLabel {
+  font-size: 11px;
+  fill: var(--color-text-subtle);
+}
+
+.valueLabel {
+  font-size: 12px;
+  font-weight: var(--weight-semibold);
+  fill: var(--color-text-on-brand);
 }
 
 .legend {

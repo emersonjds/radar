@@ -10,19 +10,26 @@ export interface LineChartTendenciaProps {
   pontos: PontoTendencia[];
 }
 
-const ALTURA = 180;
+/* Mesma superfície do BarChartFrequencia (720/268) para os cards ficarem consistentes. */
+const LARGURA = 720;
+const ALTURA_PLOT = 220;
+const PAD_TOPO = 20;
+const PAD_ESQ = 40;
+const PAD_DIR = 16;
+const ALTURA = PAD_TOPO + ALTURA_PLOT + 28;
+const BASE = PAD_TOPO + ALTURA_PLOT;
 
 export function LineChartTendencia({ pontos }: LineChartTendenciaProps) {
   if (pontos.length === 0) {
     return <p className={styles.vazio}>Sem dados ainda.</p>;
   }
 
-  const largura = Math.max(pontos.length * 90, 240);
-  const passoX = pontos.length > 1 ? largura / (pontos.length - 1) : 0;
-  const coords = pontos.map((ponto, index) => ({
+  const larguraPlot = LARGURA - PAD_ESQ - PAD_DIR;
+  const passoX = pontos.length > 1 ? larguraPlot / (pontos.length - 1) : 0;
+  const pontosPosicionados = pontos.map((ponto, indice) => ({
     ...ponto,
-    x: passoX * index,
-    y: ALTURA - (ponto.frequencia / 100) * ALTURA,
+    x: pontos.length > 1 ? PAD_ESQ + passoX * indice : PAD_ESQ + larguraPlot / 2,
+    y: BASE - (ponto.frequencia / 100) * ALTURA_PLOT,
   }));
   const resumo = pontos.map((ponto) => `${formatarData(ponto.data)}: ${ponto.frequencia}%`).join(", ");
 
@@ -31,21 +38,34 @@ export function LineChartTendencia({ pontos }: LineChartTendenciaProps) {
       <div className={styles.chartBox}>
         <svg
           className={styles.svg}
-          viewBox={`0 0 ${largura} ${ALTURA + 24}`}
+          viewBox={`0 0 ${LARGURA} ${ALTURA}`}
           role="img"
           aria-label={`Tendência de frequência — ${resumo}`}
         >
           {[0, 25, 50, 75, 100].map((marca) => {
-            const y = ALTURA - (marca / 100) * ALTURA;
-            return <line key={marca} x1={0} x2={largura} y1={y} y2={y} className={styles.gridline} />;
+            const y = BASE - (marca / 100) * ALTURA_PLOT;
+            return (
+              <g key={marca}>
+                <line x1={PAD_ESQ} x2={LARGURA - PAD_DIR} y1={y} y2={y} className={styles.gridline} />
+                <text x={PAD_ESQ - 8} y={y + 3} textAnchor="end" className={styles.tickLabel}>
+                  {marca}%
+                </text>
+              </g>
+            );
           })}
-          <polyline points={coords.map((c) => `${c.x},${c.y}`).join(" ")} className={styles.linha} />
-          {coords.map((c) => (
-            <circle key={c.data} cx={c.x} cy={c.y} r={4} className={styles.ponto} />
+          <polyline
+            points={pontosPosicionados.map((ponto) => `${ponto.x},${ponto.y}`).join(" ")}
+            className={styles.linha}
+          />
+          {pontosPosicionados.map((ponto) => (
+            <g key={ponto.data}>
+              <title>{`${formatarData(ponto.data)}: ${ponto.frequencia}%`}</title>
+              <circle cx={ponto.x} cy={ponto.y} r={4.5} className={styles.ponto} />
+            </g>
           ))}
-          {coords.map((c) => (
-            <text key={c.data} x={c.x} y={ALTURA + 18} textAnchor="middle" className={styles.axisLabel}>
-              {formatarData(c.data).slice(0, 5)}
+          {pontosPosicionados.map((ponto) => (
+            <text key={ponto.data} x={ponto.x} y={BASE + 20} textAnchor="middle" className={styles.axisLabel}>
+              {formatarData(ponto.data).slice(0, 5)}
             </text>
           ))}
         </svg>

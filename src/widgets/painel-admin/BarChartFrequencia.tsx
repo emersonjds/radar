@@ -11,16 +11,26 @@ export interface BarChartFrequenciaProps {
   dados: BarraFrequencia[];
 }
 
-const ALTURA = 200;
-const LARGURA_BARRA = 40;
+/* Superfície de desenho fixa com o mesmo aspecto do .chartBox (720/268):
+   o SVG preenche o card sem esticar nem sobrar borda. */
+const LARGURA = 720;
+const ALTURA_PLOT = 220;
+const PAD_TOPO = 20;
+const PAD_ESQ = 40;
+const PAD_DIR = 8;
+const ALTURA = PAD_TOPO + ALTURA_PLOT + 28;
+const BASE = PAD_TOPO + ALTURA_PLOT;
+const LARGURA_MAX_BARRA = 48;
+const GAP_SEGMENTOS = 2;
 
 export function BarChartFrequencia({ dados }: BarChartFrequenciaProps) {
   if (dados.length === 0) {
     return <p className={styles.vazio}>Sem dados ainda.</p>;
   }
 
-  const largura = Math.max(dados.length * 72, 240);
-  const slot = largura / dados.length;
+  const larguraPlot = LARGURA - PAD_ESQ - PAD_DIR;
+  const slot = larguraPlot / dados.length;
+  const larguraBarra = Math.min(LARGURA_MAX_BARRA, slot * 0.4);
   const resumo = dados.map((item) => `${item.label}: ${item.frequencia}%`).join(", ");
 
   return (
@@ -28,29 +38,56 @@ export function BarChartFrequencia({ dados }: BarChartFrequenciaProps) {
       <div className={styles.chartBox}>
         <svg
           className={styles.svg}
-          viewBox={`0 0 ${largura} ${ALTURA + 24}`}
+          viewBox={`0 0 ${LARGURA} ${ALTURA}`}
           role="img"
           aria-label={`Frequência por turma — ${resumo}`}
         >
           {[0, 25, 50, 75, 100].map((marca) => {
-            const y = ALTURA - (marca / 100) * ALTURA;
-            return <line key={marca} x1={0} x2={largura} y1={y} y2={y} className={styles.gridline} />;
+            const y = BASE - (marca / 100) * ALTURA_PLOT;
+            return (
+              <g key={marca}>
+                <line x1={PAD_ESQ} x2={LARGURA - PAD_DIR} y1={y} y2={y} className={styles.gridline} />
+                <text x={PAD_ESQ - 8} y={y + 3} textAnchor="end" className={styles.tickLabel}>
+                  {marca}%
+                </text>
+              </g>
+            );
           })}
           {dados.map((item, index) => {
-            const x = index * slot + (slot - LARGURA_BARRA) / 2;
-            const alturaPresente = (item.frequencia / 100) * ALTURA;
-            const alturaAusente = ALTURA - alturaPresente;
+            const x = PAD_ESQ + index * slot + (slot - larguraBarra) / 2;
+            const yPresente = BASE - (item.frequencia / 100) * ALTURA_PLOT;
+            const alturaPresente = BASE - yPresente;
+            const alturaAusente = Math.max(0, yPresente - PAD_TOPO - GAP_SEGMENTOS);
             return (
               <g key={item.turmaId}>
-                <rect x={x} y={0} width={LARGURA_BARRA} height={alturaAusente} className={styles.barAusente} />
+                <title>{`${item.label}: ${item.frequencia}% presente`}</title>
                 <rect
                   x={x}
-                  y={alturaAusente}
-                  width={LARGURA_BARRA}
+                  y={PAD_TOPO}
+                  width={larguraBarra}
+                  height={alturaAusente}
+                  rx={4}
+                  className={styles.barAusente}
+                />
+                <rect
+                  x={x}
+                  y={yPresente}
+                  width={larguraBarra}
                   height={alturaPresente}
+                  rx={4}
                   className={styles.barPresente}
                 />
-                <text x={x + LARGURA_BARRA / 2} y={ALTURA + 18} textAnchor="middle" className={styles.axisLabel}>
+                {alturaPresente >= 28 && (
+                  <text
+                    x={x + larguraBarra / 2}
+                    y={yPresente + 17}
+                    textAnchor="middle"
+                    className={styles.valueLabel}
+                  >
+                    {item.frequencia}%
+                  </text>
+                )}
+                <text x={x + larguraBarra / 2} y={BASE + 20} textAnchor="middle" className={styles.axisLabel}>
                   {item.label}
                 </text>
               </g>
