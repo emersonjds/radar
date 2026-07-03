@@ -1,6 +1,6 @@
 import type { Papel } from "@/entities/perfil/model";
 
-export type NavIcon = "painel" | "chamada" | "relatorios" | "user";
+export type NavIcon = "painel" | "chamada" | "relatorios" | "user" | "nota";
 
 export interface NavItem {
   href: string;
@@ -12,6 +12,7 @@ export interface NavItem {
 export const navProfessor: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
   { href: "/chamada", label: "Chamada", icon: "chamada" },
+  { href: "/avaliacoes", label: "Avaliações", icon: "nota" },
   { href: "/alunos", label: "Alunos", icon: "user" },
 ];
 
