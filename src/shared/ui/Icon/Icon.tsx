@@ -17,6 +17,10 @@ export type IconName =
   | "alert"
   | "download"
   | "check"
+  | "check-circle"
+  | "x-circle"
+  | "clock"
+  | "calendar"
   | "menu"
   | "grade";
 
@@ -126,6 +130,33 @@ const paths: Record<IconName, ReactNode> = {
     </>
   ),
   check: <path d="m5 12 5 5L19 7" />,
+  "check-circle": (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m8.5 12 2.5 2.5 4.5-5" />
+    </>
+  ),
+  "x-circle": (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="m9 9 6 6" />
+      <path d="m15 9-6 6" />
+    </>
+  ),
+  clock: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7.5V12l3 2" />
+    </>
+  ),
+  calendar: (
+    <>
+      <rect x="4" y="5" width="16" height="16" rx="2" />
+      <line x1="4" y1="9.5" x2="20" y2="9.5" />
+      <line x1="8.5" y1="3" x2="8.5" y2="6.5" />
+      <line x1="15.5" y1="3" x2="15.5" y2="6.5" />
+    </>
+  ),
   menu: (
     <>
       <line x1="4" y1="6.5" x2="20" y2="6.5" />
