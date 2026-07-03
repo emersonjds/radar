@@ -14,8 +14,13 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 
 ## 2. Identidade Visual
 
-- `brand-500` = `#2563eb` (azul — sinal de "radar" — cor principal)
-- `accent` = `#f59e0b` (âmbar — alertas, destaque de "aluno em risco")
+- Paleta em CSS custom properties (`var(--color-*)` em `src/app/globals.css`), estilo Material, com variantes `-hover`/`-active`/`-soft` por cor:
+  - `--color-primary` = `#1a73e8` (azul — sinal de "radar" — cor principal)
+  - `--color-secondary` = `#34a853` (verde — sucesso, presença)
+  - `--color-tertiary` = `#fbbc04` (âmbar — alertas, destaque de "aluno em risco")
+  - `--color-danger` = `#ea4335` (vermelho — falta, erro)
+  - `--color-neutral` = `#5f6368` (cinza — texto/UI secundária)
+- Tipografia: **Inter** (via `next/font`, exposta como `--font-inter`)
 - Light mode como padrão (único modo do v1)
 - Clima: escolar, profissional, direto ao ponto — o professor usa entre uma aula e outra
 
@@ -40,7 +45,7 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 - Prefira editar arquivos existentes a criar novos.
 - TypeScript: tipos explícitos em interfaces públicas; **sem `any`** (use `unknown` + narrowing); props sempre com interface nomeada.
 - Nomes semânticos — proibido identificadores de uma letra.
-- Tailwind: mobile-first (`sm:`/`md:`/`lg:`), usar tokens do design system (`brand-*`, `gray-*`, `accent`).
+- Estilo: CSS Modules por componente + tokens do design system em CSS custom properties (`var(--color-*)`, `var(--font-sans)`, `var(--text-*)`). Mobile-first. Nunca hex cru — sempre o token.
 
 ## 5. Arquitetura — Feature-Sliced Design
 
