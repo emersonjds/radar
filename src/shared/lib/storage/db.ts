@@ -6,8 +6,8 @@ import { seedDb } from "./seed";
  * won't change when the backend lands. Not for production PII.
  * Bump the key version whenever the seed shape changes — old blobs are stale.
  */
-const STORAGE_KEY = "radar.db.v2";
-const LEGACY_KEY = "radar.db.v1";
+const STORAGE_KEY = "radar.db.v3";
+const LEGACY_KEYS = ["radar.db.v1", "radar.db.v2"];
 
 export type Collection =
   | "perfis"
@@ -16,7 +16,8 @@ export type Collection =
   | "chamadas"
   | "presencas"
   | "avaliacoes"
-  | "notas";
+  | "notas"
+  | "eventosEscolares";
 
 export type Db = Record<Collection, unknown[]>;
 
@@ -41,7 +42,7 @@ function load(): Db {
         // Corrupt blob — fall through and reseed.
       }
     }
-    window.localStorage.removeItem(LEGACY_KEY);
+    for (const legacyKey of LEGACY_KEYS) window.localStorage.removeItem(legacyKey);
     const seeded = seedDb();
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
     return seeded;

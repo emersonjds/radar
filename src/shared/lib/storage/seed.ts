@@ -118,5 +118,11 @@ export function seedDb(): Db {
     });
   }
 
-  return { perfis, turmas, alunos, chamadas, presencas, avaliacoes, notas };
+  // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
+  const eventosEscolares = [
+    { id: "evento-ferias-julho", tipo: "ferias", titulo: "Férias de julho", dataInicio: "2026-07-06", dataFim: "2026-07-24" },
+    { id: "evento-recuperacao-julho", tipo: "recuperacao", titulo: "Recuperação semestral", dataInicio: "2026-07-27", dataFim: "2026-07-31" },
+  ];
+
+  return { perfis, turmas, alunos, chamadas, presencas, avaliacoes, notas, eventosEscolares };
 }

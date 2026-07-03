@@ -3,6 +3,8 @@
 import { useAluno } from "@/entities/aluno/queries";
 import { useAvaliacoesPorTurma } from "@/entities/avaliacao/queries";
 import { useChamadas } from "@/entities/chamada/queries";
+import { datasNoIntervalo } from "@/entities/evento-escolar/model";
+import { useEventosEscolares } from "@/entities/evento-escolar/queries";
 import { useNotasPorAluno } from "@/entities/nota/queries";
 import type { StatusPresenca } from "@/entities/presenca/model";
 import { usePresencasPorAluno } from "@/entities/presenca/queries";
@@ -15,7 +17,7 @@ import { Button } from "@/shared/ui/Button/Button";
 import { Card } from "@/shared/ui/Card/Card";
 import { Icon } from "@/shared/ui/Icon/Icon";
 import { TBody, TD, TH, THead, TR, Table } from "@/shared/ui/Table/Table";
-import { CalendarioPresenca } from "./CalendarioPresenca";
+import { CalendarioPresenca, type EventoDoDia } from "./CalendarioPresenca";
 import styles from "./DetalheAluno.module.css";
 
 /** "YYYY-MM" com mais registros de presença — mês exibido no calendário. */
@@ -40,6 +42,7 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
   const { data: presencas, isLoading: carregandoPresencas } = usePresencasPorAluno(alunoId);
   const { data: avaliacoes } = useAvaliacoesPorTurma(aluno?.turmaId ?? "");
   const { data: notas } = useNotasPorAluno(alunoId);
+  const { data: eventosEscolares } = useEventosEscolares();
 
   if (carregandoAluno) {
     return (
@@ -68,6 +71,19 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
   const mes = mesComMaisRegistros([...statusPorData.keys()]);
   const notaPorAvaliacao = new Map((notas ?? []).map((nota) => [nota.avaliacaoId, nota]));
   const media = mediaPonderada(notas ?? [], avaliacoes ?? []);
+
+  const eventosPorData = new Map<string, EventoDoDia[]>();
+  function adicionarEvento(data: string, evento: EventoDoDia) {
+    eventosPorData.set(data, [...(eventosPorData.get(data) ?? []), evento]);
+  }
+  for (const avaliacao of avaliacoes ?? []) {
+    adicionarEvento(avaliacao.data, { tipo: "prova", titulo: avaliacao.nome });
+  }
+  for (const eventoEscolar of eventosEscolares ?? []) {
+    for (const data of datasNoIntervalo(eventoEscolar.dataInicio, eventoEscolar.dataFim)) {
+      adicionarEvento(data, { tipo: eventoEscolar.tipo, titulo: eventoEscolar.titulo });
+    }
+  }
 
   return (
     <div className={styles.pagina}>
@@ -155,7 +171,12 @@ export function DetalheAluno({ alunoId }: DetalheAlunoProps) {
         <Card className={styles.calendarioCard}>
           {carregandoPresencas && <p className={styles.estado}>Carregando registros…</p>}
           {!carregandoPresencas && mes && (
-            <CalendarioPresenca key={aluno.id} mes={mes} statusPorData={statusPorData} />
+            <CalendarioPresenca
+              key={aluno.id}
+              mes={mes}
+              statusPorData={statusPorData}
+              eventosPorData={eventosPorData}
+            />
           )}
           {!carregandoPresencas && !mes && (
             <p className={styles.estado}>Sem registros de presença.</p>
