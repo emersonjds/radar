@@ -1,8 +1,31 @@
+import type { Avaliacao } from "@/entities/avaliacao/model";
+import type { Nota } from "@/entities/nota/model";
 import {
   STATUS_PRESENTE,
   type Presenca,
   type StatusPresenca,
 } from "@/entities/presenca/model";
+
+/** Weighted grade average (1 decimal); pending/missing grades are excluded.
+    Returns null when no grade has been launched. */
+export function mediaPonderada(
+  notas: Nota[],
+  avaliacoes: Avaliacao[],
+): number | null {
+  const pesoPorAvaliacao = new Map(
+    avaliacoes.map((avaliacao) => [avaliacao.id, avaliacao.peso]),
+  );
+  let somaPonderada = 0;
+  let somaPesos = 0;
+  for (const nota of notas) {
+    const peso = pesoPorAvaliacao.get(nota.avaliacaoId);
+    if (nota.valor === null || peso === undefined) continue;
+    somaPonderada += nota.valor * peso;
+    somaPesos += peso;
+  }
+  if (somaPesos === 0) return null;
+  return Math.round((somaPonderada / somaPesos) * 10) / 10;
+}
 
 /** Attendance rate (0–100) — presente + atrasado count as present. */
 export function taxaFrequencia(presencas: Presenca[]): number {

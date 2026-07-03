@@ -1,8 +1,11 @@
 import { describe, expect, it } from "vitest";
+import type { Avaliacao } from "@/entities/avaliacao/model";
+import type { Nota } from "@/entities/nota/model";
 import type { Presenca } from "@/entities/presenca/model";
 import {
   alunosEmRisco,
   contarFaltas,
+  mediaPonderada,
   taxaFrequencia,
   tendenciaAbsenteismo,
 } from "./model";
@@ -43,6 +46,33 @@ describe("alunosEmRisco", () => {
     const risco = alunosEmRisco(map, 2);
     expect(risco.map((r) => r.alunoId)).toEqual(["a1"]);
     expect(risco[0].faltas).toBe(3);
+  });
+});
+
+describe("mediaPonderada", () => {
+  function avaliacao(id: string, peso: number): Avaliacao {
+    return { id, turmaId: "t1", nome: id, data: "2026-06-20", peso, professorId: "p1" };
+  }
+  function nota(avaliacaoId: string, valor: number | null): Nota {
+    return { id: `nota-${avaliacaoId}-a1`, avaliacaoId, alunoId: "a1", valor };
+  }
+  const avaliacoes = [avaliacao("a1", 2), avaliacao("a2", 1)];
+
+  it("weighs by peso", () => {
+    expect(mediaPonderada([nota("a1", 8), nota("a2", 5)], avaliacoes)).toBe(7);
+  });
+
+  it("skips null and missing notas", () => {
+    expect(mediaPonderada([nota("a1", 9), nota("a2", null)], avaliacoes)).toBe(9);
+  });
+
+  it("returns null with no launched notas", () => {
+    expect(mediaPonderada([], avaliacoes)).toBeNull();
+  });
+
+  it("rounds to one decimal place", () => {
+    // (7×2 + 8×1) / 3 = 7.333…
+    expect(mediaPonderada([nota("a1", 7), nota("a2", 8)], avaliacoes)).toBe(7.3);
   });
 });
 
