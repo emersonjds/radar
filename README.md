@@ -31,7 +31,7 @@ shared`). Nunca lateral, nunca para cima.
 ### Camada de dados (temporária)
 
 `src/shared/lib/storage/` guarda um único blob versionado em `localStorage`
-(`radar.db.v1`) com seed de demonstração. `entities/*/api.ts` são fetchers
+(`radar.db.v2`) com seed de demonstração. `entities/*/api.ts` são fetchers
 assíncronos validados com Zod; `entities/*/queries.ts` expõem os hooks TanStack.
 
 ## Scripts

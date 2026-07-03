@@ -40,8 +40,18 @@ describe("storage db", () => {
   });
 
   it("tolerates a collection missing from a persisted blob", async () => {
-    // blob antigo (radar.db.v1 sem as coleções novas) não pode quebrar a leitura
+    // blob antigo sem as coleções novas não pode quebrar a leitura
     await mutateCollection("turmas", (rows) => rows);
     await expect(readCollection("avaliacoes")).resolves.toBeInstanceOf(Array);
+  });
+
+  it("discards a stale radar.db.v1 blob and reseeds", async () => {
+    window.localStorage.setItem(
+      "radar.db.v1",
+      JSON.stringify({ perfis: [{ id: "professor-1", nome: "Carla Professora" }] }),
+    );
+    const turmas = await readCollection<Turma>("turmas");
+    expect(turmas.length).toBeGreaterThan(0);
+    expect(window.localStorage.getItem("radar.db.v1")).toBeNull();
   });
 });

@@ -1,11 +1,13 @@
 import { seedDb } from "./seed";
 
 /**
- * Temporary data layer: a single versioned JSON blob in localStorage
- * (key `radar.db.v1`). The async signatures mirror a future Supabase adapter,
- * so entity fetchers won't change when the backend lands. Not for production PII.
+ * Temporary data layer: a single versioned JSON blob in localStorage.
+ * The async signatures mirror a future Supabase adapter, so entity fetchers
+ * won't change when the backend lands. Not for production PII.
+ * Bump the key version whenever the seed shape changes — old blobs are stale.
  */
-const STORAGE_KEY = "radar.db.v1";
+const STORAGE_KEY = "radar.db.v2";
+const LEGACY_KEY = "radar.db.v1";
 
 export type Collection =
   | "perfis"
@@ -39,6 +41,7 @@ function load(): Db {
         // Corrupt blob — fall through and reseed.
       }
     }
+    window.localStorage.removeItem(LEGACY_KEY);
     const seeded = seedDb();
     window.localStorage.setItem(STORAGE_KEY, JSON.stringify(seeded));
     return seeded;

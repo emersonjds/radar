@@ -57,7 +57,7 @@ src/
 
 ## 6. Dados / API
 
-> **Estado atual (experimento front-only):** os dados vivem em **localStorage** (`src/shared/lib/store/`, chave `radar.db.v1`), com seed de demonstração. Os fetchers de `entities/*/api.ts` são assíncronos e têm assinatura estável, então o Supabase abaixo entra depois como adapter sem mexer nas features. Analytics é calculado em JS sobre o store (temporário). O client Supabase (`src/shared/lib/supabase/`) já existe como encaixe do backend futuro.
+> **Estado atual (experimento front-only):** os dados vivem em **localStorage** (`src/shared/lib/storage/`, chave `radar.db.v2`), com seed de demonstração. Os fetchers de `entities/*/api.ts` são assíncronos e têm assinatura estável, então o Supabase abaixo entra depois como adapter sem mexer nas features. Analytics é calculado em JS sobre o store (temporário). O client Supabase (`src/shared/lib/supabase/`) já existe como encaixe do backend futuro.
 
 - Backend-alvo é **Supabase** (Postgres + RLS + RPCs). O app é SPA static export e fala **direto** com o Supabase via `@supabase/ssr` (`getSupabaseBrowserClient`, `src/shared/lib/supabase/`). **Não há MSW** em produção — todos os dados (turmas, alunos, chamadas, presenças) vêm do banco real; MSW só mocka nos testes.
 - Usa a **publishable key** (pública por design; a proteção é a RLS no Postgres). A `service_role` NUNCA vai para o frontend.
