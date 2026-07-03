@@ -40,8 +40,22 @@ pnpm dev          # desenvolvimento
 pnpm build        # build de produção
 pnpm type-check   # tsc --noEmit
 pnpm lint         # eslint
-pnpm test         # vitest run
+pnpm test         # vitest run (unit + integração)
+pnpm test:e2e     # playwright (E2E)
 ```
+
+## Testes (SDD)
+
+Três camadas, conforme o CLAUDE.md §8:
+
+- **Unitário** — lógica pura (analytics, storage, format, validação zod): `src/**/*.test.ts`.
+- **Integração** — hooks TanStack + fetchers sobre o store, com harness MSW
+  pronto para o Supabase futuro: `src/**/*.integration.test.tsx` e `src/test/`.
+- **E2E (Playwright)** — fluxos reais no browser com evidências PNG em
+  `e2e/<feature>/evidencias/`: personas, troca de persona, guardas de rota e
+  chamada. Rode com `pnpm test:e2e` (na 1ª vez: `npx playwright install chromium`).
+
+Spec e plano da feature em `docs/superpowers/`.
 
 ## Skills de IA usadas no desenvolvimento
 
