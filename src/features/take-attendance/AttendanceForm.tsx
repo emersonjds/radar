@@ -8,24 +8,23 @@ import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useSetAttendanceRecord, useAttendanceRecordsBySession } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
 import { formatDateLong } from "@/shared/lib/format";
-import { Badge } from "@/shared/ui/Badge/Badge";
-import { Button } from "@/shared/ui/Button/Button";
-import { Icon } from "@/shared/ui/Icon/Icon";
-import { SearchInput } from "@/shared/ui/SearchInput/SearchInput";
-import { cx } from "@/shared/ui/cx";
+import Badge from "@/shared/ui/tailadmin/Badge";
+import Button from "@/shared/ui/tailadmin/Button";
+import { CalenderIcon } from "@/shared/icons";
 import { StudentRow, STATUS_OPTIONS } from "./StudentRow";
-import styles from "./AttendanceForm.module.css";
 
 const PROFESSOR_ID = "perfil-ricardo";
 const HOJE = new Date().toISOString().slice(0, 10);
 
+const tileLabelColor: Record<AttendanceStatus, string> = {
+  present: "text-success-600",
+  late: "text-warning-600",
+  absent: "text-error-600",
+  excused: "text-brand-600",
+};
+
 function contarPorStatus(alunos: Student[], statusPorAluno: Record<string, AttendanceStatus>) {
-  const contagem: Record<AttendanceStatus, number> = {
-    present: 0,
-    absent: 0,
-    late: 0,
-    excused: 0,
-  };
+  const contagem: Record<AttendanceStatus, number> = { present: 0, absent: 0, late: 0, excused: 0 };
   for (const aluno of alunos) {
     const status = statusPorAluno[aluno.id];
     if (status) contagem[status] += 1;
@@ -111,11 +110,11 @@ export function AttendanceForm() {
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <div className={styles.tituloWrap}>
+    <div className="flex flex-col gap-5">
+      <header className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 md:p-5">
+        <div className="flex flex-col gap-2">
           <select
-            className={styles.titulo}
+            className="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2.5 text-lg font-semibold text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
             value={groupId}
             disabled={carregandoTurmas}
             onChange={(event) => setTurmaSelecionada(event.target.value)}
@@ -127,31 +126,39 @@ export function AttendanceForm() {
               </option>
             ))}
           </select>
-          <p className={styles.data}>
-            <Icon name="calendar" size={16} />
+          <p className="flex items-center gap-1.5 text-sm text-gray-500">
+            <CalenderIcon />
             {formatDateLong(HOJE)}
           </p>
         </div>
 
-        <SearchInput
+        <input
+          type="search"
           value={busca}
-          onChange={setBusca}
+          onChange={(event) => setBusca(event.target.value)}
           placeholder="Buscar aluno por nome ou matrícula..."
+          className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
         />
 
-        <div className={styles.tiles}>
+        <div className="grid grid-cols-4 gap-2">
           {STATUS_OPTIONS.map((opcao) => (
-            <div key={opcao.value} className={styles.tile}>
-              <span className={cx(styles.tileLabel, styles[opcao.value])}>{opcao.label}</span>
-              <span className={styles.tileValor}>{contagem[opcao.value]}</span>
+            <div
+              key={opcao.value}
+              className="flex flex-col items-center rounded-lg bg-gray-50 py-2"
+            >
+              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>
+                {opcao.label}
+              </span>
+              <span className="text-lg font-semibold text-gray-800">{contagem[opcao.value]}</span>
             </div>
           ))}
         </div>
       </header>
 
-      <div className={styles.toolbar}>
+      <div>
         <Button
-          variant="secondary"
+          type="button"
+          variant="outline"
           size="sm"
           onClick={marcarTodosPresentes}
           disabled={!groupId || (alunos?.length ?? 0) === 0}
@@ -160,26 +167,28 @@ export function AttendanceForm() {
         </Button>
       </div>
 
-      {!groupId && <p className={styles.estadoVazio}>Selecione uma turma para iniciar a chamada.</p>}
+      {!groupId && (
+        <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>
+      )}
 
       {groupId && carregandoAlunos && (
-        <div className={styles.lista}>
-          <div className={styles.skeletonRow} />
-          <div className={styles.skeletonRow} />
-          <div className={styles.skeletonRow} />
+        <div className="flex flex-col gap-2">
+          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
         </div>
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
-        <p className={styles.estadoVazio}>Turma sem alunos cadastrados.</p>
+        <p className="text-sm text-gray-500">Turma sem alunos cadastrados.</p>
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && alunosFiltrados.length === 0 && (
-        <p className={styles.estadoVazio}>Nenhum aluno encontrado para “{busca.trim()}”.</p>
+        <p className="text-sm text-gray-500">Nenhum aluno encontrado para “{busca.trim()}”.</p>
       )}
 
       {groupId && !carregandoAlunos && alunosFiltrados.length > 0 && (
-        <div className={styles.lista}>
+        <div className="flex flex-col gap-2">
           {alunosFiltrados.map((aluno) => (
             <StudentRow
               key={aluno.id}
@@ -192,18 +201,19 @@ export function AttendanceForm() {
       )}
 
       {erro && (
-        <div className={cx(styles.banner, styles.bannerErro)}>
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-error-50 px-4 py-3 text-sm text-error-600">
           <span>{erro}</span>
-          <Button variant="outlined" size="sm" onClick={salvarChamada} disabled={salvando}>
+          <Button type="button" variant="outline" size="sm" onClick={salvarChamada} disabled={salvando}>
             Tentar novamente
           </Button>
         </div>
       )}
 
-      <div className={styles.acoes}>
-        {salvo && <Badge tone="success">Chamada salva</Badge>}
+      <div className="flex flex-col items-center gap-3">
+        {salvo && <Badge color="success">Chamada salva</Badge>}
         <Button
-          fullWidth
+          type="button"
+          className="w-full"
           onClick={salvarChamada}
           disabled={salvando || !groupId || (alunos?.length ?? 0) === 0}
         >
