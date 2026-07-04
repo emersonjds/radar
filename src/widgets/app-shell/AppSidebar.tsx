@@ -47,7 +47,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
         </span>
       </div>
 
-      <nav className="flex flex-col gap-1">
+      <nav aria-label="Navegação principal" className="flex flex-col gap-1">
         {items.map((item) => {
           const active =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
@@ -64,7 +64,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
               >
                 {navIcons[item.icon]}
               </span>
-              {showText && <span>{item.label}</span>}
+              <span className={showText ? "" : "sr-only"}>{item.label}</span>
             </Link>
           );
         })}
