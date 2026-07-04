@@ -2,29 +2,33 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import type { Role } from "@/entities/profile/model";
-import { setRole } from "@/features/session/session-store";
+import { setSession } from "@/features/session/session-store";
 import { Button } from "@/shared/ui/Button/Button";
-import { cx } from "@/shared/ui/cx";
+import { authenticate } from "./authenticate";
 import styles from "./LoginForm.module.css";
-
-const PERSONAS: { role: Role; label: string; hint: string }[] = [
-  { role: "teacher", label: "Professor", hint: "Chamada e turmas" },
-  { role: "admin", label: "Coordenação", hint: "Visão da escola" },
-];
 
 export function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
-  const [papel, setPapelEscolhido] = useState<Role>("teacher");
+  const [erro, setErro] = useState<string | null>(null);
+  const [entrando, setEntrando] = useState(false);
 
-  // ponytail: no real auth yet — the chosen persona sets the session and opens
-  // the app. Swap for Supabase auth (role from the JWT) when it lands.
-  function entrar(event: FormEvent<HTMLFormElement>) {
+  async function entrar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setRole(papel);
-    router.push("/");
+    setErro(null);
+    setEntrando(true);
+    try {
+      const profile = await authenticate(usuario, senha);
+      if (!profile) {
+        setErro("Usuário ou senha inválidos.");
+        return;
+      }
+      setSession(profile.id);
+      router.push("/");
+    } finally {
+      setEntrando(false);
+    }
   }
 
   return (
@@ -34,34 +38,16 @@ export function LoginForm() {
         <span className={styles.sub}>Presença escolar</span>
       </div>
 
-      <fieldset className={styles.personas}>
-        <legend className={styles.legend}>Entrar como</legend>
-        {PERSONAS.map((persona) => (
-          <button
-            key={persona.role}
-            type="button"
-            className={cx(
-              styles.persona,
-              papel === persona.role && styles.personaActive,
-            )}
-            aria-pressed={papel === persona.role}
-            onClick={() => setPapelEscolhido(persona.role)}
-          >
-            <span className={styles.personaLabel}>{persona.label}</span>
-            <span className={styles.personaHint}>{persona.hint}</span>
-          </button>
-        ))}
-      </fieldset>
-
       <div className={styles.field}>
-        <label htmlFor="email">E-mail</label>
+        <label htmlFor="usuario">Usuário</label>
         <input
-          id="email"
-          type="email"
-          autoComplete="email"
-          placeholder="voce@radar.escola"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
+          id="usuario"
+          type="text"
+          autoComplete="username"
+          autoCapitalize="none"
+          placeholder="seu.usuario"
+          value={usuario}
+          onChange={(event) => setUsuario(event.target.value)}
           required
         />
       </div>
@@ -79,13 +65,15 @@ export function LoginForm() {
         />
       </div>
 
-      <Button type="submit" fullWidth>
-        Entrar
-      </Button>
+      {erro && (
+        <p className={styles.erro} role="alert">
+          {erro}
+        </p>
+      )}
 
-      <a className={styles.link} href="#">
-        Esqueci minha senha
-      </a>
+      <Button type="submit" fullWidth disabled={entrando}>
+        {entrando ? "Entrando…" : "Entrar"}
+      </Button>
     </form>
   );
 }
