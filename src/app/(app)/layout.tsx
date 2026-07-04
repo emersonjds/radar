@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
-import { AppShell } from "@/widgets/app-shell/AppShell";
+import { TailAdminShell } from "@/widgets/app-shell/TailAdminShell";
 
 export interface AppLayoutProps {
   children: ReactNode;
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  return <AppShell>{children}</AppShell>;
+  return <TailAdminShell>{children}</TailAdminShell>;
 }
