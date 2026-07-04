@@ -28,12 +28,13 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: flex-end;
   gap: var(--space-3);
 }
 
 .busca {
-  width: 100%;
-  max-width: 320px;
+  width: 320px;
+  max-width: 100%;
 }
 
 .acoesLinha {
