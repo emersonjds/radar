@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { useStudents } from "@/entities/student/queries";
 import type { AttendanceRecord, AttendanceStatus } from "@/entities/attendance-record/model";
@@ -9,14 +10,11 @@ import { useProfiles } from "@/entities/profile/queries";
 import { useGroups } from "@/entities/group/queries";
 import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import { Avatar } from "@/shared/ui/Avatar/Avatar";
-import { Badge } from "@/shared/ui/Badge/Badge";
-import { Card } from "@/shared/ui/Card/Card";
-import { Icon } from "@/shared/ui/Icon/Icon";
-import { StatCard } from "@/shared/ui/StatCard/StatCard";
+import AvatarText from "@/shared/ui/tailadmin/AvatarText";
+import Badge from "@/shared/ui/tailadmin/Badge";
+import { GroupIcon, UserCircleIcon, CheckCircleIcon } from "@/shared/icons";
 import { AttendanceBarChart } from "./AttendanceBarChart";
 import { TrendLineChart } from "./TrendLineChart";
-import styles from "./AdminPanel.module.css";
 
 /** Below this, a lone teacher account (dev seed) would tank the stat — show a plausible mock instead. */
 const LIMIAR_MOCK_PROFESSORES = 2;
@@ -36,11 +34,23 @@ const TAREFAS_ADMIN: TarefaAdmin[] = [
   { title: "Recepção de novos alunos", status: "Pendente" },
 ];
 
-const TAREFA_TONE: Record<TarefaAdmin["status"], "neutral" | "success" | "danger"> = {
-  Pendente: "neutral",
+const TAREFA_COLOR: Record<TarefaAdmin["status"], "light" | "success" | "error"> = {
+  Pendente: "light",
   "Concluída": "success",
-  Urgente: "danger",
+  Urgente: "error",
 };
+
+function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
+  return (
+    <div className="rounded-2xl border border-gray-200 bg-white p-5">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
+        {icon}
+      </div>
+      <p className="mt-4 text-sm text-gray-500">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
+    </div>
+  );
+}
 
 export function AdminPanel() {
   const alunos = useStudents();
@@ -92,12 +102,12 @@ export function AdminPanel() {
   }));
 
   return (
-    <div className={styles.page}>
-      <div className={styles.stats}>
+    <div className="flex flex-col gap-6">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatCard
           label="Total de alunos"
           value={alunos.isLoading ? "…" : String(totalAlunos)}
-          icon={<Icon name="user" />}
+          icon={<GroupIcon />}
         />
         <StatCard
           label="Total de professores"
@@ -106,80 +116,70 @@ export function AdminPanel() {
               ? "…"
               : String(totalProfessores < LIMIAR_MOCK_PROFESSORES ? MOCK_TOTAL_PROFESSORES : totalProfessores)
           }
-          icon={<Icon name="admin" />}
+          icon={<UserCircleIcon />}
         />
         <StatCard
           label="Frequência geral"
           value={presencas.isLoading ? "…" : formatPercent(frequenciaGeral)}
-          icon={<Icon name="check" />}
+          icon={<CheckCircleIcon />}
         />
       </div>
 
-      <div className={styles.row}>
-        <Card className={styles.chartCard}>
-          <div className={styles.cardHeader}>
-            <div>
-              <h2 className={styles.cardTitle}>Frequência por turma</h2>
-              <p className={styles.cardSubtitle}>Comparativo de presença e ausência por turma</p>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
+          <h2 className="text-lg font-semibold text-gray-800">Frequência por turma</h2>
+          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por turma</p>
           <AttendanceBarChart dados={frequenciaPorTurma} />
-        </Card>
+        </div>
 
-        <Card className={styles.sideCard}>
-          <div className={styles.cardHeader}>
-            <h2 className={styles.cardTitle}>
-              <Icon name="alert" /> Alertas de baixa frequência
-            </h2>
-          </div>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">Alertas de baixa frequência</h2>
           {alertas.length === 0 ? (
-            <p className={styles.vazio}>Sem dados ainda.</p>
+            <p className="text-sm text-gray-500">Sem dados ainda.</p>
           ) : (
-            <ul className={styles.alertList}>
+            <ul className="flex flex-col gap-3">
               {alertas.map((alerta) => (
-                <li key={alerta.studentId} className={styles.alertItem}>
-                  <Avatar name={alerta.name} size={36} />
-                  <div className={styles.alertInfo}>
-                    <span className={styles.alertNome}>{alerta.name}</span>
-                    <span className={styles.alertTurma}>{alerta.turma}</span>
+                <li key={alerta.studentId} className="flex items-center gap-3">
+                  <AvatarText name={alerta.name} />
+                  <div className="mr-auto min-w-0">
+                    <p className="truncate font-medium text-gray-800">{alerta.name}</p>
+                    <p className="truncate text-xs text-gray-500">{alerta.turma}</p>
                   </div>
-                  <div className={styles.alertMeta}>
-                    <Badge tone="danger">{formatPercent(alerta.attendance)}</Badge>
-                    <span className={styles.alertFaltas}>{alerta.absences} faltas</span>
+                  <div className="flex flex-col items-end gap-1">
+                    <Badge color="error">{formatPercent(alerta.attendance)}</Badge>
+                    <span className="text-xs text-gray-500">{alerta.absences} faltas</span>
                   </div>
                 </li>
               ))}
             </ul>
           )}
-          <Link href="/students?filtro=risco" className={styles.verTodos}>
+          <Link
+            href="/students?filtro=risco"
+            className="mt-4 inline-block text-sm font-medium text-brand-500 hover:text-brand-600"
+          >
             Ver todos os alunos em risco
           </Link>
-        </Card>
+        </div>
       </div>
 
-      <div className={styles.row}>
-        <Card className={styles.chartCard}>
-          <div className={styles.cardHeader}>
-            <h2 className={styles.cardTitle}>Tendência de frequência</h2>
-          </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
+          <h2 className="mb-2 text-lg font-semibold text-gray-800">Tendência de frequência</h2>
           <TrendLineChart pontos={tendencia} />
-        </Card>
+        </div>
 
-        <Card className={styles.sideCard}>
-          <div className={styles.cardHeader}>
-            <h2 className={styles.cardTitle}>Tarefas administrativas</h2>
-          </div>
-          <ul className={styles.taskList}>
+        <div className="rounded-2xl border border-gray-200 bg-white p-5">
+          <h2 className="mb-4 text-lg font-semibold text-gray-800">Tarefas administrativas</h2>
+          <ul className="flex flex-col gap-3">
             {TAREFAS_ADMIN.map((tarefa) => (
-              <li key={tarefa.title} className={styles.taskItem}>
-                <span>{tarefa.title}</span>
-                <Badge tone={TAREFA_TONE[tarefa.status]}>{tarefa.status}</Badge>
+              <li key={tarefa.title} className="flex items-center justify-between gap-3 text-sm">
+                <span className="text-gray-700">{tarefa.title}</span>
+                <Badge color={TAREFA_COLOR[tarefa.status]}>{tarefa.status}</Badge>
               </li>
             ))}
           </ul>
-        </Card>
+        </div>
       </div>
-
     </div>
   );
 }
