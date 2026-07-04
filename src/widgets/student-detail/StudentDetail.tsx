@@ -1,22 +1,19 @@
 "use client";
 
 import { useStudent } from "@/entities/student/queries";
-import { useAssessmentsByGroup } from "@/entities/assessment/queries";
 import { useAttendanceSessions } from "@/entities/attendance-session/queries";
 import { datesInRange } from "@/entities/school-event/model";
 import { useSchoolEvents } from "@/entities/school-event/queries";
-import { useGradesByStudent } from "@/entities/grade/queries";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useAttendanceRecordsByStudent } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
-import { countAbsences, weightedAverage, attendanceRate } from "@/features/analytics/model";
-import { formatDate, formatPercent } from "@/shared/lib/format";
+import { countAbsences, attendanceRate } from "@/features/analytics/model";
+import { formatPercent } from "@/shared/lib/format";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Button } from "@/shared/ui/Button/Button";
 import { Card } from "@/shared/ui/Card/Card";
 import { Icon } from "@/shared/ui/Icon/Icon";
-import { TBody, TD, TH, THead, TR, Table } from "@/shared/ui/Table/Table";
 import { AttendanceCalendar, type DayEvent } from "./AttendanceCalendar";
 import styles from "./StudentDetail.module.css";
 
@@ -40,8 +37,6 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   const { data: turmas } = useGroups();
   const { data: chamadas } = useAttendanceSessions();
   const { data: presencas, isLoading: carregandoPresencas } = useAttendanceRecordsByStudent(studentId);
-  const { data: avaliacoes } = useAssessmentsByGroup(aluno?.groupId ?? "");
-  const { data: notas } = useGradesByStudent(studentId);
   const { data: eventosEscolares } = useSchoolEvents();
 
   if (carregandoAluno) {
@@ -69,15 +64,10 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     if (chamada) statusPorData.set(chamada.date, presenca.status);
   }
   const mes = mesComMaisRegistros([...statusPorData.keys()]);
-  const notaPorAvaliacao = new Map((notas ?? []).map((nota) => [nota.assessmentId, nota]));
-  const media = weightedAverage(notas ?? [], avaliacoes ?? []);
 
   const eventosPorData = new Map<string, DayEvent[]>();
   function adicionarEvento(data: string, evento: DayEvent) {
     eventosPorData.set(data, [...(eventosPorData.get(data) ?? []), evento]);
-  }
-  for (const avaliacao of avaliacoes ?? []) {
-    adicionarEvento(avaliacao.date, { type: "prova", title: avaliacao.name });
   }
   for (const eventoEscolar of eventosEscolares ?? []) {
     for (const data of datesInRange(eventoEscolar.startDate, eventoEscolar.endDate)) {
@@ -161,10 +151,6 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               <span className={styles.statValor}>{countAbsences(presencas ?? [])}</span>
               <span className={styles.statRotulo}>Faltas</span>
             </div>
-            <div className={styles.stat}>
-              <span className={styles.statValor}>{media === null ? "—" : media.toFixed(1)}</span>
-              <span className={styles.statRotulo}>Média</span>
-            </div>
           </div>
         </Card>
 
@@ -183,46 +169,6 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           )}
         </Card>
       </div>
-
-      <Card>
-        <h2 className={styles.tituloSecao}>Desempenho por atividade</h2>
-        {(avaliacoes ?? []).length === 0 && (
-          <p className={styles.estado}>Sem avaliações nesta turma.</p>
-        )}
-        {(avaliacoes ?? []).length > 0 && (
-          <div className={styles.tabelaScroll}>
-            <Table>
-              <THead>
-                <TR>
-                  <TH>Avaliação</TH>
-                  <TH>Data</TH>
-                  <TH>Peso</TH>
-                  <TH>Nota</TH>
-                  <TH>Status</TH>
-                </TR>
-              </THead>
-              <TBody>
-                {(avaliacoes ?? []).map((avaliacao) => {
-                  const valor = notaPorAvaliacao.get(avaliacao.id)?.value ?? null;
-                  return (
-                    <TR key={avaliacao.id}>
-                      <TD>{avaliacao.name}</TD>
-                      <TD>{formatDate(avaliacao.date)}</TD>
-                      <TD>{avaliacao.weight}</TD>
-                      <TD>{valor === null ? "—" : valor.toFixed(1)}</TD>
-                      <TD>
-                        <Badge tone={valor === null ? "warning" : "success"}>
-                          {valor === null ? "Pendente" : "Lançada"}
-                        </Badge>
-                      </TD>
-                    </TR>
-                  );
-                })}
-              </TBody>
-            </Table>
-          </div>
-        )}
-      </Card>
     </div>
   );
 }

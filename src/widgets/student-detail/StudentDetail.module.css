@@ -149,14 +149,3 @@
 .calendarioCard {
   min-height: 100%;
 }
-
-.tituloSecao {
-  font-size: var(--text-base);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text);
-  margin-bottom: var(--space-4);
-}
-
-.tabelaScroll {
-  overflow-x: auto;
-}

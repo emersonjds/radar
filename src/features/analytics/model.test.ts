@@ -1,11 +1,8 @@
 import { describe, expect, it } from "vitest";
-import type { Assessment } from "@/entities/assessment/model";
-import type { Grade } from "@/entities/grade/model";
 import type { AttendanceRecord } from "@/entities/attendance-record/model";
 import {
   studentsAtRisk,
   countAbsences,
-  weightedAverage,
   attendanceRate,
   absenteeismTrend,
 } from "./model";
@@ -46,33 +43,6 @@ describe("studentsAtRisk", () => {
     const risco = studentsAtRisk(map, 2);
     expect(risco.map((r) => r.studentId)).toEqual(["a1"]);
     expect(risco[0].absences).toBe(3);
-  });
-});
-
-describe("weightedAverage", () => {
-  function avaliacao(id: string, weight: number): Assessment {
-    return { id, groupId: "t1", name: id, date: "2026-06-20", weight, teacherId: "p1" };
-  }
-  function nota(assessmentId: string, value: number | null): Grade {
-    return { id: `nota-${assessmentId}-a1`, assessmentId, studentId: "a1", value };
-  }
-  const avaliacoes = [avaliacao("a1", 2), avaliacao("a2", 1)];
-
-  it("weighs by peso", () => {
-    expect(weightedAverage([nota("a1", 8), nota("a2", 5)], avaliacoes)).toBe(7);
-  });
-
-  it("skips null and missing notas", () => {
-    expect(weightedAverage([nota("a1", 9), nota("a2", null)], avaliacoes)).toBe(9);
-  });
-
-  it("returns null with no launched notas", () => {
-    expect(weightedAverage([], avaliacoes)).toBeNull();
-  });
-
-  it("rounds to one decimal place", () => {
-    // (7×2 + 8×1) / 3 = 7.333…
-    expect(weightedAverage([nota("a1", 7), nota("a2", 8)], avaliacoes)).toBe(7.3);
   });
 });
 

@@ -1,31 +1,8 @@
-import type { Assessment } from "@/entities/assessment/model";
-import type { Grade } from "@/entities/grade/model";
 import {
   PRESENT_STATUSES,
   type AttendanceRecord,
   type AttendanceStatus,
 } from "@/entities/attendance-record/model";
-
-/** Weighted grade average (1 decimal); pending/missing grades are excluded.
-    Returns null when no grade has been launched. */
-export function weightedAverage(
-  grades: Grade[],
-  assessments: Assessment[],
-): number | null {
-  const weightByAssessment = new Map(
-    assessments.map((assessment) => [assessment.id, assessment.weight]),
-  );
-  let weightedSum = 0;
-  let weightSum = 0;
-  for (const grade of grades) {
-    const weight = weightByAssessment.get(grade.assessmentId);
-    if (grade.value === null || weight === undefined) continue;
-    weightedSum += grade.value * weight;
-    weightSum += weight;
-  }
-  if (weightSum === 0) return null;
-  return Math.round((weightedSum / weightSum) * 10) / 10;
-}
 
 /** Attendance rate (0–100) — present + late count as present. */
 export function attendanceRate(records: AttendanceRecord[]): number {

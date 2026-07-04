@@ -8,7 +8,7 @@ import { cx } from "@/shared/ui/cx";
 import styles from "./AttendanceCalendar.module.css";
 
 export interface DayEvent {
-  type: SchoolEventType | "prova";
+  type: SchoolEventType;
   title: string;
 }
 
@@ -17,7 +17,7 @@ export interface AttendanceCalendarProps {
   mes: string;
   /** Session date (ISO) → status, for this student. */
   statusPorData: Map<string, AttendanceStatus>;
-  /** Date (ISO) → important events (provas, férias, recuperação). */
+  /** Date (ISO) → important events (férias, recuperação). */
   eventosPorData?: Map<string, DayEvent[]>;
 }
 
@@ -32,7 +32,6 @@ const LABEL_STATUS: Record<AttendanceStatus, string> = {
 };
 
 const LABEL_EVENTO: Record<DayEvent["type"], string> = {
-  prova: "Prova",
   vacation: "Férias",
   makeup: "Recuperação",
   event: "Evento",
@@ -139,10 +138,6 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
         <li>
           <span className={cx(styles.amostra, styles.absent)} aria-hidden="true" />
           Ausente
-        </li>
-        <li>
-          <span className={cx(styles.marcador, styles.marcador_prova)} aria-hidden="true" />
-          Prova
         </li>
         <li>
           <span className={cx(styles.marcador, styles.marcador_vacation)} aria-hidden="true" />

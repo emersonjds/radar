@@ -104,10 +104,6 @@
   border-radius: 999px;
 }
 
-.marcador_prova {
-  background: var(--color-primary);
-}
-
 .marcador_vacation {
   background: var(--color-neutral);
 }

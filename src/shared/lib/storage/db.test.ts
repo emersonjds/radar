@@ -32,17 +32,10 @@ describe("storage db", () => {
     expect(turmas.some((turma) => turma.id === "nova")).toBe(true);
   });
 
-  it("seeds avaliacoes and notas", async () => {
-    const avaliacoes = await readCollection<{ id: string }>("assessments");
-    const notas = await readCollection<{ id: string }>("grades");
-    expect(avaliacoes.length).toBeGreaterThan(0);
-    expect(notas.length).toBeGreaterThan(0);
-  });
-
   it("tolerates a collection missing from a persisted blob", async () => {
     // blob antigo sem as coleções novas não pode quebrar a leitura
     await mutateCollection("groups", (rows) => rows);
-    await expect(readCollection("assessments")).resolves.toBeInstanceOf(Array);
+    await expect(readCollection("schoolEvents")).resolves.toBeInstanceOf(Array);
   });
 
   it("discards a stale radar.db.v1 blob and reseeds", async () => {

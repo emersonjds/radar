@@ -15,8 +15,6 @@ export type Collection =
   | "students"
   | "attendanceSessions"
   | "attendanceRecords"
-  | "assessments"
-  | "grades"
   | "schoolEvents";
 
 export type Db = Record<Collection, unknown[]>;

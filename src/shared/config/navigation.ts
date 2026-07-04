@@ -12,7 +12,6 @@ export interface NavItem {
 export const navTeacher: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
   { href: "/attendance", label: "Chamada", icon: "session" },
-  { href: "/assessments", label: "Avaliações", icon: "grade" },
   { href: "/students", label: "Alunos", icon: "user" },
 ];
 

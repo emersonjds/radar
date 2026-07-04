@@ -90,34 +90,6 @@ export function seedDb(): Db {
     });
   }
 
-  const avaliacoes: Db["assessments"] = [];
-  const notas: Db["grades"] = [];
-
-  for (const turma of turmas) {
-    const turmaAvaliacoes = [
-      { id: `avaliacao-${turma.id}-p1-2026-06-20`, groupId: turma.id, name: "Prova 1", date: "2026-06-20", weight: 2, teacherId: PROFESSOR_ID },
-      { id: `avaliacao-${turma.id}-p2-2026-06-27`, groupId: turma.id, name: "Trabalho 1", date: "2026-06-27", weight: 1, teacherId: PROFESSOR_ID },
-    ];
-    avaliacoes.push(...turmaAvaliacoes);
-
-    const turmaAlunos = alunos.filter((aluno) => aluno.groupId === turma.id);
-    turmaAvaliacoes.forEach((avaliacao, avaliacaoIdx) => {
-      turmaAlunos.forEach((aluno) => {
-        const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
-        // ~1 em 7 fica pendente (sem registro) para exercitar os estados da UI
-        if ((alunoIdx + avaliacaoIdx) % 7 === 3) return;
-        const valor =
-          Math.round((4 + ((alunoIdx * 3 + avaliacaoIdx * 5) % 61) / 10) * 10) / 10;
-        notas.push({
-          id: `nota-${avaliacao.id}-${aluno.id}`,
-          assessmentId: avaliacao.id,
-          studentId: aluno.id,
-          value: valor,
-        });
-      });
-    });
-  }
-
   // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
   const eventosEscolares = [
     { id: "evento-ferias-julho", type: "vacation", title: "Férias de julho", startDate: "2026-07-06", endDate: "2026-07-24" },
@@ -130,8 +102,6 @@ export function seedDb(): Db {
     students: alunos,
     attendanceSessions: chamadas,
     attendanceRecords: presencas,
-    assessments: avaliacoes,
-    grades: notas,
     schoolEvents: eventosEscolares,
   };
 }
