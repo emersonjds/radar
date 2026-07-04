@@ -15,7 +15,6 @@ export interface TopbarProps {
   jobTitle: string;
   role: Role;
   onSwitchRole: (role: Role) => void;
-  onToggleMenu: () => void;
 }
 
 const PERSONAS: { role: Role; label: string }[] = [
@@ -23,7 +22,7 @@ const PERSONAS: { role: Role; label: string }[] = [
   { role: "admin", label: "Coordenação" },
 ];
 
-export function Topbar({ name, jobTitle, role, onSwitchRole, onToggleMenu }: TopbarProps) {
+export function Topbar({ name, jobTitle, role, onSwitchRole }: TopbarProps) {
   const router = useRouter();
   const [termo, setTermo] = useState("");
 
@@ -35,14 +34,6 @@ export function Topbar({ name, jobTitle, role, onSwitchRole, onToggleMenu }: Top
 
   return (
     <header className={styles.topbar}>
-      <IconButton
-        label="Abrir menu"
-        className={styles.menuToggle}
-        onClick={onToggleMenu}
-      >
-        <Icon name="menu" size={18} />
-      </IconButton>
-
       <form className={styles.search} onSubmit={handleBuscar} role="search">
         <SearchInput value={termo} onChange={setTermo} placeholder="Buscar aluno..." />
       </form>

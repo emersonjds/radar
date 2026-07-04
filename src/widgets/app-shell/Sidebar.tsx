@@ -11,10 +11,9 @@ import styles from "./Sidebar.module.css";
 
 export interface SidebarProps {
   role: Role;
-  onNavigate?: () => void;
 }
 
-export function Sidebar({ role, onNavigate }: SidebarProps) {
+export function Sidebar({ role }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const itens = navForRole(role);
@@ -35,7 +34,6 @@ export function Sidebar({ role, onNavigate }: SidebarProps) {
               href={item.href}
               className={cx(styles.navItem, ativo && styles.navItemActive)}
               aria-current={ativo ? "page" : undefined}
-              onClick={onNavigate}
             >
               <Icon name={item.icon} />
               <span>{item.label}</span>
@@ -50,10 +48,7 @@ export function Sidebar({ role, onNavigate }: SidebarProps) {
             variant="primary"
             fullWidth
             leftIcon={<Icon name="plus" size={16} />}
-            onClick={() => {
-              router.push("/attendance");
-              onNavigate?.();
-            }}
+            onClick={() => router.push("/attendance")}
           >
             Nova chamada
           </Button>
@@ -66,7 +61,7 @@ export function Sidebar({ role, onNavigate }: SidebarProps) {
           <Icon name="settings" />
           <span>Configurações</span>
         </button>
-        <Link href="/login" className={styles.footerItem} onClick={onNavigate}>
+        <Link href="/login" className={styles.footerItem}>
           <Icon name="logout" />
           <span>Sair</span>
         </Link>
