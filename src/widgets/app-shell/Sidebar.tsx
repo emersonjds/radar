@@ -11,9 +11,10 @@ import styles from "./Sidebar.module.css";
 
 export interface SidebarProps {
   role: Role;
+  onLogout: () => void;
 }
 
-export function Sidebar({ role }: SidebarProps) {
+export function Sidebar({ role, onLogout }: SidebarProps) {
   const pathname = usePathname();
   const router = useRouter();
   const itens = navForRole(role);
@@ -56,15 +57,10 @@ export function Sidebar({ role }: SidebarProps) {
       )}
 
       <div className={styles.footer}>
-        {/* ponytail: sem ação real ainda — volta a ligar quando a feature de auth/config retornar */}
-        <button type="button" className={styles.footerItem}>
-          <Icon name="settings" />
-          <span>Configurações</span>
-        </button>
-        <Link href="/login" className={styles.footerItem}>
+        <button type="button" className={styles.footerItem} onClick={onLogout}>
           <Icon name="logout" />
           <span>Sair</span>
-        </Link>
+        </button>
       </div>
     </aside>
   );
