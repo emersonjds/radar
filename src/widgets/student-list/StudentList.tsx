@@ -11,18 +11,19 @@ import { useGroups } from "@/entities/group/queries";
 import { useSession } from "@/features/session/use-session";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import { Avatar } from "@/shared/ui/Avatar/Avatar";
-import { Badge } from "@/shared/ui/Badge/Badge";
-import { Button } from "@/shared/ui/Button/Button";
-import { Card } from "@/shared/ui/Card/Card";
-import { StudentForm } from "./StudentForm";
-import { cx } from "@/shared/ui/cx";
-import { Icon } from "@/shared/ui/Icon/Icon";
-import { SearchInput } from "@/shared/ui/SearchInput/SearchInput";
-import { Table, TBody, TD, TH, THead, TR } from "@/shared/ui/Table/Table";
-import styles from "./StudentList.module.css";
+import AvatarText from "@/shared/ui/tailadmin/AvatarText";
+import Badge from "@/shared/ui/tailadmin/Badge";
+import Button from "@/shared/ui/tailadmin/Button";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/shared/ui/tailadmin/Table";
+import { EyeIcon, PencilIcon, PlusIcon, TrashBinIcon } from "@/shared/icons";
+import { StudentFormModal } from "./StudentFormModal";
 
 const LIMITE_FALTAS_RISCO = 3;
+
+const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500";
+const td = "px-5 py-4 text-sm text-gray-700";
+const acaoBtn =
+  "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100";
 
 export function StudentList() {
   const { role, profile, loading: carregandoSessao } = useSession();
@@ -95,23 +96,24 @@ export function StudentList() {
       : `${alunosEscopo.length} aluno${alunosEscopo.length === 1 ? "" : "s"} cadastrados`;
 
   return (
-    <div className={styles.pagina}>
-      <header className={styles.cabecalho}>
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className={styles.title}>{titulo}</h1>
-          <p className={styles.subtitulo}>{subtitulo}</p>
+          <h1 className="text-2xl font-bold text-gray-800">{titulo}</h1>
+          <p className="mt-1 text-sm text-gray-500">{subtitulo}</p>
         </div>
-        <div className={styles.headerAcoes}>
-          <SearchInput
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          <input
+            type="search"
             value={busca}
-            onChange={setBusca}
+            onChange={(event) => setBusca(event.target.value)}
             placeholder="Buscar por nome ou matrícula"
-            className={styles.busca}
+            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 sm:w-80"
           />
           {!isProfessor && (
             <Button
-              className={styles.botaoAdicionar}
-              leftIcon={<Icon name="plus" size={16} />}
+              className="h-11"
+              startIcon={<PlusIcon />}
               onClick={() => setFormAluno(null)}
             >
               Adicionar aluno
@@ -120,95 +122,85 @@ export function StudentList() {
         </div>
       </header>
 
-      {formAluno !== undefined && (
-        <Card>
-          <StudentForm
-            student={formAluno}
-            groups={turmas ?? []}
-            onClose={() => setFormAluno(undefined)}
-          />
-        </Card>
-      )}
-
-      <Card>
-        <div className={styles.tableScroll}>
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        <div className="overflow-x-auto">
           <Table>
-            <THead>
-              <TR>
-                <TH>Aluno</TH>
-                {!isProfessor && <TH>Matrícula</TH>}
-                <TH>Turma</TH>
-                <TH>Frequência</TH>
-                <TH>Faltas</TH>
-                <TH>Situação</TH>
-                {!isProfessor && <TH>Ação</TH>}
-              </TR>
-            </THead>
-            <TBody>
+            <TableHeader className="border-b border-gray-100 bg-gray-50">
+              <TableRow>
+                <TableCell isHeader className={th}>Aluno</TableCell>
+                {!isProfessor && <TableCell isHeader className={th}>Matrícula</TableCell>}
+                <TableCell isHeader className={th}>Turma</TableCell>
+                <TableCell isHeader className={th}>Frequência</TableCell>
+                <TableCell isHeader className={th}>Faltas</TableCell>
+                <TableCell isHeader className={th}>Situação</TableCell>
+                {!isProfessor && <TableCell isHeader className={th}>Ação</TableCell>}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {carregando && (
-                <TR>
-                  <TD colSpan={colunas} className={styles.estado}>
+                <TableRow>
+                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
                     Carregando alunos…
-                  </TD>
-                </TR>
+                  </TableCell>
+                </TableRow>
               )}
               {!carregando && semTurmas && (
-                <TR>
-                  <TD colSpan={colunas} className={styles.estado}>
+                <TableRow>
+                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
                     Você não tem turmas atribuídas
-                  </TD>
-                </TR>
+                  </TableCell>
+                </TableRow>
               )}
               {!carregando && !semTurmas && linhas.length === 0 && (
-                <TR>
-                  <TD colSpan={colunas} className={styles.estado}>
+                <TableRow>
+                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
                     Nenhum aluno encontrado
-                  </TD>
-                </TR>
+                  </TableCell>
+                </TableRow>
               )}
               {!carregando &&
                 linhas.map(({ aluno, turmaNome, attendance, absences }) => {
                   const emRisco = absences >= LIMITE_FALTAS_RISCO;
                   return (
-                    <TR key={aluno.id}>
-                      <TD>
-                        <div className={styles.alunoCell}>
-                          <Avatar name={aluno.name} size={36} />
-                          <span>{aluno.name}</span>
+                    <TableRow key={aluno.id} className="border-t border-gray-100">
+                      <TableCell className={td}>
+                        <div className="flex items-center gap-3">
+                          <AvatarText name={aluno.name} />
+                          <span className="font-medium text-gray-800">{aluno.name}</span>
                         </div>
-                      </TD>
-                      {!isProfessor && <TD>{aluno.enrollment}</TD>}
-                      <TD>{turmaNome}</TD>
-                      <TD>{formatPercent(attendance)}</TD>
-                      <TD>{absences}</TD>
-                      <TD>
-                        <Badge tone={emRisco ? "danger" : "success"}>
+                      </TableCell>
+                      {!isProfessor && <TableCell className={td}>{aluno.enrollment}</TableCell>}
+                      <TableCell className={td}>{turmaNome}</TableCell>
+                      <TableCell className={td}>{formatPercent(attendance)}</TableCell>
+                      <TableCell className={td}>{absences}</TableCell>
+                      <TableCell className={td}>
+                        <Badge color={emRisco ? "error" : "success"}>
                           {emRisco ? "Em risco" : "Regular"}
                         </Badge>
-                      </TD>
+                      </TableCell>
                       {!isProfessor && (
-                        <TD>
-                          <div className={styles.acoesLinha}>
+                        <TableCell className={td}>
+                          <div className="flex items-center gap-1">
                             <Link
                               href={"/reports/" + aluno.id}
-                              className={styles.acaoIcone}
+                              className={acaoBtn}
                               aria-label={`Ver relatório de ${aluno.name}`}
                               title="Ver relatório"
                             >
-                              <Icon name="relatorios" size={18} />
+                              <EyeIcon />
                             </Link>
                             <button
                               type="button"
-                              className={styles.acaoIcone}
+                              className={acaoBtn}
                               aria-label={`Editar ${aluno.name}`}
                               title="Editar"
                               onClick={() => setFormAluno(aluno)}
                             >
-                              <Icon name="edit" size={18} />
+                              <PencilIcon />
                             </button>
                             <button
                               type="button"
-                              className={cx(styles.acaoIcone, styles.acaoExcluir)}
+                              className={`${acaoBtn} hover:bg-error-50 hover:text-error-600`}
                               aria-label={`Excluir ${aluno.name}`}
                               title="Excluir"
                               disabled={deleteStudent.isPending}
@@ -218,18 +210,24 @@ export function StudentList() {
                                 }
                               }}
                             >
-                              <Icon name="trash" size={18} />
+                              <TrashBinIcon />
                             </button>
                           </div>
-                        </TD>
+                        </TableCell>
                       )}
-                    </TR>
+                    </TableRow>
                   );
                 })}
-            </TBody>
+            </TableBody>
           </Table>
         </div>
-      </Card>
+      </div>
+
+      <StudentFormModal
+        student={formAluno}
+        groups={turmas ?? []}
+        onClose={() => setFormAluno(undefined)}
+      />
     </div>
   );
 }
