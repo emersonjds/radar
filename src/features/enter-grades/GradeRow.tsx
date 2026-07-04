@@ -16,10 +16,7 @@ export function GradeRow({ aluno, value, erro, onChange }: GradeRowProps) {
     <div className={styles.notaRow}>
       <div className={styles.info}>
         <Avatar name={aluno.name} />
-        <div className={styles.identidade}>
-          <span className={styles.name}>{aluno.name}</span>
-          <span className={styles.enrollment}>Matrícula {aluno.enrollment}</span>
-        </div>
+        <span className={styles.name}>{aluno.name}</span>
       </div>
 
       <div className={styles.campoNota}>

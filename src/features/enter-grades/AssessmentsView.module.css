@@ -172,24 +172,14 @@
   min-width: 0;
 }
 
-.identidade {
-  display: flex;
-  flex-direction: column;
+.name {
   min-width: 0;
-}
-
-.nome {
   font-size: var(--text-base);
   font-weight: var(--weight-medium);
   color: var(--color-text);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.matricula {
-  font-size: var(--text-xs);
-  color: var(--color-text-subtle);
 }
 
 .campoNota {
