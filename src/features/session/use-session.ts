@@ -2,12 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useProfile } from "@/entities/profile/queries";
-import type { Role, Profile } from "@/entities/profile/model";
+import type { PublicProfile } from "@/entities/profile/api";
+import type { Role } from "@/entities/profile/model";
 import { clearSession, useSessionProfileId } from "./session-store";
 
 export interface Session {
   profileId: string | null;
-  profile: Profile | null;
+  profile: PublicProfile | null;
   role: Role | null;
   loading: boolean;
   logout: () => void;
