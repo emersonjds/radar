@@ -1,0 +1,59 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useStudents } from "@/entities/student/queries";
+
+const SEGMENT_LABELS: Record<string, string> = {
+  attendance: "Chamada",
+  students: "Alunos",
+  reports: "Relatórios",
+  users: "Perfis",
+};
+
+interface Crumb {
+  label: string;
+  href?: string;
+}
+
+export function AppBreadcrumb() {
+  const pathname = usePathname();
+  const { data: alunos } = useStudents();
+
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments.length === 0) return null;
+
+  const nomePorId = new Map((alunos ?? []).map((aluno) => [aluno.id, aluno.name]));
+
+  const crumbs: Crumb[] = [{ label: "Início", href: "/" }];
+  let acc = "";
+  segments.forEach((segment, index) => {
+    acc += "/" + segment;
+    const isLast = index === segments.length - 1;
+    const label = SEGMENT_LABELS[segment] ?? nomePorId.get(segment) ?? segment;
+    crumbs.push({ label, href: isLast ? undefined : acc });
+  });
+
+  return (
+    <nav aria-label="Trilha de navegação" className="mb-6">
+      <ol className="flex flex-wrap items-center gap-1.5 text-sm">
+        {crumbs.map((crumb, index) => (
+          <li key={crumb.href ?? crumb.label} className="flex items-center gap-1.5">
+            {crumb.href ? (
+              <Link href={crumb.href} className="text-gray-500 transition hover:text-gray-700">
+                {crumb.label}
+              </Link>
+            ) : (
+              <span className="font-medium text-gray-800">{crumb.label}</span>
+            )}
+            {index < crumbs.length - 1 && (
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                <path d="M9 6l6 6-6 6" />
+              </svg>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}

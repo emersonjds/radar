@@ -7,6 +7,7 @@ import { useSession } from "@/features/session/use-session";
 import { useSidebar } from "@tailadmin/context/SidebarContext";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
+import { AppBreadcrumb } from "./AppBreadcrumb";
 import { Backdrop } from "./Backdrop";
 
 export interface TailAdminShellProps {
@@ -45,6 +46,7 @@ export function TailAdminShell({ children }: TailAdminShellProps) {
       <div className={`flex min-h-screen flex-col transition-all duration-300 ease-in-out ${mainMargin}`}>
         <AppHeader name={profile.name} jobTitle={jobTitle} onLogout={logout} />
         <main className="mx-auto w-full max-w-(--breakpoint-2xl) flex-1 p-4 md:p-6">
+          <AppBreadcrumb />
           {children}
         </main>
       </div>
