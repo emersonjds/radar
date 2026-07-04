@@ -4,7 +4,7 @@ import styles from "./IconButton.module.css";
 
 export interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   label: string;
-  tone?: "primary" | "secondary" | "tertiary" | "danger" | "ghost";
+  tone?: "primary" | "secondary" | "tertiary" | "danger" | "ghost" | "ghostDanger";
   size?: "md" | "sm";
 }
 

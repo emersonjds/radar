@@ -24,6 +24,7 @@ export type IconName =
   | "menu"
   | "edit"
   | "trash"
+  | "power"
   | "grade";
 
 export interface IconProps {
@@ -179,6 +180,12 @@ const paths: Record<IconName, ReactNode> = {
       <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
       <line x1="10" y1="11" x2="10" y2="17" />
       <line x1="14" y1="11" x2="14" y2="17" />
+    </>
+  ),
+  power: (
+    <>
+      <line x1="12" y1="3.5" x2="12" y2="12" />
+      <path d="M7.5 7a6.5 6.5 0 1 0 9 0" />
     </>
   ),
 };

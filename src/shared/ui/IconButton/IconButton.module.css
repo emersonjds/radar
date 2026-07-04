@@ -63,3 +63,12 @@
   background: var(--color-surface-muted);
   color: var(--color-text);
 }
+
+.ghostDanger {
+  background: transparent;
+  color: var(--color-neutral);
+}
+.ghostDanger:not(:disabled):hover {
+  background: var(--color-danger-soft);
+  color: var(--color-danger);
+}
