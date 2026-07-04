@@ -60,9 +60,9 @@ export async function createProfile(input: NewProfileInput): Promise<PublicProfi
     throw new Error("Nome de usuário já está em uso.");
   }
   const profile: Profile = {
-    // ponytail: id derived from the unique username — fine while usernames are
-    // immutable and there's no rename flow; switch to a uuid if that changes.
-    id: `perfil-${username}`,
+    // Stable random id: usernames are editable, so the id must not derive from them
+    // (a rename would otherwise let a later create collide on `perfil-<username>`).
+    id: crypto.randomUUID(),
     name: input.name.trim(),
     email: input.email?.trim() || undefined,
     role: input.role,
@@ -74,6 +74,46 @@ export async function createProfile(input: NewProfileInput): Promise<PublicProfi
   profileSchema.parse(profile);
   await mutateCollection<Profile>("profiles", (rows) => [...rows, profile]);
   return toPublicProfile(profile);
+}
+
+export interface ProfileUpdate {
+  name?: string;
+  username?: string;
+  role?: Profile["role"];
+  /** Optional: when omitted or empty, the current password is kept. */
+  password?: string;
+}
+
+/** Admin edits a profile. Username stays unique (excluding the profile itself). */
+export async function updateProfile(id: string, patch: ProfileUpdate): Promise<PublicProfile> {
+  const rows = await fetchAllProfiles();
+  const current = rows.find((profile) => profile.id === id);
+  if (!current) {
+    throw new Error("Perfil não encontrado.");
+  }
+
+  const next: Profile = { ...current };
+  if (patch.name !== undefined) next.name = patch.name.trim();
+  if (patch.role !== undefined) next.role = patch.role;
+  if (patch.username !== undefined) {
+    const username = patch.username.trim().toLowerCase();
+    if (rows.some((profile) => profile.id !== id && profile.username === username)) {
+      throw new Error("Nome de usuário já está em uso.");
+    }
+    next.username = username;
+  }
+  if (patch.password) {
+    if (patch.password.length < MIN_PASSWORD_LENGTH) {
+      throw new Error("Senha deve ter pelo menos 6 caracteres.");
+    }
+    next.passwordHash = await hashPassword(patch.password);
+  }
+
+  profileSchema.parse(next);
+  await mutateCollection<Profile>("profiles", (list) =>
+    list.map((profile) => (profile.id === id ? next : profile)),
+  );
+  return toPublicProfile(next);
 }
 
 export async function setProfileActive(id: string, active: boolean): Promise<void> {

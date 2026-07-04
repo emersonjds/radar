@@ -7,7 +7,9 @@ import {
   fetchProfile,
   fetchProfiles,
   setProfileActive,
+  updateProfile,
   type NewProfileInput,
+  type ProfileUpdate,
 } from "./api";
 
 export const profileKeys = {
@@ -31,6 +33,14 @@ export function useCreateProfile() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: NewProfileInput) => createProfile(input),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.all }),
+  });
+}
+
+export function useUpdateProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, patch }: { id: string; patch: ProfileUpdate }) => updateProfile(id, patch),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.all }),
   });
 }
