@@ -2,8 +2,12 @@ import { expect, test, type Page } from "@playwright/test";
 
 const MOBILE_VIEWPORT = { width: 375, height: 812 };
 
-function bottomNav(page: Page) {
-  return page.getByRole("navigation", { name: "Navegação inferior" });
+function sidebar(page: Page) {
+  return page.getByRole("navigation", { name: "Navegação principal" });
+}
+
+async function openMenu(page: Page) {
+  await page.getByRole("button", { name: "Alternar menu" }).click();
 }
 
 async function login(page: Page, usuario: string, senha: string) {
@@ -39,7 +43,7 @@ test.describe("visão por papel", () => {
 
     await expect(page.getByText("Meus alunos")).toBeVisible();
 
-    const nav = bottomNav(page);
+    const nav = sidebar(page);
     await expect(nav.getByRole("link")).toHaveCount(2);
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
@@ -53,7 +57,7 @@ test.describe("visão por papel", () => {
   test("admin vê Painel, Alunos, Relatórios e Perfis, e abre /users", async ({ page }) => {
     await login(page, "ana", "admin123");
 
-    const nav = bottomNav(page);
+    const nav = sidebar(page);
     await expect(nav.getByRole("link")).toHaveCount(4);
     await expect(nav.getByRole("link", { name: "Painel" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
@@ -62,6 +66,7 @@ test.describe("visão por papel", () => {
 
     await page.screenshot({ path: "e2e/auth/evidencias/admin-home.png", fullPage: true });
 
+    await openMenu(page);
     await nav.getByRole("link", { name: "Perfis" }).click();
     await expect(page).toHaveURL("/users");
     await expect(page.getByRole("heading", { name: "Perfis", exact: true })).toBeVisible();
@@ -74,7 +79,7 @@ test.describe("visão por papel", () => {
   }) => {
     await login(page, "carla", "coord123");
 
-    const nav = bottomNav(page);
+    const nav = sidebar(page);
     await expect(nav.getByRole("link")).toHaveCount(3);
     await expect(nav.getByRole("link", { name: "Painel" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
@@ -137,7 +142,7 @@ test.describe("gestão de perfis (admin)", () => {
 
     await login(page, "teste", "teste123");
     await expect(page.getByText("Meus alunos")).toBeVisible();
-    await expect(bottomNav(page).getByRole("link")).toHaveCount(2);
+    await expect(sidebar(page).getByRole("link")).toHaveCount(2);
 
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-criado-login.png", fullPage: true });
   });
