@@ -7,6 +7,8 @@ import { useSchoolEvents } from "@/entities/school-event/queries";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useAttendanceRecordsByStudent } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
+import { useGradesByStudent } from "@/entities/grade/queries";
+import { useSubjects } from "@/entities/subject/queries";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
 import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
@@ -14,6 +16,7 @@ import Badge from "@tailadmin/components/ui/badge/Badge";
 import Button from "@tailadmin/components/ui/button/Button";
 import { DownloadIcon } from "@tailadmin/icons";
 import { AttendanceCalendar, type DayEvent } from "./AttendanceCalendar";
+import { AcademicPanel } from "./AcademicPanel";
 
 const control =
   "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
@@ -39,6 +42,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   const { data: chamadas } = useAttendanceSessions();
   const { data: presencas, isLoading: carregandoPresencas } = useAttendanceRecordsByStudent(studentId);
   const { data: eventosEscolares } = useSchoolEvents();
+  const { data: notas } = useGradesByStudent(studentId);
+  const { data: materias } = useSubjects();
 
   if (carregandoAluno) {
     return <p className="text-sm text-gray-500">Carregando aluno…</p>;
@@ -162,6 +167,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           )}
         </section>
       </div>
+
+      <AcademicPanel grades={notas ?? []} subjects={materias ?? []} />
     </div>
   );
 }
