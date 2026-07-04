@@ -112,7 +112,7 @@ export function ProfilesAdmin() {
             </p>
           )}
 
-          <Button type="submit" disabled={createProfile.isPending}>
+          <Button type="submit" size="sm" disabled={createProfile.isPending}>
             {createProfile.isPending ? "Criando…" : "Criar perfil"}
           </Button>
         </form>
