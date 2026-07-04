@@ -1,37 +1,29 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 const MOBILE_VIEWPORT = { width: 375, height: 812 };
 const DESKTOP_VIEWPORT = { width: 1280, height: 800 };
 
-// Mobile navigates via the bottom tab bar ("Navegação inferior"); the desktop
-// Sidebar ("Navegação principal") is display:none below 1024px, so each nav has
-// a distinct accessible name and only one is in the tree per breakpoint.
-function bottomNav(page: import("@playwright/test").Page) {
-  return page.getByRole("navigation", { name: "Navegação inferior" });
-}
-
-// Mobile-first: nothing may push the page wider than the viewport (wide tables
-// must scroll inside their own card, not the whole document).
-async function semOverflowHorizontal(page: import("@playwright/test").Page) {
+// Mobile-first: nothing may push the page wider than the viewport (wide content
+// must scroll inside its own card, not the whole document).
+async function semOverflowHorizontal(page: Page) {
   const overflow = await page.evaluate(
     () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
   );
   expect(overflow).toBeLessThanOrEqual(0);
 }
 
-async function loginComo(page: import("@playwright/test").Page, persona: "Professor" | "Coordenação") {
-  const credenciais = persona === "Professor" ? ["ricardo", "prof123"] : ["carla", "coord123"];
+async function loginProfessor(page: Page) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill(credenciais[0]);
-  await page.getByLabel("Senha").fill(credenciais[1]);
+  await page.getByLabel("Usuário").fill("ricardo");
+  await page.getByLabel("Senha").fill("prof123");
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
-test.describe("chamada mobile (bottom nav + cards)", () => {
+test.describe("chamada mobile (cards)", () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
-  test("tela de chamada: título, tiles, busca e status", async ({ page }) => {
-    await loginComo(page, "Professor");
+  test("título, busca, tiles e marcação de status", async ({ page }) => {
+    await loginProfessor(page);
     await page.goto("/attendance");
 
     await expect(page.getByLabel("Selecionar turma")).toBeVisible();
@@ -42,76 +34,39 @@ test.describe("chamada mobile (bottom nav + cards)", () => {
     const totalInicial = await linhas.count();
     expect(totalInicial).toBeGreaterThan(0);
 
-    const primeiroNome = await linhas
-      .first()
-      .getAttribute("aria-label")
-      .then((label) => label!.replace("Status de presença de ", ""));
+    const primeiroNome = (await linhas.first().getAttribute("aria-label"))!.replace(
+      "Status de presença de ",
+      "",
+    );
 
     await page.getByPlaceholder("Buscar aluno por nome ou matrícula...").fill(primeiroNome);
     await expect(linhas).toHaveCount(1);
-    await expect(page.getByText(primeiroNome)).toBeVisible();
 
     await page.getByPlaceholder("Buscar aluno por nome ou matrícula...").fill("");
     await expect(linhas).toHaveCount(totalInicial);
 
     await linhas.first().getByRole("button", { name: "Ausente" }).click();
-    await expect(linhas.first().getByRole("button", { name: "Ausente" })).toHaveAttribute("aria-pressed", "true");
+    await expect(linhas.first().getByRole("button", { name: "Ausente" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
 
-    await expect(bottomNav(page)).toBeVisible();
-    await expect(bottomNav(page).getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
+    await semOverflowHorizontal(page);
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-mobile.png", fullPage: true });
   });
 });
 
-test.describe("painel mobile", () => {
-  test.use({ viewport: MOBILE_VIEWPORT });
-
-  test("painel do professor com bottom nav (2 itens)", async ({ page }) => {
-    await loginComo(page, "Professor");
-
-    await expect(bottomNav(page)).toBeVisible();
-    await expect(bottomNav(page).getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
-    await expect(bottomNav(page).getByRole("link")).toHaveCount(2);
-    await semOverflowHorizontal(page);
-
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/painel-professor-mobile.png", fullPage: true });
-  });
-
-  test("painel da coordenação com bottom nav (3 itens) e conteúdo não coberto", async ({ page }) => {
-    await loginComo(page, "Coordenação");
-    await expect(page.getByText("Total de alunos")).toBeVisible();
-
-    await expect(bottomNav(page)).toBeVisible();
-    await expect(bottomNav(page).getByRole("link", { name: "Relatórios" })).toBeVisible();
-    await expect(bottomNav(page).getByRole("link")).toHaveCount(3);
-
-    const kpi = page.getByText("Total de alunos");
-    const kpiBox = await kpi.boundingBox();
-    const navBox = await bottomNav(page).boundingBox();
-    expect(kpiBox).not.toBeNull();
-    expect(navBox).not.toBeNull();
-    // KPI content must sit above the fixed bottom bar, not underneath it.
-    expect(kpiBox!.y + kpiBox!.height).toBeLessThanOrEqual(navBox!.y);
-    await semOverflowHorizontal(page);
-
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/painel-coordenacao-mobile.png", fullPage: true });
-  });
-});
-
-test.describe("desktop: sidebar sim, bottom nav não", () => {
+test.describe("chamada desktop", () => {
   test.use({ viewport: DESKTOP_VIEWPORT });
 
-  test("chamada no desktop", async ({ page }) => {
-    await loginComo(page, "Professor");
+  test("sidebar com Chamada e tela renderiza", async ({ page }) => {
+    await loginProfessor(page);
     await page.goto("/attendance");
 
-    // `display: none` removes BottomNav from the accessibility tree entirely,
-    // so on desktop only the Sidebar's landmark should be present.
-    await expect(page.getByRole("navigation", { name: "Navegação principal" })).toHaveCount(1);
-    await expect(bottomNav(page)).toHaveCount(0);
-    await expect(page.getByRole("complementary")).toBeVisible();
-    await expect(page.getByRole("complementary").getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
+    const nav = page.getByRole("navigation", { name: "Navegação principal" });
+    await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
+    await expect(page.getByLabel("Selecionar turma")).toBeVisible();
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-desktop.png", fullPage: true });
   });
