@@ -3,7 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useStudents } from "@/entities/student/queries";
+import { useStudents, useDeleteStudent } from "@/entities/student/queries";
+import type { Student } from "@/entities/student/model";
 import type { AttendanceRecord } from "@/entities/attendance-record/model";
 import { useAttendanceRecords } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
@@ -12,8 +13,10 @@ import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Badge } from "@/shared/ui/Badge/Badge";
+import { Button } from "@/shared/ui/Button/Button";
 import buttonStyles from "@/shared/ui/Button/Button.module.css";
 import { Card } from "@/shared/ui/Card/Card";
+import { StudentForm } from "./StudentForm";
 import { cx } from "@/shared/ui/cx";
 import { Icon } from "@/shared/ui/Icon/Icon";
 import { SearchInput } from "@/shared/ui/SearchInput/SearchInput";
@@ -30,6 +33,10 @@ export function StudentList() {
   const searchParams = useSearchParams();
   const [busca, setBusca] = useState(() => searchParams.get("q") ?? "");
   const filtroRisco = searchParams.get("filtro") === "risco";
+
+  // undefined = fechado, null = novo aluno, Student = editando.
+  const [formAluno, setFormAluno] = useState<Student | null | undefined>(undefined);
+  const deleteStudent = useDeleteStudent();
 
   const carregando =
     carregandoSessao || carregandoAlunos || carregandoTurmas || carregandoPresencas;
@@ -95,13 +102,30 @@ export function StudentList() {
           <h1 className={styles.title}>{titulo}</h1>
           <p className={styles.subtitulo}>{subtitulo}</p>
         </div>
-        <SearchInput
-          value={busca}
-          onChange={setBusca}
-          placeholder="Buscar por nome ou matrícula"
-          className={styles.busca}
-        />
+        <div className={styles.headerAcoes}>
+          <SearchInput
+            value={busca}
+            onChange={setBusca}
+            placeholder="Buscar por nome ou matrícula"
+            className={styles.busca}
+          />
+          {!isProfessor && (
+            <Button leftIcon={<Icon name="plus" size={16} />} onClick={() => setFormAluno(null)}>
+              Adicionar aluno
+            </Button>
+          )}
+        </div>
       </header>
+
+      {formAluno !== undefined && (
+        <Card>
+          <StudentForm
+            student={formAluno}
+            groups={turmas ?? []}
+            onClose={() => setFormAluno(undefined)}
+          />
+        </Card>
+      )}
 
       <Card>
         <div className={styles.tableScroll}>
@@ -161,13 +185,30 @@ export function StudentList() {
                       </TD>
                       {!isProfessor && (
                         <TD>
-                          <Link
-                            href={"/reports/" + aluno.id}
-                            className={cx(buttonStyles.button, buttonStyles.outlined, buttonStyles.sm)}
-                          >
-                            <Icon name="relatorios" size={16} />
-                            Ver relatório
-                          </Link>
+                          <div className={styles.acoesLinha}>
+                            <Link
+                              href={"/reports/" + aluno.id}
+                              className={cx(buttonStyles.button, buttonStyles.outlined, buttonStyles.sm)}
+                            >
+                              <Icon name="relatorios" size={16} />
+                              Ver
+                            </Link>
+                            <Button variant="outlined" size="sm" onClick={() => setFormAluno(aluno)}>
+                              Editar
+                            </Button>
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              disabled={deleteStudent.isPending}
+                              onClick={() => {
+                                if (window.confirm(`Excluir o aluno ${aluno.name}?`)) {
+                                  deleteStudent.mutate(aluno.id);
+                                }
+                              }}
+                            >
+                              Excluir
+                            </Button>
+                          </div>
                         </TD>
                       )}
                     </TR>
