@@ -1,0 +1,140 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.titulo {
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  color: var(--color-text);
+}
+
+.subtitulo {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.formCard,
+.listaCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.secaoTitulo {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.campo label {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.campo input,
+.campo select {
+  height: 44px;
+  padding: 0 var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  color: var(--color-text);
+}
+
+.campo input:focus-visible,
+.campo select:focus-visible {
+  border-color: var(--color-primary);
+  outline: 2px solid var(--color-primary-soft);
+  outline-offset: 0;
+}
+
+.erro {
+  grid-column: 1 / -1;
+  font-size: var(--text-sm);
+  color: var(--color-danger-hover);
+}
+
+.ok {
+  grid-column: 1 / -1;
+  font-size: var(--text-sm);
+  color: var(--color-secondary-hover);
+}
+
+.form :global(button[type="submit"]) {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.nome {
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.meta {
+  font-size: var(--text-xs);
+  color: var(--color-text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vazio {
+  padding: var(--space-6) 0;
+  text-align: center;
+  color: var(--color-text-subtle);
+  font-size: var(--text-sm);
+}
