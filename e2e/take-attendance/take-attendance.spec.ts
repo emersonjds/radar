@@ -10,6 +10,15 @@ function bottomNav(page: import("@playwright/test").Page) {
   return page.getByRole("navigation", { name: "Navegação inferior" });
 }
 
+// Mobile-first: nothing may push the page wider than the viewport (wide tables
+// must scroll inside their own card, not the whole document).
+async function semOverflowHorizontal(page: import("@playwright/test").Page) {
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
+}
+
 async function loginComo(page: import("@playwright/test").Page, persona: "Professor" | "Coordenação") {
   await page.goto("/login");
   await page.getByRole("button", { name: persona }).click();
@@ -63,6 +72,7 @@ test.describe("painel mobile", () => {
     await expect(bottomNav(page)).toBeVisible();
     await expect(bottomNav(page).getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(bottomNav(page).getByRole("link")).toHaveCount(4);
+    await semOverflowHorizontal(page);
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/painel-professor-mobile.png", fullPage: true });
   });
@@ -84,6 +94,7 @@ test.describe("painel mobile", () => {
     expect(navBox).not.toBeNull();
     // KPI content must sit above the fixed bottom bar, not underneath it.
     expect(kpiBox!.y + kpiBox!.height).toBeLessThanOrEqual(navBox!.y);
+    await semOverflowHorizontal(page);
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/painel-coordenacao-mobile.png", fullPage: true });
   });
