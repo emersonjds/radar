@@ -25,6 +25,7 @@ export function ProfilesAdmin() {
 
   async function criar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (createProfile.isPending) return;
     setErro(null);
     setCriado(null);
     try {

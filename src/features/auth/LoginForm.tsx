@@ -16,6 +16,7 @@ export function LoginForm() {
 
   async function entrar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (entrando) return;
     setErro(null);
     setEntrando(true);
     try {
