@@ -12,6 +12,8 @@ import { useSession } from "@/features/session/use-session";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Button } from "@/shared/ui/Button/Button";
 import { Card } from "@/shared/ui/Card/Card";
+import { Icon } from "@/shared/ui/Icon/Icon";
+import { IconButton } from "@/shared/ui/IconButton/IconButton";
 import styles from "./ProfilesAdmin.module.css";
 
 const ROLES = roleSchema.options;
@@ -134,17 +136,21 @@ export function ProfilesAdmin() {
                   {perfil.active ? "Ativo" : "Inativo"}
                 </Badge>
                 <div className={styles.acoes}>
-                  <Button
-                    variant="outlined"
+                  <IconButton
+                    tone="ghost"
                     size="sm"
+                    label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
+                    title={perfil.active ? "Desativar" : "Ativar"}
                     disabled={perfil.id === profileId || setActive.isPending}
                     onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
                   >
-                    {perfil.active ? "Desativar" : "Ativar"}
-                  </Button>
-                  <Button
-                    variant="danger"
+                    <Icon name="power" size={18} />
+                  </IconButton>
+                  <IconButton
+                    tone="ghostDanger"
                     size="sm"
+                    label={`Excluir ${perfil.name}`}
+                    title="Excluir"
                     disabled={perfil.id === profileId || deleteProfile.isPending}
                     onClick={() => {
                       if (window.confirm(`Excluir o perfil de ${perfil.name}?`)) {
@@ -152,8 +158,8 @@ export function ProfilesAdmin() {
                       }
                     }}
                   >
-                    Excluir
-                  </Button>
+                    <Icon name="trash" size={18} />
+                  </IconButton>
                 </div>
               </li>
             ))}
