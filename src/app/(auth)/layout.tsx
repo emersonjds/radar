@@ -1,7 +1,9 @@
-import styles from "./layout.module.css";
-
 export default function AuthLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return <div className={styles.wrap}>{children}</div>;
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
+      {children}
+    </div>
+  );
 }

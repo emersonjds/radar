@@ -3,9 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { setSession } from "@/features/session/session-store";
-import { Button } from "@/shared/ui/Button/Button";
+import Button from "@/shared/ui/tailadmin/Button";
+import Label from "@/shared/ui/tailadmin/Label";
 import { authenticate } from "./authenticate";
-import styles from "./LoginForm.module.css";
+
+const inputClasses =
+  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
 
 export function LoginForm() {
   const router = useRouter();
@@ -33,14 +36,17 @@ export function LoginForm() {
   }
 
   return (
-    <form className={styles.card} onSubmit={entrar}>
-      <div className={styles.brand}>
-        <span className={styles.mark}>Radar</span>
-        <span className={styles.sub}>Presença escolar</span>
+    <form
+      onSubmit={entrar}
+      className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-sm"
+    >
+      <div className="mb-8">
+        <span className="text-2xl font-bold text-brand-500">Radar</span>
+        <p className="mt-1 text-sm text-gray-500">Presença escolar</p>
       </div>
 
-      <div className={styles.field}>
-        <label htmlFor="usuario">Usuário</label>
+      <div className="mb-5">
+        <Label htmlFor="usuario">Usuário</Label>
         <input
           id="usuario"
           type="text"
@@ -50,11 +56,12 @@ export function LoginForm() {
           value={usuario}
           onChange={(event) => setUsuario(event.target.value)}
           required
+          className={inputClasses}
         />
       </div>
 
-      <div className={styles.field}>
-        <label htmlFor="senha">Senha</label>
+      <div className="mb-5">
+        <Label htmlFor="senha">Senha</Label>
         <input
           id="senha"
           type="password"
@@ -63,16 +70,20 @@ export function LoginForm() {
           value={senha}
           onChange={(event) => setSenha(event.target.value)}
           required
+          className={inputClasses}
         />
       </div>
 
       {erro && (
-        <p className={styles.erro} role="alert">
+        <p
+          role="alert"
+          className="mb-5 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600"
+        >
           {erro}
         </p>
       )}
 
-      <Button type="submit" fullWidth disabled={entrando}>
+      <Button className="w-full" disabled={entrando}>
         {entrando ? "Entrando…" : "Entrar"}
       </Button>
     </form>
