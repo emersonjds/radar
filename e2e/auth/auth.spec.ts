@@ -121,8 +121,7 @@ test.describe("gestão de perfis (admin)", () => {
     await page.goto("/users");
 
     await page.getByLabel("Nome").fill("Perfil de Teste");
-    await page.getByLabel("Usuário").fill("teste");
-    await page.getByLabel("E-mail").fill("teste@radar.escola");
+    await page.getByLabel("Login de usuário").fill("teste");
     await page.getByLabel("Papel").selectOption("teacher");
     await page.getByLabel("Senha").fill("teste123");
     await page.getByRole("button", { name: "Criar perfil" }).click();
