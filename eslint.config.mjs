@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored TailAdmin template — kept verbatim as the base, not adapted.
+    "src/shared/tailadmin/**",
   ]),
 ]);
 
