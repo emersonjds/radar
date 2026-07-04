@@ -9,10 +9,12 @@ import {
   useSetProfileActive,
 } from "@/entities/profile/queries";
 import { useSession } from "@/features/session/use-session";
+import type { PublicProfile } from "@/entities/profile/api";
+import { ProfileFormModal } from "./ProfileFormModal";
 import Badge from "@tailadmin/components/ui/badge/Badge";
 import Button from "@tailadmin/components/ui/button/Button";
 import Label from "@tailadmin/components/form/Label";
-import { TrashBinIcon } from "@tailadmin/icons";
+import { PencilIcon, TrashBinIcon } from "@tailadmin/icons";
 
 const ROLES = roleSchema.options;
 const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };
@@ -41,6 +43,7 @@ export function ProfilesAdmin() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [erro, setErro] = useState<string | null>(null);
   const [criado, setCriado] = useState<string | null>(null);
+  const [editando, setEditando] = useState<PublicProfile | null>(null);
 
   async function criar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -161,6 +164,15 @@ export function ProfilesAdmin() {
                   <button
                     type="button"
                     className={acaoBtn}
+                    aria-label={`Editar ${perfil.name}`}
+                    title="Editar"
+                    onClick={() => setEditando(perfil)}
+                  >
+                    <PencilIcon className="size-[18px]" />
+                  </button>
+                  <button
+                    type="button"
+                    className={acaoBtn}
                     aria-label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
                     title={perfil.active ? "Desativar" : "Ativar"}
                     disabled={perfil.id === profileId || setActive.isPending}
@@ -188,6 +200,8 @@ export function ProfilesAdmin() {
           </ul>
         )}
       </section>
+
+      <ProfileFormModal profile={editando} onClose={() => setEditando(null)} />
     </div>
   );
 }
