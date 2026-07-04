@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { resetDb } from "@/shared/lib/storage/db";
-import { authenticate } from "@/features/auth/authenticate";
-import { createProfile, fetchProfiles, setProfileActive } from "./api";
+import { createProfile, fetchProfiles, setProfileActive } from "@/entities/profile/api";
+import { authenticate } from "./authenticate";
 
 describe("profile management + auth (integration, over the store)", () => {
   beforeEach(async () => {
@@ -39,6 +39,18 @@ describe("profile management + auth (integration, over the store)", () => {
         password: "segredo123",
       }),
     ).rejects.toThrow(/já está em uso/);
+  });
+
+  it("rejects a password shorter than the minimum", async () => {
+    await expect(
+      createProfile({
+        name: "Senha Curta",
+        username: "curto",
+        email: "curto@radar.escola",
+        role: "teacher",
+        password: "123",
+      }),
+    ).rejects.toThrow(/pelo menos 6/);
   });
 
   it("blocks login for a deactivated profile", async () => {
