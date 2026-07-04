@@ -147,6 +147,28 @@ test.describe("gestão de perfis (admin)", () => {
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-criado-login.png", fullPage: true });
   });
 
+  test("admin edita papel e senha de um perfil, e a mudança vale no login", async ({ page }) => {
+    await login(page, "ana", "admin123");
+    await page.goto("/users");
+
+    const item = page.getByRole("listitem").filter({ hasText: "Ricardo Alves" });
+    await expect(item.getByText("Professor")).toBeVisible();
+    await item.getByRole("button", { name: "Editar Ricardo Alves" }).click();
+
+    const modal = page.locator("form").filter({ hasText: "Editar perfil" });
+    await modal.getByLabel("Papel").selectOption("admin");
+    await modal.getByLabel("Nova senha").fill("novasenha1");
+    await modal.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(item.getByText("Administrador")).toBeVisible();
+
+    await page.screenshot({ path: "e2e/auth/evidencias/perfil-editado.png", fullPage: true });
+
+    await page.getByRole("button", { name: "Sair" }).click();
+    await login(page, "ricardo", "novasenha1");
+    await expect(sidebar(page).getByRole("link")).toHaveCount(4);
+  });
+
   test("admin desativa um perfil e o badge vira Inativo", async ({ page }) => {
     await login(page, "ana", "admin123");
     await page.goto("/users");
