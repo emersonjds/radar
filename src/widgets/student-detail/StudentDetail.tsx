@@ -118,7 +118,6 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <Avatar name={aluno.name} size={72} />
             <div>
               <h2 className={styles.name}>{aluno.name}</h2>
-              <p className={styles.enrollment}>ID: {aluno.enrollment}</p>
               <Badge tone={aluno.active ? "success" : "danger"}>
                 {aluno.active ? "ATIVO" : "INATIVO"}
               </Badge>
