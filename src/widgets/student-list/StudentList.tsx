@@ -109,7 +109,11 @@ export function StudentList() {
             className={styles.busca}
           />
           {!isProfessor && (
-            <Button leftIcon={<Icon name="plus" size={16} />} onClick={() => setFormAluno(null)}>
+            <Button
+              className={styles.botaoAdicionar}
+              leftIcon={<Icon name="plus" size={16} />}
+              onClick={() => setFormAluno(null)}
+            >
               Adicionar aluno
             </Button>
           )}
