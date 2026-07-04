@@ -12,15 +12,23 @@ export interface AppHeaderProps {
 export function AppHeader({ name, jobTitle, onLogout }: AppHeaderProps) {
   const { toggleSidebar, toggleMobileSidebar } = useSidebar();
 
+  // lg breakpoint (1024px) controls which sidebar the toggle drives: the
+  // collapsible desktop rail vs. the mobile slide-in drawer. Firing both at
+  // once leaves isMobileOpen set on desktop, which pins the rail open.
+  const handleToggle = () => {
+    if (window.innerWidth >= 1024) {
+      toggleSidebar();
+    } else {
+      toggleMobileSidebar();
+    }
+  };
+
   return (
     <header className="sticky top-0 z-30 flex w-full border-b border-gray-200 bg-white">
       <div className="flex w-full items-center justify-between gap-2 px-4 py-3 lg:px-6">
         <button
           aria-label="Alternar menu"
-          onClick={() => {
-            toggleSidebar();
-            toggleMobileSidebar();
-          }}
+          onClick={handleToggle}
           className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50"
         >
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
