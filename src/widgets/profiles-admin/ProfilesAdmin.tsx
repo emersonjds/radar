@@ -9,16 +9,27 @@ import {
   useSetProfileActive,
 } from "@/entities/profile/queries";
 import { useSession } from "@/features/session/use-session";
-import { Badge } from "@/shared/ui/Badge/Badge";
-import { Button } from "@/shared/ui/Button/Button";
-import { Card } from "@/shared/ui/Card/Card";
-import { Icon } from "@/shared/ui/Icon/Icon";
-import { IconButton } from "@/shared/ui/IconButton/IconButton";
-import styles from "./ProfilesAdmin.module.css";
+import Badge from "@/shared/ui/tailadmin/Badge";
+import Button from "@/shared/ui/tailadmin/Button";
+import Label from "@/shared/ui/tailadmin/Label";
+import { TrashBinIcon } from "@/shared/icons";
 
 const ROLES = roleSchema.options;
-
 const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };
+
+const control =
+  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+const acaoBtn =
+  "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40";
+
+function PowerIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="3.5" x2="12" y2="12" />
+      <path d="M7.5 7a6.5 6.5 0 1 0 9 0" />
+    </svg>
+  );
+}
 
 export function ProfilesAdmin() {
   const { profileId } = useSession();
@@ -46,110 +57,121 @@ export function ProfilesAdmin() {
   }
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <h1 className={styles.titulo}>Perfis</h1>
-        <p className={styles.subtitulo}>Crie e gerencie os acessos abaixo de você.</p>
+    <div className="flex flex-col gap-6">
+      <header>
+        <h1 className="text-2xl font-bold text-gray-800">Perfis</h1>
+        <p className="mt-1 text-sm text-gray-500">Crie e gerencie os acessos abaixo de você.</p>
       </header>
 
-      <Card as="section" className={styles.formCard}>
-        <h2 className={styles.secaoTitulo}>Novo perfil</h2>
-        <form className={styles.form} onSubmit={criar}>
-          <div className={styles.campo}>
-            <label htmlFor="perfil-nome">Nome</label>
-            <input
-              id="perfil-nome"
-              value={form.name}
-              onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
-              required
-            />
-          </div>
-          <div className={styles.campo}>
-            <label htmlFor="perfil-usuario">Login de usuário</label>
-            <input
-              id="perfil-usuario"
-              autoCapitalize="none"
-              value={form.username}
-              onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
-              required
-            />
-          </div>
-          <div className={styles.campo}>
-            <label htmlFor="perfil-papel">Papel</label>
-            <select
-              id="perfil-papel"
-              value={form.role}
-              onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value as Role }))}
-            >
-              {ROLES.map((role) => (
-                <option key={role} value={role}>
-                  {roleLabels[role]}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className={styles.campo}>
-            <label htmlFor="perfil-senha">Senha</label>
-            <input
-              id="perfil-senha"
-              type="password"
-              minLength={6}
-              autoComplete="new-password"
-              value={form.password}
-              onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
-              required
-            />
+      <section className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
+        <h2 className="mb-5 text-lg font-semibold text-gray-800">Novo perfil</h2>
+        <form onSubmit={criar} className="flex flex-col gap-5">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="perfil-nome">Nome</Label>
+              <input
+                id="perfil-nome"
+                value={form.name}
+                onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                required
+                className={control}
+              />
+            </div>
+            <div>
+              <Label htmlFor="perfil-usuario">Login de usuário</Label>
+              <input
+                id="perfil-usuario"
+                autoCapitalize="none"
+                value={form.username}
+                onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
+                required
+                className={control}
+              />
+            </div>
+            <div>
+              <Label htmlFor="perfil-papel">Papel</Label>
+              <select
+                id="perfil-papel"
+                value={form.role}
+                onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value as Role }))}
+                className={control}
+              >
+                {ROLES.map((role) => (
+                  <option key={role} value={role}>
+                    {roleLabels[role]}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <Label htmlFor="perfil-senha">Senha</Label>
+              <input
+                id="perfil-senha"
+                type="password"
+                minLength={6}
+                autoComplete="new-password"
+                value={form.password}
+                onChange={(event) => setForm((prev) => ({ ...prev, password: event.target.value }))}
+                required
+                className={control}
+              />
+            </div>
           </div>
 
           {erro && (
-            <p className={styles.erro} role="alert">
+            <p role="alert" className="text-sm text-error-600">
               {erro}
             </p>
           )}
           {criado && (
-            <p className={styles.ok} role="status">
+            <p role="status" className="text-sm text-success-600">
               {criado}
             </p>
           )}
 
-          <Button type="submit" size="sm" disabled={createProfile.isPending}>
-            {createProfile.isPending ? "Criando…" : "Criar perfil"}
-          </Button>
+          <div>
+            <Button type="submit" size="sm" disabled={createProfile.isPending}>
+              {createProfile.isPending ? "Criando…" : "Criar perfil"}
+            </Button>
+          </div>
         </form>
-      </Card>
+      </section>
 
-      <Card as="section" className={styles.listaCard}>
-        <h2 className={styles.secaoTitulo}>Perfis existentes</h2>
+      <section className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
+        <h2 className="mb-5 text-lg font-semibold text-gray-800">Perfis existentes</h2>
         {isLoading ? (
-          <p className={styles.vazio}>Carregando…</p>
+          <p className="text-sm text-gray-500">Carregando…</p>
         ) : (
-          <ul className={styles.lista}>
+          <ul className="flex flex-col gap-3">
             {(perfis ?? []).map((perfil) => (
-              <li key={perfil.id} className={styles.item}>
-                <div className={styles.info}>
-                  <span className={styles.nome}>{perfil.name}</span>
-                  <span className={styles.meta}>
+              <li
+                key={perfil.id}
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-100 px-4 py-3"
+              >
+                <div className="mr-auto min-w-0">
+                  <p className="font-medium text-gray-800">{perfil.name}</p>
+                  <p className="text-sm text-gray-500">
                     @{perfil.username} · {roleLabels[perfil.role]}
-                  </span>
+                  </p>
                 </div>
-                <Badge tone={perfil.active ? "success" : "neutral"}>
+                <Badge color={perfil.active ? "success" : "light"}>
                   {perfil.active ? "Ativo" : "Inativo"}
                 </Badge>
-                <div className={styles.acoes}>
-                  <IconButton
-                    tone="ghost"
-                    size="sm"
-                    label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
+                <div className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    className={acaoBtn}
+                    aria-label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
                     title={perfil.active ? "Desativar" : "Ativar"}
                     disabled={perfil.id === profileId || setActive.isPending}
                     onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
                   >
-                    <Icon name="power" size={18} />
-                  </IconButton>
-                  <IconButton
-                    tone="ghostDanger"
-                    size="sm"
-                    label={`Excluir ${perfil.name}`}
+                    <PowerIcon />
+                  </button>
+                  <button
+                    type="button"
+                    className={`${acaoBtn} hover:bg-error-50 hover:text-error-600`}
+                    aria-label={`Excluir ${perfil.name}`}
                     title="Excluir"
                     disabled={perfil.id === profileId || deleteProfile.isPending}
                     onClick={() => {
@@ -158,14 +180,14 @@ export function ProfilesAdmin() {
                       }
                     }}
                   >
-                    <Icon name="trash" size={18} />
-                  </IconButton>
+                    <TrashBinIcon />
+                  </button>
                 </div>
               </li>
             ))}
           </ul>
         )}
-      </Card>
+      </section>
     </div>
   );
 }
