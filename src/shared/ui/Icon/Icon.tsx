@@ -22,6 +22,8 @@ export type IconName =
   | "clock"
   | "calendar"
   | "menu"
+  | "edit"
+  | "trash"
   | "grade";
 
 export interface IconProps {
@@ -162,6 +164,21 @@ const paths: Record<IconName, ReactNode> = {
       <line x1="4" y1="6.5" x2="20" y2="6.5" />
       <line x1="4" y1="12" x2="20" y2="12" />
       <line x1="4" y1="17.5" x2="20" y2="17.5" />
+    </>
+  ),
+  edit: (
+    <>
+      <path d="M4 20h4L18.5 9.5a2 2 0 0 0-2.83-2.83L5 17v3Z" />
+      <path d="m14 8 2.8 2.8" />
+    </>
+  ),
+  trash: (
+    <>
+      <path d="M4 7h16" />
+      <path d="M9 7V4.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7" />
+      <path d="M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12" />
+      <line x1="10" y1="11" x2="10" y2="17" />
+      <line x1="14" y1="11" x2="14" y2="17" />
     </>
   ),
 };

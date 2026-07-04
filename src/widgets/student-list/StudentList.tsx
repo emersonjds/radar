@@ -14,7 +14,6 @@ import { formatPercent } from "@/shared/lib/format";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Button } from "@/shared/ui/Button/Button";
-import buttonStyles from "@/shared/ui/Button/Button.module.css";
 import { Card } from "@/shared/ui/Card/Card";
 import { StudentForm } from "./StudentForm";
 import { cx } from "@/shared/ui/cx";
@@ -188,17 +187,26 @@ export function StudentList() {
                           <div className={styles.acoesLinha}>
                             <Link
                               href={"/reports/" + aluno.id}
-                              className={cx(buttonStyles.button, buttonStyles.outlined, buttonStyles.sm)}
+                              className={styles.acaoIcone}
+                              aria-label={`Ver relatório de ${aluno.name}`}
+                              title="Ver relatório"
                             >
-                              <Icon name="relatorios" size={16} />
-                              Ver
+                              <Icon name="relatorios" size={18} />
                             </Link>
-                            <Button variant="outlined" size="sm" onClick={() => setFormAluno(aluno)}>
-                              Editar
-                            </Button>
-                            <Button
-                              variant="danger"
-                              size="sm"
+                            <button
+                              type="button"
+                              className={styles.acaoIcone}
+                              aria-label={`Editar ${aluno.name}`}
+                              title="Editar"
+                              onClick={() => setFormAluno(aluno)}
+                            >
+                              <Icon name="edit" size={18} />
+                            </button>
+                            <button
+                              type="button"
+                              className={cx(styles.acaoIcone, styles.acaoExcluir)}
+                              aria-label={`Excluir ${aluno.name}`}
+                              title="Excluir"
                               disabled={deleteStudent.isPending}
                               onClick={() => {
                                 if (window.confirm(`Excluir o aluno ${aluno.name}?`)) {
@@ -206,8 +214,8 @@ export function StudentList() {
                                 }
                               }}
                             >
-                              Excluir
-                            </Button>
+                              <Icon name="trash" size={18} />
+                            </button>
                           </div>
                         </TD>
                       )}
