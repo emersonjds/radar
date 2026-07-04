@@ -33,6 +33,30 @@ const NOMES = [
   "Lara Nunes", "Mateus Rocha", "Nina Barros",
 ];
 
+// 8 matérias, 2 por área — base para notas, matérias de destaque e aptidão.
+const MATERIAS = [
+  { id: "materia-matematica", name: "Matemática", area: "exatas" },
+  { id: "materia-fisica", name: "Física", area: "exatas" },
+  { id: "materia-biologia", name: "Biologia", area: "biologicas" },
+  { id: "materia-quimica", name: "Química", area: "biologicas" },
+  { id: "materia-portugues", name: "Português", area: "linguagens" },
+  { id: "materia-ingles", name: "Inglês", area: "linguagens" },
+  { id: "materia-historia", name: "História", area: "humanas" },
+  { id: "materia-geografia", name: "Geografia", area: "humanas" },
+] as const;
+
+const AREAS_SEED = ["exatas", "biologicas", "linguagens", "humanas"] as const;
+
+// Nota determinística: cada aluno tem uma área preferida (ciclando pelo índice),
+// onde tira notas altas; nas demais, mais baixas — gera aptidões variadas.
+function scoreFor(alunoIdx: number, materiaIdx: number, area: string): number {
+  const areaPreferida = AREAS_SEED[alunoIdx % AREAS_SEED.length];
+  const base = area === areaPreferida ? 8.6 : 5.8;
+  const wobble = (((alunoIdx * 5 + materiaIdx * 3) % 17) - 8) / 10;
+  const bruto = base + wobble;
+  return Math.max(0, Math.min(10, Math.round(bruto * 10) / 10));
+}
+
 type SeedStatus = "present" | "absent" | "late" | "excused";
 
 // Students carrying more absences — drives the "aluno em risco" panels.
@@ -101,6 +125,21 @@ export function seedDb(): Db {
     { id: "evento-recuperacao-julho", type: "makeup", title: "Recuperação semestral", startDate: "2026-07-27", endDate: "2026-07-31" },
   ];
 
+  const materias = MATERIAS.map((materia) => ({ ...materia }));
+
+  const notas: Db["grades"] = [];
+  for (const aluno of alunos) {
+    const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
+    MATERIAS.forEach((materia, materiaIdx) => {
+      notas.push({
+        id: `nota-${aluno.id}-${materia.id}`,
+        studentId: aluno.id,
+        subjectId: materia.id,
+        score: scoreFor(alunoIdx, materiaIdx, materia.area),
+      });
+    });
+  }
+
   return {
     profiles: perfis,
     groups: turmas,
@@ -108,5 +147,7 @@ export function seedDb(): Db {
     attendanceSessions: chamadas,
     attendanceRecords: presencas,
     schoolEvents: eventosEscolares,
+    subjects: materias,
+    grades: notas,
   };
 }
