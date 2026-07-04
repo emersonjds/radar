@@ -3,12 +3,11 @@ import { expect, test } from "@playwright/test";
 const MOBILE_VIEWPORT = { width: 375, height: 812 };
 const DESKTOP_VIEWPORT = { width: 1280, height: 800 };
 
-// Sidebar and BottomNav share the same accessible name ("Navegação principal"),
-// so `getByRole` alone is ambiguous (strict-mode violation). BottomNav is the
-// last <nav> in the AppShell DOM order — scope explicitly instead of relying
-// on visibility to disambiguate.
+// Mobile navigates via the bottom tab bar ("Navegação inferior"); the desktop
+// Sidebar ("Navegação principal") is display:none below 1024px, so each nav has
+// a distinct accessible name and only one is in the tree per breakpoint.
 function bottomNav(page: import("@playwright/test").Page) {
-  return page.getByRole("navigation", { name: "Navegação principal" }).last();
+  return page.getByRole("navigation", { name: "Navegação inferior" });
 }
 
 async function loginComo(page: import("@playwright/test").Page, persona: "Professor" | "Coordenação") {
@@ -97,8 +96,9 @@ test.describe("desktop: sidebar sim, bottom nav não", () => {
     await page.goto("/attendance");
 
     // `display: none` removes BottomNav from the accessibility tree entirely,
-    // so on desktop only the Sidebar's landmark should be queryable at all.
+    // so on desktop only the Sidebar's landmark should be present.
     await expect(page.getByRole("navigation", { name: "Navegação principal" })).toHaveCount(1);
+    await expect(bottomNav(page)).toHaveCount(0);
     await expect(page.getByRole("complementary")).toBeVisible();
     await expect(page.getByRole("complementary").getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
 
