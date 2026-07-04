@@ -1,11 +1,8 @@
 import { useState } from "react";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import type { SchoolEventType } from "@/entities/school-event/model";
-import { IconButton } from "@/shared/ui/IconButton/IconButton";
-import { Icon } from "@/shared/ui/Icon/Icon";
 import { formatDateLong } from "@/shared/lib/format";
-import { cx } from "@/shared/ui/cx";
-import styles from "./AttendanceCalendar.module.css";
+import { ChevronLeftIcon } from "@/shared/icons";
 
 export interface DayEvent {
   type: SchoolEventType;
@@ -37,6 +34,19 @@ const LABEL_EVENTO: Record<DayEvent["type"], string> = {
   event: "Evento",
 };
 
+const STATUS_BG: Record<AttendanceStatus, string> = {
+  present: "bg-success-500 text-white",
+  late: "bg-warning-500 text-white",
+  absent: "bg-error-500 text-white",
+  excused: "bg-brand-500 text-white",
+};
+
+const EVENTO_DOT: Record<DayEvent["type"], string> = {
+  vacation: "bg-brand-500",
+  makeup: "bg-warning-500",
+  event: "bg-gray-400",
+};
+
 /** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
 function deslocarMes(mes: string, delta: number): string {
   const [ano, mesNumero] = mes.split("-").map(Number);
@@ -44,10 +54,8 @@ function deslocarMes(mes: string, delta: number): string {
   return `${data.getUTCFullYear()}-${String(data.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
-function toneClass(status: AttendanceStatus | undefined): string {
-  if (!status) return styles.semAula;
-  return styles[status];
-}
+const navBtn =
+  "flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100";
 
 export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: AttendanceCalendarProps) {
   const [mesVisivel, setMesVisivel] = useState(mes);
@@ -65,33 +73,37 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
   const dias = Array.from({ length: diasNoMes }, (_, indice) => indice + 1);
 
   return (
-    <div className={styles.calendario}>
-      <div className={styles.cabecalho}>
-        <h3 className={styles.title}>Resumo de presença</h3>
-        <div className={styles.navegacao}>
-          <IconButton
-            label="Mês anterior"
-            size="sm"
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-base font-semibold text-gray-800">Resumo de presença</h3>
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            className={navBtn}
+            aria-label="Mês anterior"
             onClick={() => setMesVisivel((atual) => deslocarMes(atual, -1))}
           >
-            <Icon name="chevron-left" size={16} />
-          </IconButton>
-          <span className={styles.mesAtual}>
+            <ChevronLeftIcon />
+          </button>
+          <span className="min-w-32 text-center text-sm font-medium text-gray-700">
             {tituloMes.charAt(0).toUpperCase() + tituloMes.slice(1)}
           </span>
-          <IconButton
-            label="Próximo mês"
-            size="sm"
+          <button
+            type="button"
+            className={navBtn}
+            aria-label="Próximo mês"
             onClick={() => setMesVisivel((atual) => deslocarMes(atual, 1))}
           >
-            <Icon name="chevron-right" size={16} />
-          </IconButton>
+            <span className="rotate-180">
+              <ChevronLeftIcon />
+            </span>
+          </button>
         </div>
       </div>
 
-      <div className={styles.grade}>
+      <div className="grid grid-cols-7 gap-1 text-center">
         {DIAS_SEMANA.map((inicialDia, indice) => (
-          <span key={`${inicialDia}-${indice}`} className={styles.diaSemana} aria-hidden="true">
+          <span key={`${inicialDia}-${indice}`} className="text-xs font-medium text-gray-400" aria-hidden="true">
             {inicialDia}
           </span>
         ))}
@@ -109,14 +121,25 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
           ];
           const rotulo = partesRotulo.join(" — ");
           return (
-            <span key={dataIso} className={styles.celula} title={rotulo} aria-label={rotulo}>
-              <span className={cx(styles.dia, toneClass(status))}>{dia}</span>
+            <span
+              key={dataIso}
+              className="flex flex-col items-center gap-0.5 py-0.5"
+              title={rotulo}
+              aria-label={rotulo}
+            >
+              <span
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm ${
+                  status ? STATUS_BG[status] : "text-gray-700"
+                }`}
+              >
+                {dia}
+              </span>
               {eventos.length > 0 && (
-                <span className={styles.marcadores} aria-hidden="true">
+                <span className="flex gap-0.5" aria-hidden="true">
                   {eventos.slice(0, 3).map((evento, indice) => (
                     <span
                       key={`${evento.type}-${indice}`}
-                      className={cx(styles.marcador, styles[`marcador_${evento.type}`])}
+                      className={`h-1 w-1 rounded-full ${EVENTO_DOT[evento.type]}`}
                     />
                   ))}
                 </span>
@@ -126,25 +149,25 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
         })}
       </div>
 
-      <ul className={styles.legenda}>
-        <li>
-          <span className={cx(styles.amostra, styles.present)} aria-hidden="true" />
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+        <li className="flex items-center gap-1.5">
+          <span className="h-3 w-3 rounded-full bg-success-500" aria-hidden="true" />
           Presente
         </li>
-        <li>
-          <span className={cx(styles.amostra, styles.late)} aria-hidden="true" />
+        <li className="flex items-center gap-1.5">
+          <span className="h-3 w-3 rounded-full bg-warning-500" aria-hidden="true" />
           Atrasado
         </li>
-        <li>
-          <span className={cx(styles.amostra, styles.absent)} aria-hidden="true" />
+        <li className="flex items-center gap-1.5">
+          <span className="h-3 w-3 rounded-full bg-error-500" aria-hidden="true" />
           Ausente
         </li>
-        <li>
-          <span className={cx(styles.marcador, styles.marcador_vacation)} aria-hidden="true" />
+        <li className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
           Férias
         </li>
-        <li>
-          <span className={cx(styles.marcador, styles.marcador_makeup)} aria-hidden="true" />
+        <li className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-warning-500" aria-hidden="true" />
           Recuperação
         </li>
       </ul>
