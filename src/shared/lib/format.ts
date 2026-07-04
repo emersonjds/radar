@@ -17,3 +17,8 @@ export function formatDateLong(iso: string): string {
 export function formatPercent(value: number): string {
   return `${value}%`;
 }
+
+/** Nota 0–10 com uma casa e vírgula decimal (pt-BR). */
+export function formatScore(value: number): string {
+  return value.toFixed(1).replace(".", ",");
+}
