@@ -12,7 +12,7 @@ export const roleLabels: Record<Role, string> = {
 export const profileSchema = z.object({
   id: z.string(),
   name: z.string(),
-  email: z.string().email(),
+  email: z.string().email().optional(),
   role: roleSchema,
   jobTitle: z.string().optional(),
   username: z.string(),

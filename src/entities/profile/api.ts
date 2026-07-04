@@ -43,7 +43,7 @@ export async function fetchProfileWithHash(username: string): Promise<Profile | 
 export interface NewProfileInput {
   name: string;
   username: string;
-  email: string;
+  email?: string;
   role: Profile["role"];
   password: string;
   jobTitle?: string;
@@ -64,7 +64,7 @@ export async function createProfile(input: NewProfileInput): Promise<PublicProfi
     // immutable and there's no rename flow; switch to a uuid if that changes.
     id: `perfil-${username}`,
     name: input.name.trim(),
-    email: input.email.trim(),
+    email: input.email?.trim() || undefined,
     role: input.role,
     jobTitle: input.jobTitle?.trim() || undefined,
     username,
@@ -80,4 +80,8 @@ export async function setProfileActive(id: string, active: boolean): Promise<voi
   await mutateCollection<Profile>("profiles", (rows) =>
     rows.map((profile) => (profile.id === id ? { ...profile, active } : profile)),
   );
+}
+
+export async function deleteProfile(id: string): Promise<void> {
+  await mutateCollection<Profile>("profiles", (rows) => rows.filter((profile) => profile.id !== id));
 }

@@ -2,7 +2,12 @@
 
 import { useState, type FormEvent } from "react";
 import { roleLabels, roleSchema, type Role } from "@/entities/profile/model";
-import { useCreateProfile, useProfiles, useSetProfileActive } from "@/entities/profile/queries";
+import {
+  useCreateProfile,
+  useDeleteProfile,
+  useProfiles,
+  useSetProfileActive,
+} from "@/entities/profile/queries";
 import { useSession } from "@/features/session/use-session";
 import { Badge } from "@/shared/ui/Badge/Badge";
 import { Button } from "@/shared/ui/Button/Button";
@@ -11,13 +16,14 @@ import styles from "./ProfilesAdmin.module.css";
 
 const ROLES = roleSchema.options;
 
-const EMPTY_FORM = { name: "", username: "", email: "", role: "teacher" as Role, password: "" };
+const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };
 
 export function ProfilesAdmin() {
   const { profileId } = useSession();
   const { data: perfis, isLoading } = useProfiles();
   const createProfile = useCreateProfile();
   const setActive = useSetProfileActive();
+  const deleteProfile = useDeleteProfile();
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [erro, setErro] = useState<string | null>(null);
@@ -57,22 +63,12 @@ export function ProfilesAdmin() {
             />
           </div>
           <div className={styles.campo}>
-            <label htmlFor="perfil-usuario">Usuário</label>
+            <label htmlFor="perfil-usuario">Login de usuário</label>
             <input
               id="perfil-usuario"
               autoCapitalize="none"
               value={form.username}
               onChange={(event) => setForm((prev) => ({ ...prev, username: event.target.value }))}
-              required
-            />
-          </div>
-          <div className={styles.campo}>
-            <label htmlFor="perfil-email">E-mail</label>
-            <input
-              id="perfil-email"
-              type="email"
-              value={form.email}
-              onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
               required
             />
           </div>
@@ -137,14 +133,28 @@ export function ProfilesAdmin() {
                 <Badge tone={perfil.active ? "success" : "neutral"}>
                   {perfil.active ? "Ativo" : "Inativo"}
                 </Badge>
-                <Button
-                  variant="outlined"
-                  size="sm"
-                  disabled={perfil.id === profileId || setActive.isPending}
-                  onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
-                >
-                  {perfil.active ? "Desativar" : "Ativar"}
-                </Button>
+                <div className={styles.acoes}>
+                  <Button
+                    variant="outlined"
+                    size="sm"
+                    disabled={perfil.id === profileId || setActive.isPending}
+                    onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
+                  >
+                    {perfil.active ? "Desativar" : "Ativar"}
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    disabled={perfil.id === profileId || deleteProfile.isPending}
+                    onClick={() => {
+                      if (window.confirm(`Excluir o perfil de ${perfil.name}?`)) {
+                        deleteProfile.mutate(perfil.id);
+                      }
+                    }}
+                  >
+                    Excluir
+                  </Button>
+                </div>
               </li>
             ))}
           </ul>

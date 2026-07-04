@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createProfile,
+  deleteProfile,
   fetchProfile,
   fetchProfiles,
   setProfileActive,
@@ -38,6 +39,14 @@ export function useSetProfileActive() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ id, active }: { id: string; active: boolean }) => setProfileActive(id, active),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.all }),
+  });
+}
+
+export function useDeleteProfile() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteProfile(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.all }),
   });
 }
