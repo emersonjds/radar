@@ -6,8 +6,8 @@ import { seedDb } from "./seed";
  * won't change when the backend lands. Not for production PII.
  * Bump the key version whenever the seed shape changes — old blobs are stale.
  */
-const STORAGE_KEY = "radar.db.v3";
-const LEGACY_KEYS = ["radar.db.v1", "radar.db.v2"];
+const STORAGE_KEY = "radar.db.v4";
+const LEGACY_KEYS = ["radar.db.v1", "radar.db.v2", "radar.db.v3"];
 
 export type Collection =
   | "profiles"

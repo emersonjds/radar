@@ -8,6 +8,7 @@ import type { Db } from "./db";
 
 const PROFESSOR_ID = "perfil-ricardo";
 const ADMIN_ID = "perfil-ana";
+const COORDINATOR_ID = "perfil-carla";
 
 const TURMAS = [
   { id: "turma-mat-b", name: "Matemática Avançada II", gradeLevel: "3ª série", shift: "manhã" },
@@ -51,9 +52,13 @@ function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
 }
 
 export function seedDb(): Db {
+  // Demo credentials (username / password): ricardo / prof123, ana / admin123,
+  // carla / coord123. passwordHash is the SHA-256 hex of the password
+  // (shared/lib/auth/password) — temporary until Supabase Auth.
   const perfis = [
-    { id: PROFESSOR_ID, name: "Ricardo Alves", email: "ricardo@radar.escola", role: "teacher", jobTitle: "Professor Titular" },
-    { id: ADMIN_ID, name: "Ana Vance", email: "ana@radar.escola", role: "admin", jobTitle: "Coordenação" },
+    { id: PROFESSOR_ID, name: "Ricardo Alves", email: "ricardo@radar.escola", role: "teacher", jobTitle: "Professor Titular", username: "ricardo", passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf", active: true },
+    { id: ADMIN_ID, name: "Ana Vance", email: "ana@radar.escola", role: "admin", jobTitle: "Administração", username: "ana", passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", active: true },
+    { id: COORDINATOR_ID, name: "Carla Dias", email: "carla@radar.escola", role: "coordinator", jobTitle: "Coordenação Pedagógica", username: "carla", passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65", active: true },
   ];
 
   const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: PROFESSOR_ID }));
