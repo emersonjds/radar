@@ -20,10 +20,10 @@ async function semOverflowHorizontal(page: import("@playwright/test").Page) {
 }
 
 async function loginComo(page: import("@playwright/test").Page, persona: "Professor" | "Coordenação") {
+  const credenciais = persona === "Professor" ? ["ricardo", "prof123"] : ["carla", "coord123"];
   await page.goto("/login");
-  await page.getByRole("button", { name: persona }).click();
-  await page.getByLabel("E-mail").fill("teste@radar.escola");
-  await page.getByLabel("Senha").fill("senha123");
+  await page.getByLabel("Usuário").fill(credenciais[0]);
+  await page.getByLabel("Senha").fill(credenciais[1]);
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
@@ -31,6 +31,7 @@ test.describe("chamada mobile (bottom nav + cards)", () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test("tela de chamada: título, tiles, busca e status", async ({ page }) => {
+    await loginComo(page, "Professor");
     await page.goto("/attendance");
 
     await expect(page.getByLabel("Selecionar turma")).toBeVisible();
@@ -66,20 +67,18 @@ test.describe("chamada mobile (bottom nav + cards)", () => {
 test.describe("painel mobile", () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
-  test("painel do professor com bottom nav (4 itens)", async ({ page }) => {
-    await page.goto("/");
+  test("painel do professor com bottom nav (2 itens)", async ({ page }) => {
+    await loginComo(page, "Professor");
 
     await expect(bottomNav(page)).toBeVisible();
     await expect(bottomNav(page).getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
-    await expect(bottomNav(page).getByRole("link")).toHaveCount(4);
+    await expect(bottomNav(page).getByRole("link")).toHaveCount(2);
     await semOverflowHorizontal(page);
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/painel-professor-mobile.png", fullPage: true });
   });
 
   test("painel da coordenação com bottom nav (3 itens) e conteúdo não coberto", async ({ page }) => {
-    // Persona switcher in the topbar is hidden below 768px (demo affordance);
-    // log in as coordenação directly instead of trying to toggle it on mobile.
     await loginComo(page, "Coordenação");
     await expect(page.getByText("Total de alunos")).toBeVisible();
 
@@ -104,6 +103,7 @@ test.describe("desktop: sidebar sim, bottom nav não", () => {
   test.use({ viewport: DESKTOP_VIEWPORT });
 
   test("chamada no desktop", async ({ page }) => {
+    await loginComo(page, "Professor");
     await page.goto("/attendance");
 
     // `display: none` removes BottomNav from the accessibility tree entirely,
