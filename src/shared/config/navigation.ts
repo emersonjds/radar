@@ -1,6 +1,6 @@
 import type { Role } from "@/entities/profile/model";
 
-export type NavIcon = "painel" | "session" | "relatorios" | "user" | "grade";
+export type NavIcon = "painel" | "session" | "relatorios" | "user" | "admin";
 
 export interface NavItem {
   href: string;
@@ -8,20 +8,27 @@ export interface NavItem {
   icon: NavIcon;
 }
 
-/** Professor: enxuto — painel das próprias turmas, chamada e dados dos alunos. */
+/** Professor: chamada e lista de alunos das próprias turmas. */
 export const navTeacher: NavItem[] = [
-  { href: "/", label: "Painel", icon: "painel" },
   { href: "/attendance", label: "Chamada", icon: "session" },
   { href: "/students", label: "Alunos", icon: "user" },
 ];
 
-/** Coordenação: visão ampla — analytics, todos os alunos e relatórios. */
-export const navAdmin: NavItem[] = [
+/** Coordenador: visão administrativa — painel, alunos e relatórios. */
+export const navCoordinator: NavItem[] = [
   { href: "/", label: "Painel", icon: "painel" },
   { href: "/students", label: "Alunos", icon: "user" },
   { href: "/reports", label: "Relatórios", icon: "relatorios" },
 ];
 
+/** Admin: tudo do coordenador + gestão de perfis. */
+export const navAdmin: NavItem[] = [
+  ...navCoordinator,
+  { href: "/users", label: "Perfis", icon: "admin" },
+];
+
 export function navForRole(role: Role): NavItem[] {
-  return role === "admin" ? navAdmin : navTeacher;
+  if (role === "admin") return navAdmin;
+  if (role === "coordinator") return navCoordinator;
+  return navTeacher;
 }

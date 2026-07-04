@@ -6,7 +6,7 @@ import { useStudents } from "@/entities/student/queries";
 import { useRequireRole } from "@/features/session/use-require-role";
 
 export default function RelatoriosPage() {
-  const permitido = useRequireRole(["admin"]);
+  const permitido = useRequireRole(["admin", "coordinator"]);
   const { data: alunos } = useStudents();
   const router = useRouter();
 
