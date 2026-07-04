@@ -1,23 +1,31 @@
 "use client";
 
-import { useProfileByRole } from "@/entities/profile/queries";
+import { useRouter } from "next/navigation";
+import { useProfile } from "@/entities/profile/queries";
 import type { Role, Profile } from "@/entities/profile/model";
-import { setRole, useRole } from "./session-store";
+import { clearSession, useSessionProfileId } from "./session-store";
 
 export interface Session {
-  role: Role;
+  profileId: string | null;
   profile: Profile | null;
+  role: Role | null;
   loading: boolean;
-  switchRole: (role: Role) => void;
+  logout: () => void;
 }
 
 export function useSession(): Session {
-  const role = useRole();
-  const { data: profile, isLoading } = useProfileByRole(role);
+  const router = useRouter();
+  const profileId = useSessionProfileId();
+  const { data: profile, isLoading } = useProfile(profileId);
+
   return {
-    role,
+    profileId,
     profile: profile ?? null,
-    loading: isLoading,
-    switchRole: setRole,
+    role: profile?.role ?? null,
+    loading: profileId !== null && isLoading,
+    logout: () => {
+      clearSession();
+      router.push("/login");
+    },
   };
 }

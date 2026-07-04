@@ -3,21 +3,23 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import type { Role } from "@/entities/profile/model";
-import { useRole } from "./session-store";
+import { useSession } from "./use-session";
 
 /**
- * Route guard for deep links: sends the user home when the current persona
- * isn't allowed here. Returns whether access is permitted so the page can
- * render nothing while the redirect happens.
+ * Route guard for deep links: sends a logged-out user to /login and a
+ * logged-in user whose role isn't allowed here back home. Returns whether
+ * access is permitted so the page can render nothing while redirecting.
  */
 export function useRequireRole(allowedRoles: Role[]): boolean {
-  const role = useRole();
+  const { role, loading } = useSession();
   const router = useRouter();
-  const allowed = allowedRoles.includes(role);
+  const allowed = role !== null && allowedRoles.includes(role);
 
   useEffect(() => {
-    if (!allowed) router.replace("/");
-  }, [allowed, router]);
+    if (loading) return;
+    if (role === null) router.replace("/login");
+    else if (!allowed) router.replace("/");
+  }, [loading, role, allowed, router]);
 
   return allowed;
 }

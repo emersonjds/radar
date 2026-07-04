@@ -1,26 +1,22 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { roleSchema, type Role } from "@/entities/profile/model";
 
 /**
- * Mock session: which persona is using the app. Persisted in localStorage
+ * Mock session: the id of the logged-in profile. Persisted in localStorage
  * (`radar.session`) and read via useSyncExternalStore so it's hydration-safe
- * (server + first client render use the default) and cross-tab aware.
- * Replace with real Supabase auth later.
+ * (server + first client render see "logged out") and cross-tab aware.
+ * Replace with real Supabase auth (session from the JWT) later.
  */
 const STORAGE_KEY = "radar.session";
-const DEFAULT_ROLE: Role = "teacher";
 
 const listeners = new Set<() => void>();
 
-function readRole(): Role {
+function readProfileId(): string | null {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    const parsed = roleSchema.safeParse(raw);
-    return parsed.success ? parsed.data : DEFAULT_ROLE;
+    return window.localStorage.getItem(STORAGE_KEY);
   } catch {
-    return DEFAULT_ROLE;
+    return null;
   }
 }
 
@@ -33,11 +29,20 @@ function subscribe(callback: () => void): () => void {
   };
 }
 
-export function setRole(role: Role): void {
-  window.localStorage.setItem(STORAGE_KEY, role);
+function emit(): void {
   listeners.forEach((listener) => listener());
 }
 
-export function useRole(): Role {
-  return useSyncExternalStore(subscribe, readRole, () => DEFAULT_ROLE);
+export function setSession(profileId: string): void {
+  window.localStorage.setItem(STORAGE_KEY, profileId);
+  emit();
+}
+
+export function clearSession(): void {
+  window.localStorage.removeItem(STORAGE_KEY);
+  emit();
+}
+
+export function useSessionProfileId(): string | null {
+  return useSyncExternalStore(subscribe, readProfileId, () => null);
 }
