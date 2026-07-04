@@ -1,34 +1,27 @@
-.card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-}
-
-/* Absent students recede so the attention lands on who still needs marking. */
-.cardMuted {
-  opacity: 0.55;
-}
-
-.info {
+.row {
   display: flex;
   align-items: center;
   gap: var(--space-3);
-  min-width: 0;
+  padding: var(--space-3);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+/* Absent students recede so attention lands on who still needs marking. */
+.rowMuted {
+  opacity: 0.55;
 }
 
 .identidade {
   display: flex;
   flex-direction: column;
+  flex: 1;
   min-width: 0;
 }
 
 .name {
-  font-size: var(--text-base);
+  font-size: var(--text-sm);
   font-weight: var(--weight-semibold);
   color: var(--color-text);
   overflow: hidden;
@@ -39,36 +32,29 @@
 .enrollment {
   font-size: var(--text-xs);
   color: var(--color-text-subtle);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .opcoes {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-2);
-}
-
-/* 2x2 gives each label room on phones; 4-up only once there's width for it. */
-@media (min-width: 480px) {
-  .opcoes {
-    grid-template-columns: repeat(4, 1fr);
-  }
+  display: flex;
+  gap: var(--space-1);
+  flex-shrink: 0;
 }
 
 .opcao {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--space-1);
-  min-height: 56px;
-  padding: var(--space-2);
+  width: 40px;
+  height: 40px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-medium);
-  text-align: center;
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
   transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease;
 }
 
@@ -98,17 +84,4 @@
   background: var(--color-primary-soft);
   border-color: var(--color-primary);
   color: var(--color-primary);
-}
-
-@media (min-width: 768px) {
-  .card {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .opcoes {
-    flex-shrink: 0;
-    width: 400px;
-  }
 }

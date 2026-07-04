@@ -1,15 +1,14 @@
 import type { Student } from "@/entities/student/model";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
-import { Avatar } from "@/shared/ui/Avatar/Avatar";
-import { Icon, type IconName } from "@/shared/ui/Icon/Icon";
 import { cx } from "@/shared/ui/cx";
 import styles from "./StudentRow.module.css";
 
-export const STATUS_OPTIONS: Array<{ value: AttendanceStatus; label: string; icon: IconName }> = [
-  { value: "present", label: "Presente", icon: "check-circle" },
-  { value: "late", label: "Atrasado", icon: "clock" },
-  { value: "absent", label: "Ausente", icon: "x-circle" },
-  { value: "excused", label: "Justificado", icon: "grade" },
+// `short` follows the Brazilian class-register convention: P/A/F/J.
+export const STATUS_OPTIONS: Array<{ value: AttendanceStatus; label: string; short: string }> = [
+  { value: "present", label: "Presente", short: "P" },
+  { value: "late", label: "Atrasado", short: "A" },
+  { value: "absent", label: "Ausente", short: "F" },
+  { value: "excused", label: "Justificado", short: "J" },
 ];
 
 export interface StudentRowProps {
@@ -20,13 +19,10 @@ export interface StudentRowProps {
 
 export function StudentRow({ aluno, status, onSelectStatus }: StudentRowProps) {
   return (
-    <div className={cx(styles.card, status === "absent" && styles.cardMuted)}>
-      <div className={styles.info}>
-        <Avatar name={aluno.name} />
-        <div className={styles.identidade}>
-          <span className={styles.name}>{aluno.name}</span>
-          <span className={styles.enrollment}>Matrícula {aluno.enrollment}</span>
-        </div>
+    <div className={cx(styles.row, status === "absent" && styles.rowMuted)}>
+      <div className={styles.identidade}>
+        <span className={styles.name}>{aluno.name}</span>
+        <span className={styles.enrollment}>Matrícula {aluno.enrollment}</span>
       </div>
 
       <div className={styles.opcoes} role="group" aria-label={`Status de presença de ${aluno.name}`}>
@@ -35,11 +31,12 @@ export function StudentRow({ aluno, status, onSelectStatus }: StudentRowProps) {
             key={opcao.value}
             type="button"
             aria-pressed={status === opcao.value}
+            aria-label={opcao.label}
+            title={opcao.label}
             className={cx(styles.opcao, status === opcao.value && cx(styles.opcaoAtiva, styles[opcao.value]))}
             onClick={() => onSelectStatus(opcao.value)}
           >
-            <Icon name={opcao.icon} size={16} />
-            <span>{opcao.label}</span>
+            {opcao.short}
           </button>
         ))}
       </div>
