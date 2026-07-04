@@ -9,10 +9,10 @@ import {
   useSetProfileActive,
 } from "@/entities/profile/queries";
 import { useSession } from "@/features/session/use-session";
-import Badge from "@/shared/ui/tailadmin/Badge";
-import Button from "@/shared/ui/tailadmin/Button";
-import Label from "@/shared/ui/tailadmin/Label";
-import { TrashBinIcon } from "@/shared/icons";
+import Badge from "@tailadmin/components/ui/badge/Badge";
+import Button from "@tailadmin/components/ui/button/Button";
+import Label from "@tailadmin/components/form/Label";
+import { TrashBinIcon } from "@tailadmin/icons";
 
 const ROLES = roleSchema.options;
 const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };

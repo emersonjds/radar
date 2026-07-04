@@ -4,7 +4,7 @@ import { useEffect, useSyncExternalStore, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { roleLabels } from "@/entities/profile/model";
 import { useSession } from "@/features/session/use-session";
-import { useSidebar } from "@/shared/context/SidebarContext";
+import { useSidebar } from "@tailadmin/context/SidebarContext";
 import { AppSidebar } from "./AppSidebar";
 import { AppHeader } from "./AppHeader";
 import { Backdrop } from "./Backdrop";

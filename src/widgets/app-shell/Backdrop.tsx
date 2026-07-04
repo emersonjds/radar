@@ -1,6 +1,6 @@
 "use client";
 
-import { useSidebar } from "@/shared/context/SidebarContext";
+import { useSidebar } from "@tailadmin/context/SidebarContext";
 
 export function Backdrop() {
   const { isMobileOpen, toggleMobileSidebar } = useSidebar();

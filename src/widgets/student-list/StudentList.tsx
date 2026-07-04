@@ -11,11 +11,11 @@ import { useGroups } from "@/entities/group/queries";
 import { useSession } from "@/features/session/use-session";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@/shared/ui/tailadmin/AvatarText";
-import Badge from "@/shared/ui/tailadmin/Badge";
-import Button from "@/shared/ui/tailadmin/Button";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@/shared/ui/tailadmin/Table";
-import { EyeIcon, PencilIcon, PlusIcon, TrashBinIcon } from "@/shared/icons";
+import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
+import Badge from "@tailadmin/components/ui/badge/Badge";
+import Button from "@tailadmin/components/ui/button/Button";
+import { Table, TableBody, TableCell, TableHeader, TableRow } from "@tailadmin/components/ui/table";
+import { EyeIcon, PencilIcon, PlusIcon, TrashBinIcon } from "@tailadmin/icons";
 import { StudentFormModal } from "./StudentFormModal";
 
 const LIMITE_FALTAS_RISCO = 3;

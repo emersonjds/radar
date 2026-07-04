@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/shared/providers/query-provider";
-import { SidebarProvider } from "@/shared/context/SidebarContext";
+import { SidebarProvider } from "@tailadmin/context/SidebarContext";
 
 const outfit = Outfit({
   subsets: ["latin"],

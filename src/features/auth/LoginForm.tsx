@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { setSession } from "@/features/session/session-store";
-import Button from "@/shared/ui/tailadmin/Button";
-import Label from "@/shared/ui/tailadmin/Label";
+import Button from "@tailadmin/components/ui/button/Button";
+import Label from "@tailadmin/components/form/Label";
 import { authenticate } from "./authenticate";
 
 const inputClasses =

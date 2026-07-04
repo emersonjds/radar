@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import type { SchoolEventType } from "@/entities/school-event/model";
 import { formatDateLong } from "@/shared/lib/format";
-import { ChevronLeftIcon } from "@/shared/icons";
+import { ChevronLeftIcon } from "@tailadmin/icons";
 
 export interface DayEvent {
   type: SchoolEventType;

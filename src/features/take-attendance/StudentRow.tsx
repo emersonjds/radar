@@ -1,6 +1,6 @@
 import type { Student } from "@/entities/student/model";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
-import AvatarText from "@/shared/ui/tailadmin/AvatarText";
+import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
 
 // `short` follows the Brazilian class-register convention: P/A/F/J.
 export const STATUS_OPTIONS: Array<{

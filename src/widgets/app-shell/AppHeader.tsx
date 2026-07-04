@@ -1,7 +1,7 @@
 "use client";
 
-import { useSidebar } from "@/shared/context/SidebarContext";
-import AvatarText from "@/shared/ui/tailadmin/AvatarText";
+import { useSidebar } from "@tailadmin/context/SidebarContext";
+import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
 
 export interface AppHeaderProps {
   name: string;

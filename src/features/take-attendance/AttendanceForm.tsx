@@ -8,9 +8,9 @@ import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useSetAttendanceRecord, useAttendanceRecordsBySession } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
 import { formatDateLong } from "@/shared/lib/format";
-import Badge from "@/shared/ui/tailadmin/Badge";
-import Button from "@/shared/ui/tailadmin/Button";
-import { CalenderIcon } from "@/shared/icons";
+import Badge from "@tailadmin/components/ui/badge/Badge";
+import Button from "@tailadmin/components/ui/button/Button";
+import { CalenderIcon } from "@tailadmin/icons";
 import { StudentRow, STATUS_OPTIONS } from "./StudentRow";
 
 const PROFESSOR_ID = "perfil-ricardo";

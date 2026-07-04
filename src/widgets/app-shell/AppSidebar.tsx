@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "@/shared/context/SidebarContext";
+import { useSidebar } from "@tailadmin/context/SidebarContext";
 import { navForRole, type NavIcon } from "@/shared/config/navigation";
 import type { Role } from "@/entities/profile/model";
 import {
@@ -12,7 +12,7 @@ import {
   GroupIcon,
   PieChartIcon,
   UserCircleIcon,
-} from "@/shared/icons";
+} from "@tailadmin/icons";
 
 const navIcons: Record<NavIcon, ReactNode> = {
   painel: <GridIcon />,

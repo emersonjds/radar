@@ -9,10 +9,10 @@ import { useAttendanceRecordsByStudent } from "@/entities/attendance-record/quer
 import { useGroups } from "@/entities/group/queries";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@/shared/ui/tailadmin/AvatarText";
-import Badge from "@/shared/ui/tailadmin/Badge";
-import Button from "@/shared/ui/tailadmin/Button";
-import { DownloadIcon } from "@/shared/icons";
+import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
+import Badge from "@tailadmin/components/ui/badge/Badge";
+import Button from "@tailadmin/components/ui/button/Button";
+import { DownloadIcon } from "@tailadmin/icons";
 import { AttendanceCalendar, type DayEvent } from "./AttendanceCalendar";
 
 const control =

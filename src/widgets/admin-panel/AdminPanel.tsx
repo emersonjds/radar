@@ -10,9 +10,9 @@ import { useProfiles } from "@/entities/profile/queries";
 import { useGroups } from "@/entities/group/queries";
 import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@/shared/ui/tailadmin/AvatarText";
-import Badge from "@/shared/ui/tailadmin/Badge";
-import { GroupIcon, UserCircleIcon, CheckCircleIcon } from "@/shared/icons";
+import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
+import Badge from "@tailadmin/components/ui/badge/Badge";
+import { GroupIcon, UserCircleIcon, CheckCircleIcon } from "@tailadmin/icons";
 import { AttendanceBarChart } from "./AttendanceBarChart";
 import { TrendLineChart } from "./TrendLineChart";
 

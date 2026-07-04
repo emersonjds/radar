@@ -4,9 +4,9 @@ import { useState, type FormEvent } from "react";
 import type { Group } from "@/entities/group/model";
 import type { Student } from "@/entities/student/model";
 import { useCreateStudent, useUpdateStudent } from "@/entities/student/queries";
-import { Modal } from "@/shared/ui/tailadmin/Modal";
-import Button from "@/shared/ui/tailadmin/Button";
-import Label from "@/shared/ui/tailadmin/Label";
+import { Modal } from "@tailadmin/components/ui/modal";
+import Button from "@tailadmin/components/ui/button/Button";
+import Label from "@tailadmin/components/form/Label";
 
 const controlClasses =
   "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
