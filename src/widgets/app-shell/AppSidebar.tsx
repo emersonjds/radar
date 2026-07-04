@@ -41,10 +41,13 @@ export function AppSidebar({ role }: AppSidebarProps) {
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className={`flex py-8 ${showText ? "justify-start" : "justify-center"}`}>
+      <div className={`flex flex-col py-8 ${showText ? "items-start" : "items-center"}`}>
         <span className="text-2xl font-bold text-brand-500">
           {showText ? "Radar" : "R"}
         </span>
+        {showText && (
+          <span className="text-xs font-medium text-gray-500">Gestão Estudantil</span>
+        )}
       </div>
 
       <nav aria-label="Navegação principal" className="flex flex-col gap-1">
