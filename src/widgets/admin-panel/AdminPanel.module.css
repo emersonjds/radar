@@ -30,8 +30,7 @@
 }
 
 .chartCard,
-.sideCard,
-.tableCard {
+.sideCard {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -132,8 +131,4 @@
   gap: var(--space-3);
   font-size: var(--text-sm);
   color: var(--color-text);
-}
-
-.tableScroll {
-  overflow-x: auto;
 }

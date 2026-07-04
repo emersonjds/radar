@@ -11,11 +11,9 @@ import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/ana
 import { formatPercent } from "@/shared/lib/format";
 import { Avatar } from "@/shared/ui/Avatar/Avatar";
 import { Badge } from "@/shared/ui/Badge/Badge";
-import { Button } from "@/shared/ui/Button/Button";
 import { Card } from "@/shared/ui/Card/Card";
 import { Icon } from "@/shared/ui/Icon/Icon";
 import { StatCard } from "@/shared/ui/StatCard/StatCard";
-import { Table, TBody, TD, TH, THead, TR } from "@/shared/ui/Table/Table";
 import { AttendanceBarChart } from "./AttendanceBarChart";
 import { TrendLineChart } from "./TrendLineChart";
 import styles from "./AdminPanel.module.css";
@@ -43,20 +41,6 @@ const TAREFA_TONE: Record<TarefaAdmin["status"], "neutral" | "success" | "danger
   "Concluída": "success",
   Urgente: "danger",
 };
-
-interface LoginRecente {
-  name: string;
-  turma: string;
-  horario: string;
-  ip: string;
-  status: "Sucesso" | "Falha";
-}
-
-const LOGINS_RECENTES: LoginRecente[] = [
-  { name: "Elena Rodrigues", turma: "3ª série", horario: "08:14:22", ip: "192.168.1.14", status: "Sucesso" },
-  { name: "Tobias Jenkins", turma: "2ª série", horario: "08:11:45", ip: "192.168.1.52", status: "Sucesso" },
-  { name: "Amara Gupta", turma: "1ª série", horario: "08:09:12", ip: "192.168.1.109", status: "Falha" },
-];
 
 export function AdminPanel() {
   const alunos = useStudents();
@@ -196,40 +180,6 @@ export function AdminPanel() {
         </Card>
       </div>
 
-      <Card className={styles.tableCard}>
-        <div className={styles.cardHeader}>
-          <h2 className={styles.cardTitle}>Logins recentes de alunos</h2>
-          <Button variant="outlined" size="sm" leftIcon={<Icon name="download" size={16} />}>
-            Exportar CSV
-          </Button>
-        </div>
-        <div className={styles.tableScroll}>
-          <Table>
-            <THead>
-              <TR>
-                <TH>Aluno</TH>
-                <TH>Turma</TH>
-                <TH>Horário</TH>
-                <TH>IP</TH>
-                <TH>Status</TH>
-              </TR>
-            </THead>
-            <TBody>
-              {LOGINS_RECENTES.map((login) => (
-                <TR key={login.name}>
-                  <TD>{login.name}</TD>
-                  <TD>{login.turma}</TD>
-                  <TD>{login.horario}</TD>
-                  <TD>{login.ip}</TD>
-                  <TD>
-                    <Badge tone={login.status === "Sucesso" ? "success" : "danger"}>{login.status}</Badge>
-                  </TD>
-                </TR>
-              ))}
-            </TBody>
-          </Table>
-        </div>
-      </Card>
     </div>
   );
 }
