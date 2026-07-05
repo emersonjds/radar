@@ -12,16 +12,12 @@ test.describe("painel admin", () => {
 
   test("KPIs e gráficos ApexCharts renderizam", async ({ page }) => {
     await login(page, "ana", "admin123");
-
     await expect(page.getByText("Total de alunos")).toBeVisible();
     await expect(page.getByText("Total de professores")).toBeVisible();
     await expect(page.getByText("Frequência geral")).toBeVisible();
     await expect(page.getByText("Frequência por turma")).toBeVisible();
     await expect(page.getByText("Tendência de frequência")).toBeVisible();
-
-    // ApexCharts is client-only (dynamic import) — wait for both canvases.
     await expect(page.locator(".apexcharts-canvas")).toHaveCount(2, { timeout: 15000 });
-
     await page.screenshot({ path: "e2e/dashboard/evidencias/painel-admin.png", fullPage: true });
   });
 });
