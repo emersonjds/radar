@@ -65,5 +65,8 @@ export async function deleteGroup(id: string): Promise<void> {
   if (inUse) {
     throw new Error("Turma com alunos ou chamadas não pode ser removida.");
   }
+  await mutateCollection<{ groupId: string }>("assignments", (assignments) =>
+    assignments.filter((assignment) => assignment.groupId !== id),
+  );
   await mutateCollection<Group>("groups", (groups) => groups.filter((group) => group.id !== id));
 }

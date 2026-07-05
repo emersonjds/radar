@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { resetDb } from "@/shared/lib/storage/db";
 import { createStudent } from "@/entities/student/api";
+import { createAssignment, fetchAssignmentsByGroup } from "@/entities/assignment/api";
 import { createGroup, deleteGroup, fetchGroups, updateGroup } from "./api";
 
 describe("group writes (over the store)", () => {
@@ -40,5 +41,22 @@ describe("group writes (over the store)", () => {
     });
     await createStudent({ name: "Aluno Teste", groupId: created.id });
     await expect(deleteGroup(created.id)).rejects.toThrow();
+  });
+
+  it("cascades lecionamentos when the group is deleted", async () => {
+    const created = await createGroup({
+      name: "Redação I",
+      gradeLevel: "1ª série",
+      shift: "afternoon",
+      teacherId: "perfil-ricardo",
+    });
+    await createAssignment({
+      groupId: created.id,
+      subjectId: "materia-portugues",
+      teacherId: "perfil-ricardo",
+    });
+    await deleteGroup(created.id);
+    expect(await fetchAssignmentsByGroup(created.id)).toHaveLength(0);
+    expect((await fetchGroups()).some((g) => g.id === created.id)).toBe(false);
   });
 });
