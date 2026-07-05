@@ -699,7 +699,7 @@ export async function deleteGroup(id: string): Promise<void> {
 }
 ```
 
-> Note: deleting a group does not cascade to its assignments. In practice a turma with assignments usually also has students/sessions and is blocked. Cascading assignment cleanup is deferred (not needed for the demo); if a turma has only assignments, delete them via the turma panel first.
+> Note: `deleteGroup` blocks when the turma has students or sessions; once it passes that guard it **cascade-deletes the turma's own `assignment` rows** (lecionamentos are sub-objects of the turma), so no orphaned assignments remain to lock their subjects. (Added after the final review flagged the orphan-lock — commit `cascade delete lecionamentos when a turma is removed`.)
 
 - [ ] **Step 5: Add the mutation hooks**
 
