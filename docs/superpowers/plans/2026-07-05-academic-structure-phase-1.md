@@ -327,7 +327,7 @@ Add the `assignments` array before the `return`:
     { id: "assign-matb-fis", groupId: "turma-mat-b", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
     { id: "assign-matb-his", groupId: "turma-mat-b", subjectId: "materia-historia", teacherId: TEACHER_TWO_ID },
     { id: "assign-fisa-fis", groupId: "turma-fis-a", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-fisa-qui", groupId: "turma-fis-a", subjectId: "materia-quimica", teacherId: TEACHER_TWO_ID },
+    { id: "assign-fisa-ing", groupId: "turma-fis-a", subjectId: "materia-ingles", teacherId: TEACHER_TWO_ID },
     { id: "assign-ciec-bio", groupId: "turma-cie-c", subjectId: "materia-biologia", teacherId: TEACHER_TWO_ID },
     { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
   ];
