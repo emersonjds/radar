@@ -7,6 +7,7 @@ import type { Db } from "./db";
  */
 
 const PROFESSOR_ID = "perfil-ricardo";
+const TEACHER_TWO_ID = "perfil-bruno";
 const ADMIN_ID = "perfil-ana";
 const COORDINATOR_ID = "perfil-carla";
 
@@ -83,9 +84,15 @@ export function seedDb(): Db {
     { id: PROFESSOR_ID, name: "Ricardo Alves", email: "ricardo@radar.escola", role: "teacher", jobTitle: "Professor Titular", username: "ricardo", passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf", active: true },
     { id: ADMIN_ID, name: "Ana Vance", email: "ana@radar.escola", role: "admin", jobTitle: "Administração", username: "ana", passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", active: true },
     { id: COORDINATOR_ID, name: "Carla Dias", email: "carla@radar.escola", role: "coordinator", jobTitle: "Coordenação Pedagógica", username: "carla", passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65", active: true },
+    { id: TEACHER_TWO_ID, name: "Bruno Farias", email: "bruno@radar.escola", role: "teacher", jobTitle: "Professor", username: "bruno", passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf", active: true },
   ];
 
-  const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: PROFESSOR_ID }));
+  const REGENTE_POR_TURMA: Record<string, string> = {
+    "turma-mat-b": PROFESSOR_ID,
+    "turma-fis-a": PROFESSOR_ID,
+    "turma-cie-c": TEACHER_TWO_ID,
+  };
+  const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: REGENTE_POR_TURMA[turma.id] }));
 
   const alunos = NOMES.map((name, index) => ({
     id: `aluno-${index + 1}`,
@@ -106,7 +113,7 @@ export function seedDb(): Db {
         id: sessionId,
         groupId: turma.id,
         date: data,
-        teacherId: PROFESSOR_ID,
+        teacherId: turma.teacherId,
       });
       turmaAlunos.forEach((aluno) => {
         presencas.push({
@@ -140,6 +147,16 @@ export function seedDb(): Db {
     });
   }
 
+  const assignments = [
+    { id: "assign-matb-mat", groupId: "turma-mat-b", subjectId: "materia-matematica", teacherId: PROFESSOR_ID },
+    { id: "assign-matb-fis", groupId: "turma-mat-b", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
+    { id: "assign-matb-his", groupId: "turma-mat-b", subjectId: "materia-historia", teacherId: TEACHER_TWO_ID },
+    { id: "assign-fisa-fis", groupId: "turma-fis-a", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
+    { id: "assign-fisa-ing", groupId: "turma-fis-a", subjectId: "materia-ingles", teacherId: TEACHER_TWO_ID },
+    { id: "assign-ciec-bio", groupId: "turma-cie-c", subjectId: "materia-biologia", teacherId: TEACHER_TWO_ID },
+    { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
+  ];
+
   return {
     profiles: perfis,
     groups: turmas,
@@ -149,5 +166,6 @@ export function seedDb(): Db {
     schoolEvents: eventosEscolares,
     subjects: materias,
     grades: notas,
+    assignments,
   };
 }
