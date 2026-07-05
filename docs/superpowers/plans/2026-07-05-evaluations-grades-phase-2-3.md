@@ -62,6 +62,12 @@ export type Collection =
 
 (`"grades"` stays for now — Task 4 removes it.)
 
+Also loosen the `Db` type so a partially-seeded store type-checks while collections are added across tasks (matches the existing "missing collection yields []" runtime contract):
+
+```ts
+export type Db = Partial<Record<Collection, unknown[]>>;
+```
+
 - [ ] **Step 2: Write the model**
 
 `src/entities/evaluation/model.ts`:
