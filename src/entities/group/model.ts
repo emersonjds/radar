@@ -12,3 +12,9 @@ export const groupSchema = z.object({
 });
 
 export type Group = z.infer<typeof groupSchema>;
+
+export const shiftLabels: Record<Shift, string> = {
+  "manhã": "Manhã",
+  afternoon: "Tarde",
+  evening: "Noite",
+};
