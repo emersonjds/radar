@@ -199,6 +199,32 @@ Reutiliza o padrão que já existe: **lista (TanStack Table no desktop / cards n
 - [ ] `pnpm type-check`, testes das 3 camadas e `pnpm build` passam. UI 100% PT-BR.
       Responsivo (375/768/1280). Sem `console.log`, sem imports não usados.
 
+## White-label / multi-tenant (mapeamento — NÃO implementar na Fase 1)
+
+Contexto: hoje o cliente é uma ONG; amanhã outra escola pode usar. Meta: **não travar** o
+white-label, sem construí-lo agora (YAGNI até existir 2º cliente real).
+
+Seams que já existem (ou custam ~0) e devem ser preservados:
+
+- **Tema por design token** (`var(--color-*)` em `globals.css`) — já é o mecanismo de
+  rebranding: trocar tokens, não componentes. Regra "nunca hex cru" (já no CLAUDE.md) é o
+  que mantém isso funcionando. Nada de cor/estilo hardcoded no código novo.
+- **Fetchers assíncronos de assinatura estável** (`entities/*/api.ts`) — já pensados como
+  futuro adapter Supabase. O **escopo por escola entra no backend** (coluna
+  `organization_id` + RLS), **sem** mexer nas features. Por isso as entidades novas
+  (`group`, `subject`, `assignment`) **não** ganham `organizationId` nesta fase
+  (front-only, single-tenant); a coluna nasce junto com o Supabase.
+- **Zero hardcode de identidade**: nenhum código novo cita "Radar"/"ONG"/nome da escola em
+  lógica de domínio. Nome/logo do produto ficam num único ponto de branding (o
+  `TailAdminShell`/header) — uma futura config de tenant lê dali.
+
+Ação concreta na Fase 1: manter entidades e regras **tenant-agnósticas** (nada que assuma
+"uma única escola"). É natural no modelo escolhido — o cuidado é só não introduzir
+suposição de cliente único.
+
+Explicitamente fora da Fase 1: modelo multi-tenant, tabela de organizações, tenant
+switcher, domínio próprio, motor de tema por tenant.
+
 ## Fora de escopo (Fases 2 e 3)
 
 - **Fase 2 — Avaliações & notas:** entidade `avaliação` (prova | trabalho de casa; nome,
