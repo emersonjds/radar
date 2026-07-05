@@ -13,6 +13,7 @@ import {
   PieChartIcon,
   UserCircleIcon,
   DocsIcon,
+  TableIcon,
 } from "@tailadmin/icons";
 
 const navIcons: Record<NavIcon, ReactNode> = {
@@ -22,6 +23,7 @@ const navIcons: Record<NavIcon, ReactNode> = {
   relatorios: <PieChartIcon />,
   admin: <UserCircleIcon />,
   materia: <DocsIcon />,
+  turma: <TableIcon />,
 };
 
 export interface AppSidebarProps {
