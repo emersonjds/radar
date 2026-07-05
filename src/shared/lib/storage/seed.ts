@@ -157,6 +157,29 @@ export function seedDb(): Db {
     { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
   ];
 
+  const evaluations: Db["evaluations"] = [];
+  const evaluationGrades: Db["evaluationGrades"] = [];
+  for (const assignment of assignments) {
+    const materiaIdx = MATERIAS.findIndex((m) => m.id === assignment.subjectId);
+    const area = MATERIAS[materiaIdx].area;
+    const groupStudents = alunos.filter((aluno) => aluno.groupId === assignment.groupId);
+    const examId = `eval-${assignment.id}-p1`;
+    const homeworkId = `eval-${assignment.id}-t1`;
+    evaluations.push(
+      { id: examId, groupId: assignment.groupId, subjectId: assignment.subjectId, name: "P1", type: "exam", date: "2026-06-20", weight: 3 },
+      { id: homeworkId, groupId: assignment.groupId, subjectId: assignment.subjectId, name: "Trabalho 1", type: "homework", date: "2026-06-27", weight: 1 },
+    );
+    for (const aluno of groupStudents) {
+      const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
+      const examScore = scoreFor(alunoIdx, materiaIdx, area);
+      const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
+      evaluationGrades.push(
+        { id: `eg-${examId}-${aluno.id}`, evaluationId: examId, studentId: aluno.id, score: examScore },
+        { id: `eg-${homeworkId}-${aluno.id}`, evaluationId: homeworkId, studentId: aluno.id, score: homeworkScore },
+      );
+    }
+  }
+
   return {
     profiles: perfis,
     groups: turmas,
@@ -167,5 +190,7 @@ export function seedDb(): Db {
     subjects: materias,
     grades: notas,
     assignments,
+    evaluations,
+    evaluationGrades,
   };
 }
