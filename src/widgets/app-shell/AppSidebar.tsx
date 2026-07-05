@@ -12,6 +12,7 @@ import {
   GroupIcon,
   PieChartIcon,
   UserCircleIcon,
+  DocsIcon,
 } from "@tailadmin/icons";
 
 const navIcons: Record<NavIcon, ReactNode> = {
@@ -20,6 +21,7 @@ const navIcons: Record<NavIcon, ReactNode> = {
   user: <GroupIcon />,
   relatorios: <PieChartIcon />,
   admin: <UserCircleIcon />,
+  materia: <DocsIcon />,
 };
 
 export interface AppSidebarProps {
