@@ -14,6 +14,7 @@ import {
   UserCircleIcon,
   DocsIcon,
   TableIcon,
+  TaskIcon,
 } from "@tailadmin/icons";
 
 const navIcons: Record<NavIcon, ReactNode> = {
@@ -24,6 +25,7 @@ const navIcons: Record<NavIcon, ReactNode> = {
   admin: <UserCircleIcon />,
   materia: <DocsIcon />,
   turma: <TableIcon />,
+  grades: <TaskIcon />,
 };
 
 export interface AppSidebarProps {

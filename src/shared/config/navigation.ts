@@ -1,6 +1,6 @@
 import type { Role } from "@/entities/profile/model";
 
-export type NavIcon = "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma";
+export type NavIcon = "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma" | "grades";
 
 export interface NavItem {
   href: string;
@@ -12,6 +12,7 @@ export interface NavItem {
 export const navTeacher: NavItem[] = [
   { href: "/attendance", label: "Chamada", icon: "session" },
   { href: "/students", label: "Alunos", icon: "user" },
+  { href: "/grades", label: "Notas", icon: "grades" },
 ];
 
 /** Coordenador: visão administrativa — painel, alunos e relatórios. */
