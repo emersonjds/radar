@@ -7,13 +7,14 @@ import { useCreateAttendanceSession } from "@/entities/attendance-session/querie
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useSetAttendanceRecord, useAttendanceRecordsBySession } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
+import { useSession } from "@/features/session/use-session";
 import { formatDateLong } from "@/shared/lib/format";
 import Badge from "@tailadmin/components/ui/badge/Badge";
 import Button from "@tailadmin/components/ui/button/Button";
 import { CalenderIcon } from "@tailadmin/icons";
 import { StudentRow, STATUS_OPTIONS } from "./StudentRow";
+import { groupsForRegente } from "./scope";
 
-const PROFESSOR_ID = "perfil-ricardo";
 const HOJE = new Date().toISOString().slice(0, 10);
 
 const tileLabelColor: Record<AttendanceStatus, string> = {
@@ -33,7 +34,9 @@ function contarPorStatus(alunos: Student[], statusPorAluno: Record<string, Atten
 }
 
 export function AttendanceForm() {
-  const { data: turmas, isLoading: carregandoTurmas } = useGroups();
+  const { profileId } = useSession();
+  const { data: allGroups, isLoading: carregandoTurmas } = useGroups();
+  const turmas = groupsForRegente(allGroups ?? [], profileId);
   const [turmaSelecionada, setTurmaSelecionada] = useState<string | null>(null);
   const groupId = turmaSelecionada ?? turmas?.[0]?.id ?? "";
   const sessionId = groupId ? `chamada-${groupId}-${HOJE}` : "";
@@ -90,7 +93,7 @@ export function AttendanceForm() {
     setSalvo(false);
     setSalvando(true);
     try {
-      const chamada = await createAttendanceSession.mutateAsync({ groupId, date: HOJE, teacherId: PROFESSOR_ID });
+      const chamada = await createAttendanceSession.mutateAsync({ groupId, date: HOJE, teacherId: profileId ?? "" });
       const lancamentos = (alunos ?? []).filter((aluno) => statusPorAluno[aluno.id]);
       await Promise.all(
         lancamentos.map((aluno) =>
@@ -169,6 +172,10 @@ export function AttendanceForm() {
 
       {!groupId && (
         <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>
+      )}
+
+      {turmas.length === 0 && !carregandoTurmas && (
+        <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>
       )}
 
       {groupId && carregandoAlunos && (
