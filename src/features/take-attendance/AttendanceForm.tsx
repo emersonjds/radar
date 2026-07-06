@@ -118,7 +118,7 @@ export function AttendanceForm() {
             value={groupId}
             disabled={carregandoTurmas}
             onChange={(event) => setTurmaSelecionada(event.target.value)}
-            aria-label="Selecionar turma"
+            aria-label="Selecionar aula"
           >
             {(turmas ?? []).map((turma) => (
               <option key={turma.id} value={turma.id}>
@@ -162,10 +162,10 @@ export function AttendanceForm() {
         </Button>
       </div>
 
-      {!groupId && <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>}
+      {!groupId && <p className="text-sm text-gray-500">Selecione uma aula para iniciar a chamada.</p>}
 
       {turmas.length === 0 && !carregandoTurmas && (
-        <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>
+        <p className="text-sm text-gray-500">Você não é regente de nenhuma aula.</p>
       )}
 
       {groupId && carregandoAlunos && (
@@ -177,7 +177,7 @@ export function AttendanceForm() {
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
-        <p className="text-sm text-gray-500">Turma sem alunos cadastrados.</p>
+        <p className="text-sm text-gray-500">Aula sem alunos cadastrados.</p>
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && alunosFiltrados.length === 0 && (

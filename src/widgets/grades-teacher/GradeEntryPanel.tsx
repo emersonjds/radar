@@ -2,10 +2,7 @@
 
 import { useStudentsByGroup } from "@/entities/student/queries";
 import type { Evaluation } from "@/entities/evaluation/model";
-import {
-  useEvaluationGradesByEvaluation,
-  useSetEvaluationGrade,
-} from "@/entities/evaluation-grade/queries";
+import { useEvaluationGradesByEvaluation, useSetEvaluationGrade } from "@/entities/evaluation-grade/queries";
 
 const inputClasses =
   "h-10 w-24 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden";
@@ -48,9 +45,7 @@ export function GradeEntryPanel({ evaluation }: { evaluation: Evaluation }) {
             />
           </li>
         ))}
-        {(students ?? []).length === 0 && (
-          <li className="text-sm text-gray-500">Turma sem alunos.</li>
-        )}
+        {(students ?? []).length === 0 && <li className="text-sm text-gray-500">Aula sem alunos.</li>}
       </ul>
     </div>
   );

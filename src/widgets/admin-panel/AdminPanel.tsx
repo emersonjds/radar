@@ -137,8 +137,8 @@ export function AdminPanel() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-gray-800">Frequência por turma</h2>
-          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por turma</p>
+          <h2 className="text-lg font-semibold text-gray-800">Frequência por aula</h2>
+          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por aula</p>
           <AttendanceBarChart dados={frequenciaPorTurma} />
         </div>
 

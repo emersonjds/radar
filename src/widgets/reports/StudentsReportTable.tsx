@@ -35,13 +35,27 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
         <Table>
           <TableHeader className="border-b border-gray-100 bg-gray-50">
             <TableRow>
-              <TableCell isHeader className={th}>Aluno</TableCell>
-              <TableCell isHeader className={th}>Turma</TableCell>
-              <TableCell isHeader className={th}>Nota média</TableCell>
-              <TableCell isHeader className={th}>Frequência</TableCell>
-              <TableCell isHeader className={th}>Aptidão</TableCell>
-              <TableCell isHeader className={th}>Situação</TableCell>
-              <TableCell isHeader className={th}>Relatório</TableCell>
+              <TableCell isHeader className={th}>
+                Aluno
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Aula
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Nota média
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Frequência
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Aptidão
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Situação
+              </TableCell>
+              <TableCell isHeader className={th}>
+                Relatório
+              </TableCell>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -75,13 +89,9 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                   <TableCell className={td}>{linha.turmaNome}</TableCell>
                   <TableCell className={td}>{formatScore(linha.nota)}</TableCell>
                   <TableCell className={td}>{formatPercent(linha.freq)}</TableCell>
+                  <TableCell className={td}>{linha.aptidao ? areaLabels[linha.aptidao] : "—"}</TableCell>
                   <TableCell className={td}>
-                    {linha.aptidao ? areaLabels[linha.aptidao] : "—"}
-                  </TableCell>
-                  <TableCell className={td}>
-                    <Badge color={linha.emRisco ? "error" : "success"}>
-                      {linha.emRisco ? "Em risco" : "Regular"}
-                    </Badge>
+                    <Badge color={linha.emRisco ? "error" : "success"}>{linha.emRisco ? "Em risco" : "Regular"}</Badge>
                   </TableCell>
                   <TableCell className={td}>
                     <Link

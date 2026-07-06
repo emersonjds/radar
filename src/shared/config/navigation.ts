@@ -25,7 +25,7 @@ export const navCoordinator: NavItem[] = [
 /** Admin: tudo do coordenador + gestão de perfis. */
 export const navAdmin: NavItem[] = [
   ...navCoordinator,
-  { href: "/groups", label: "Turmas", icon: "turma" },
+  { href: "/groups", label: "Aulas", icon: "turma" },
   { href: "/subjects", label: "Matérias", icon: "materia" },
   { href: "/users", label: "Perfis", icon: "admin" },
 ];

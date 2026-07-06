@@ -33,9 +33,9 @@ export function GroupsAdmin() {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">Turmas</h1>
+        <h1 className="text-xl font-semibold text-gray-800">Aulas</h1>
         <Button size="sm" onClick={() => setEditing(null)}>
-          Adicionar turma
+          Adicionar aula
         </Button>
       </header>
 

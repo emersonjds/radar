@@ -123,19 +123,19 @@ export function ReportsCenter() {
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Relatórios</h1>
           <p className="mt-1 text-sm text-gray-500">
-            Panorama acadêmico e de frequência por turma — clique num aluno para a ficha completa
+            Panorama acadêmico e de frequência por aula — clique num aluno para a ficha completa
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
-            Turma
+            Aula
             <select
-              aria-label="Selecionar turma"
+              aria-label="Selecionar aula"
               className={control}
               value={turmaId}
               onChange={(event) => setTurmaId(event.target.value)}
             >
-              <option value={TODAS}>Todas as turmas</option>
+              <option value={TODAS}>Todas as aulas</option>
               {(turmas ?? []).map((turma) => (
                 <option key={turma.id} value={turma.id}>
                   {turma.name}
