@@ -8,6 +8,7 @@ import { useAttendanceRecords } from "@/entities/attendance-record/queries";
 import { useAttendanceSessions } from "@/entities/attendance-session/queries";
 import { useProfiles } from "@/entities/profile/queries";
 import { useGroups } from "@/entities/group/queries";
+import { useEnrollments } from "@/entities/enrollment/queries";
 import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
 import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
@@ -36,16 +37,14 @@ const TAREFAS_ADMIN: TarefaAdmin[] = [
 
 const TAREFA_COLOR: Record<TarefaAdmin["status"], "light" | "success" | "error"> = {
   Pendente: "light",
-  "Concluída": "success",
+  Concluída: "success",
   Urgente: "error",
 };
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
-        {icon}
-      </div>
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">{icon}</div>
       <p className="mt-4 text-sm text-gray-500">{label}</p>
       <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
     </div>
@@ -55,6 +54,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
 export function AdminPanel() {
   const alunos = useStudents();
   const turmas = useGroups();
+  const enrollments = useEnrollments();
   const perfis = useProfiles();
   const presencas = useAttendanceRecords();
   const chamadas = useAttendanceSessions();
@@ -67,19 +67,26 @@ export function AdminPanel() {
   const turmaPorId = new Map((turmas.data ?? []).map((turma) => [turma.id, turma]));
   const chamadaPorId = new Map((chamadas.data ?? []).map((chamada) => [chamada.id, chamada]));
 
+  // Aula(s) por aluno vem do enrollment ativo (N:N).
+  const turmasDoAluno = new Map<string, string[]>();
+  for (const enrollment of enrollments.data ?? []) {
+    if (!enrollment.active) continue;
+    turmasDoAluno.set(enrollment.studentId, [...(turmasDoAluno.get(enrollment.studentId) ?? []), enrollment.groupId]);
+  }
+
   const presencasPorTurma = new Map<string, AttendanceRecord[]>();
   const recordsByStudent = new Map<string, AttendanceRecord[]>();
   for (const presenca of presencas.data ?? []) {
-    const aluno = alunoPorId.get(presenca.studentId);
-    if (aluno) {
-      presencasPorTurma.set(aluno.groupId, [...(presencasPorTurma.get(aluno.groupId) ?? []), presenca]);
+    const chamada = chamadaPorId.get(presenca.sessionId);
+    if (chamada) {
+      presencasPorTurma.set(chamada.groupId, [...(presencasPorTurma.get(chamada.groupId) ?? []), presenca]);
     }
     recordsByStudent.set(presenca.studentId, [...(recordsByStudent.get(presenca.studentId) ?? []), presenca]);
   }
 
   const frequenciaPorTurma = (turmas.data ?? []).map((turma) => ({
     groupId: turma.id,
-    label: turma.gradeLevel.split(" ")[0],
+    label: turma.name.split(" ")[0],
     attendance: attendanceRate(presencasPorTurma.get(turma.id) ?? []),
   }));
 
@@ -87,8 +94,15 @@ export function AdminPanel() {
     .slice(0, MAX_ALERTAS)
     .map((risco) => {
       const aluno = alunoPorId.get(risco.studentId);
-      const turma = aluno ? turmaPorId.get(aluno.groupId) : undefined;
-      return { ...risco, name: aluno?.name ?? "Aluno", turma: turma?.gradeLevel ?? "—" };
+      const groupIds = turmasDoAluno.get(risco.studentId) ?? [];
+      const nomesTurmas = groupIds
+        .map((groupId) => turmaPorId.get(groupId)?.name)
+        .filter((name): name is string => Boolean(name));
+      return {
+        ...risco,
+        name: aluno?.name ?? "Aluno",
+        turma: nomesTurmas.join(", ") || "—",
+      };
     });
 
   const registrosPorData: { date: string; status: AttendanceStatus }[] = [];
@@ -104,11 +118,7 @@ export function AdminPanel() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard
-          label="Total de alunos"
-          value={alunos.isLoading ? "…" : String(totalAlunos)}
-          icon={<GroupIcon />}
-        />
+        <StatCard label="Total de alunos" value={alunos.isLoading ? "…" : String(totalAlunos)} icon={<GroupIcon />} />
         <StatCard
           label="Total de professores"
           value={
@@ -127,8 +137,8 @@ export function AdminPanel() {
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-gray-800">Frequência por turma</h2>
-          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por turma</p>
+          <h2 className="text-lg font-semibold text-gray-800">Frequência por aula</h2>
+          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por aula</p>
           <AttendanceBarChart dados={frequenciaPorTurma} />
         </div>
 

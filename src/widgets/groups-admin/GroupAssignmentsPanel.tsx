@@ -50,7 +50,7 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
 
   return (
     <div className="mt-3 rounded-xl bg-gray-50 p-4">
-      <h5 className="mb-3 text-sm font-semibold text-gray-700">Matérias desta turma</h5>
+      <h5 className="mb-3 text-sm font-semibold text-gray-700">Matérias desta aula</h5>
 
       <ul className="mb-4 flex flex-col gap-2">
         {(assignments ?? []).map((assignment) => (
@@ -63,7 +63,9 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
               className={controlClasses}
             >
               {teachers.map((teacher) => (
-                <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+                <option key={teacher.id} value={teacher.id}>
+                  {teacher.name}
+                </option>
               ))}
             </select>
             <Button size="sm" variant="outline" onClick={() => deleteAssignment.mutate(assignment.id)}>
@@ -76,21 +78,41 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
         )}
       </ul>
 
-      {erro && <p role="alert" className="mb-2 text-sm text-error-600">{erro}</p>}
+      {erro && (
+        <p role="alert" className="mb-2 text-sm text-error-600">
+          {erro}
+        </p>
+      )}
 
       {availableSubjects.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <select aria-label="Matéria a adicionar" value={newSubjectId} onChange={(e) => setNewSubjectId(e.target.value)} className={controlClasses}>
+          <select
+            aria-label="Matéria a adicionar"
+            value={newSubjectId}
+            onChange={(e) => setNewSubjectId(e.target.value)}
+            className={controlClasses}
+          >
             {availableSubjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
+              <option key={subject.id} value={subject.id}>
+                {subject.name}
+              </option>
             ))}
           </select>
-          <select aria-label="Professor da matéria" value={newTeacherId} onChange={(e) => setNewTeacherId(e.target.value)} className={controlClasses}>
+          <select
+            aria-label="Professor da matéria"
+            value={newTeacherId}
+            onChange={(e) => setNewTeacherId(e.target.value)}
+            className={controlClasses}
+          >
             {teachers.map((teacher) => (
-              <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+              <option key={teacher.id} value={teacher.id}>
+                {teacher.name}
+              </option>
             ))}
           </select>
-          <Button size="sm" onClick={adicionar}>Adicionar matéria à turma</Button>
+          <Button size="sm" onClick={adicionar}>
+            Adicionar matéria à aula
+          </Button>
         </div>
       )}
     </div>

@@ -7,7 +7,8 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 ## 1. Identidade do Produto
 
 - **Nome**: Radar
-- **Domínio**: presença escolar. Professores marcam a chamada da turma (mobile, em sala); admins acompanham frequência e absenteísmo em dashboards (mobile + desktop).
+- **Domínio**: sistema de presença e acompanhamento para **ONG de reforço escolar no contra-turno**. Professores marcam presença nas **aulas** (mobile); admins acompanham frequência, absenteísmo e desempenho em dashboards (mobile + desktop).
+- **Modelo**: alunos têm uma **ficha** independente (nome, data de nascimento, responsável, telefone) e podem estar matriculados em **múltiplas aulas** simultaneamente (relação N:N). Não há conceito de série/ano escolar — cada aula é uma oficina temática (ex: Matemática Avançada II, Física I, Ciências Gerais).
 - **Stack**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, pnpm. Supabase (Postgres + RLS + RPCs) via `@supabase/ssr`. recharts, TanStack Query/Table, zustand, zod, react-hook-form.
 - **Tipo**: SPA com static export (`output: "export"`) — sem servidor próprio; dados direto do Supabase (MSW só nos testes).
 - **Idioma da UI**: português brasileiro em 100% dos textos visíveis.
@@ -53,8 +54,8 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 src/
 ├── app/          ← Next.js App Router. Rotas e layouts. Sem regra de negócio.
 ├── widgets/      ← UI composta (header, sidebar, painéis de gráfico).
-├── features/     ← Casos de uso (fazer-chamada, ver-dashboard, gerir-turmas, gerir-alunos, auth).
-├── entities/     ← Modelos de domínio (perfil, turma, aluno, chamada, presenca).
+├── features/     ← Casos de uso (fazer-chamada, ver-dashboard, gerir-aulas, gerir-alunos, matricular, auth).
+├── entities/     ← Modelos de domínio (perfil, aula/group, aluno, matrícula/enrollment, chamada, presença).
 └── shared/       ← Infra reutilizável (ui, lib/supabase, hooks, providers).
 ```
 
@@ -100,15 +101,18 @@ Execução e qualidade: `bug` (QA/quality gate de código), `qa` (E2E em tela co
 
 Regra: **um agent por função, sem duplicação**.
 
-## 10. Domínio: Radar
+## 10. Domínio: Radar (ONG de Reforço Escolar)
 
 - **Perfil**: usuário do sistema, com papel `professor` ou `admin`.
-- **Turma**: grupo de alunos com um professor responsável (nome, série, turno).
-- **Aluno**: estudante vinculado a uma turma (nome, matrícula, ativo/inativo).
-- **Chamada**: registro de uma aula realizada — única por `(turma, data)`.
-- **Presença**: status de um aluno numa chamada — `presente`, `ausente`, `atrasado` ou `justificado`; única por `(chamada, aluno)`.
-- **Avaliação**: prova/trabalho de uma turma (nome, data, peso 1–3) — única por `(turma, nome, data)`.
-- **Nota**: valor 0–10 (uma casa) de um aluno numa avaliação — única por `(avaliação, aluno)`; `null` = pendente. Média do aluno é ponderada pelo peso.
-- **Frequência**: percentual de presença de um aluno ou de uma turma, agregado no servidor.
+- **Aula** (entidade `Group`): oficina temática com um professor regente (ex: Matemática Avançada II, Física I). Atributos: nome, turno (manhã/tarde/noite). **Não há série/ano** — cada aula é independente.
+- **Aluno**: ficha cadastral do estudante. Atributos: nome, data de nascimento, responsável, telefone do responsável, ativo/inativo. **Não tem matrícula (enrollment number) nem vínculo fixo a uma aula** — a relação é N:N via `Enrollment`.
+- **Matrícula** (entidade `Enrollment`): vínculo entre um aluno e uma aula. Um aluno pode estar matriculado em várias aulas; uma aula tem vários alunos. Atributos: `studentId`, `groupId`, `joinedAt`, `active` (soft delete).
+- **Chamada** (entidade `AttendanceSession`): registro de uma sessão de aula realizada — única por `(aula, data)`.
+- **Presença** (entidade `AttendanceRecord`): status de um aluno numa chamada — `presente`, `ausente`, `atrasado` ou `justificado`; única por `(chamada, aluno)`.
+- **Avaliação**: prova/trabalho de uma aula (nome, data, peso 1–3) — única por `(aula, matéria, nome, data)`.
+- **Nota** (entidade `EvaluationGrade`): valor 0–10 (uma casa) de um aluno numa avaliação — única por `(avaliação, aluno)`; `null` = pendente. Média do aluno é ponderada pelo peso.
+- **Frequência**: percentual de presença de um aluno (global ou por aula), agregado no servidor.
 - **Absenteísmo**: tendência/série temporal de faltas ao longo do tempo.
 - **Aluno em risco**: aluno com faltas acima de um limite (indicador de risco de evasão).
+
+**Observação**: no código, a entidade ainda se chama `Group` (por legado e para evitar refactor massivo), mas na UI e na documentação de produto sempre se refere como **"aula"**. O modelo de dados agora reflete um contexto de ONG de reforço no contra-turno, não uma escola tradicional com turmas seriadas.
