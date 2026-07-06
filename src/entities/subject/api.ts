@@ -45,14 +45,12 @@ export async function updateSubject(id: string, patch: SubjectUpdate): Promise<S
 
 export async function deleteSubject(id: string): Promise<void> {
   const assignments = await readCollection<{ subjectId: string }>("assignments");
-  const grades = await readCollection<{ subjectId: string }>("grades");
+  const evaluations = await readCollection<{ subjectId: string }>("evaluations");
   const inUse =
     assignments.some((assignment) => assignment.subjectId === id) ||
-    grades.some((grade) => grade.subjectId === id);
+    evaluations.some((evaluation) => evaluation.subjectId === id);
   if (inUse) {
-    throw new Error("Matéria em uso (lecionamento ou nota) não pode ser removida.");
+    throw new Error("Matéria em uso (lecionamento ou avaliação) não pode ser removida.");
   }
-  await mutateCollection<Subject>("subjects", (subjects) =>
-    subjects.filter((subject) => subject.id !== id),
-  );
+  await mutateCollection<Subject>("subjects", (subjects) => subjects.filter((subject) => subject.id !== id));
 }

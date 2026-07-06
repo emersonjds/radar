@@ -17,7 +17,6 @@ export type Collection =
   | "attendanceRecords"
   | "schoolEvents"
   | "subjects"
-  | "grades"
   | "assignments"
   | "evaluations"
   | "evaluationGrades";
@@ -71,10 +70,7 @@ export async function readCollection<T>(name: Collection): Promise<T[]> {
 }
 
 /** Apply a pure transform to a collection and persist the result. */
-export async function mutateCollection<T>(
-  name: Collection,
-  transform: (rows: T[]) => T[],
-): Promise<T[]> {
+export async function mutateCollection<T>(name: Collection, transform: (rows: T[]) => T[]): Promise<T[]> {
   const db = load();
   const next = transform((db[name] ?? []) as T[]);
   persist({ ...db, [name]: next });
