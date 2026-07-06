@@ -27,7 +27,8 @@ export type Collection =
   | "subjects"
   | "assignments"
   | "evaluations"
-  | "evaluationGrades";
+  | "evaluationGrades"
+  | "enrollments";
 
 // Partial: a seed or a persisted blob may predate a collection (light migration),
 // and readCollection/mutateCollection already fall back to [] for missing keys.

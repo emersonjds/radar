@@ -137,11 +137,36 @@ export function seedDb(): Db {
   };
   const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: REGENTE_POR_TURMA[turma.id] }));
 
-  const alunos = NOMES.map((name, index) => ({
-    id: `aluno-${index + 1}`,
-    name,
-    enrollment: `EDU-2026-${String(1000 + index)}`,
-    groupId: TURMAS[index % TURMAS.length].id,
+  const SEED_DATE = "2026-07-05";
+
+  // Alocacao original (aluno -> aula). Antes vivia em student.groupId; agora vira enrollment.
+  const alunoGroupById: Record<string, string> = {};
+
+  const alunos = NOMES.map((name, index) => {
+    const id = `aluno-${index + 1}`;
+    alunoGroupById[id] = TURMAS[index % TURMAS.length].id;
+    // Idade determinística entre 11 e 17 anos, com mês/dia variando pelo índice.
+    const age = 11 + (index % 7);
+    const birthYear = 2026 - age;
+    const birthMonth = String(((index * 3) % 12) + 1).padStart(2, "0");
+    const birthDay = String(((index * 5) % 27) + 1).padStart(2, "0");
+    const lastName = name.split(" ").slice(-1)[0];
+    const guardianRelation = index % 2 === 0 ? "Mãe" : "Pai";
+    return {
+      id,
+      name,
+      birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
+      guardianName: `${guardianRelation} de ${lastName}`,
+      guardianPhone: `(11) 9${String(10000 + index * 137).slice(0, 4)}-${String(1000 + index * 17).slice(-4)}`,
+      active: true,
+    };
+  });
+
+  const enrollments = alunos.map((aluno) => ({
+    id: `matricula-${aluno.id}-${alunoGroupById[aluno.id]}`,
+    studentId: aluno.id,
+    groupId: alunoGroupById[aluno.id],
+    joinedAt: SEED_DATE,
     active: true,
   }));
 
@@ -149,7 +174,7 @@ export function seedDb(): Db {
   const presencas: Db["attendanceRecords"] = [];
 
   for (const turma of turmas) {
-    const turmaAlunos = alunos.filter((aluno) => aluno.groupId === turma.id);
+    const turmaAlunos = alunos.filter((aluno) => alunoGroupById[aluno.id] === turma.id);
     DATAS.forEach((data, dataIdx) => {
       const sessionId = `chamada-${turma.id}-${data}`;
       chamadas.push({
@@ -204,7 +229,7 @@ export function seedDb(): Db {
   for (const assignment of assignments) {
     const materiaIdx = MATERIAS.findIndex((m) => m.id === assignment.subjectId);
     const area = MATERIAS[materiaIdx].area;
-    const groupStudents = alunos.filter((aluno) => aluno.groupId === assignment.groupId);
+    const groupStudents = alunos.filter((aluno) => alunoGroupById[aluno.id] === assignment.groupId);
     const examId = `eval-${assignment.id}-p1`;
     const homeworkId = `eval-${assignment.id}-t1`;
     evaluations.push(
@@ -249,5 +274,6 @@ export function seedDb(): Db {
     assignments,
     evaluations,
     evaluationGrades,
+    enrollments,
   };
 }
