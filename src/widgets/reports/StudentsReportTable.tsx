@@ -78,7 +78,7 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                 <TableRow key={linha.id} className="border-t border-gray-100 hover:bg-gray-50">
                   <TableCell className={td}>
                     <Link
-                      href={"/reports/" + linha.id}
+                      href={"/reports?studentId=" + linha.id}
                       className="flex items-center gap-3"
                       aria-label={`Abrir relatório de ${linha.name}`}
                     >
