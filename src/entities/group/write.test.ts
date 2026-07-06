@@ -12,7 +12,6 @@ describe("group writes (over the store)", () => {
   it("creates and updates a group with a regente", async () => {
     const created = await createGroup({
       name: "Redação I",
-      gradeLevel: "1ª série",
       shift: "afternoon",
       teacherId: "perfil-ricardo",
     });
@@ -24,7 +23,6 @@ describe("group writes (over the store)", () => {
   it("deletes an empty group", async () => {
     const created = await createGroup({
       name: "Redação I",
-      gradeLevel: "1ª série",
       shift: "afternoon",
       teacherId: "perfil-ricardo",
     });
@@ -35,7 +33,6 @@ describe("group writes (over the store)", () => {
   it("refuses to delete a group that has students", async () => {
     const created = await createGroup({
       name: "Redação I",
-      gradeLevel: "1ª série",
       shift: "afternoon",
       teacherId: "perfil-ricardo",
     });
@@ -46,7 +43,6 @@ describe("group writes (over the store)", () => {
   it("cascades lecionamentos when the group is deleted", async () => {
     const created = await createGroup({
       name: "Redação I",
-      gradeLevel: "1ª série",
       shift: "afternoon",
       teacherId: "perfil-ricardo",
     });

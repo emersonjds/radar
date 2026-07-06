@@ -12,9 +12,9 @@ const ADMIN_ID = "perfil-ana";
 const COORDINATOR_ID = "perfil-carla";
 
 const TURMAS = [
-  { id: "turma-mat-b", name: "Matemática Avançada II", gradeLevel: "3ª série", shift: "manhã" },
-  { id: "turma-fis-a", name: "Física I", gradeLevel: "2ª série", shift: "manhã" },
-  { id: "turma-cie-c", name: "Ciências Gerais", gradeLevel: "1ª série", shift: "afternoon" },
+  { id: "turma-mat-b", name: "Reforço de Matemática — Segunda", shift: "afternoon" },
+  { id: "turma-fis-a", name: "Reforço de Física — Terça", shift: "afternoon" },
+  { id: "turma-cie-c", name: "Reforço de Ciências — Quarta", shift: "afternoon" },
 ];
 
 // Weekday ISO dates leading up to 2026-07-01, oldest first.

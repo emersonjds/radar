@@ -6,7 +6,6 @@ export type Shift = z.infer<typeof shiftSchema>;
 export const groupSchema = z.object({
   id: z.string(),
   name: z.string(),
-  gradeLevel: z.string(),
   shift: shiftSchema,
   teacherId: z.string(),
 });
@@ -14,7 +13,7 @@ export const groupSchema = z.object({
 export type Group = z.infer<typeof groupSchema>;
 
 export const shiftLabels: Record<Shift, string> = {
-  "manhã": "Manhã",
+  manhã: "Manhã",
   afternoon: "Tarde",
   evening: "Noite",
 };

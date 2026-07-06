@@ -36,16 +36,14 @@ const TAREFAS_ADMIN: TarefaAdmin[] = [
 
 const TAREFA_COLOR: Record<TarefaAdmin["status"], "light" | "success" | "error"> = {
   Pendente: "light",
-  "Concluída": "success",
+  Concluída: "success",
   Urgente: "error",
 };
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
-        {icon}
-      </div>
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">{icon}</div>
       <p className="mt-4 text-sm text-gray-500">{label}</p>
       <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
     </div>
@@ -79,7 +77,7 @@ export function AdminPanel() {
 
   const frequenciaPorTurma = (turmas.data ?? []).map((turma) => ({
     groupId: turma.id,
-    label: turma.gradeLevel.split(" ")[0],
+    label: turma.name.split(" ")[0],
     attendance: attendanceRate(presencasPorTurma.get(turma.id) ?? []),
   }));
 
@@ -88,7 +86,7 @@ export function AdminPanel() {
     .map((risco) => {
       const aluno = alunoPorId.get(risco.studentId);
       const turma = aluno ? turmaPorId.get(aluno.groupId) : undefined;
-      return { ...risco, name: aluno?.name ?? "Aluno", turma: turma?.gradeLevel ?? "—" };
+      return { ...risco, name: aluno?.name ?? "Aluno", turma: turma?.name ?? "—" };
     });
 
   const registrosPorData: { date: string; status: AttendanceStatus }[] = [];
@@ -104,11 +102,7 @@ export function AdminPanel() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard
-          label="Total de alunos"
-          value={alunos.isLoading ? "…" : String(totalAlunos)}
-          icon={<GroupIcon />}
-        />
+        <StatCard label="Total de alunos" value={alunos.isLoading ? "…" : String(totalAlunos)} icon={<GroupIcon />} />
         <StatCard
           label="Total de professores"
           value={

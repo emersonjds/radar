@@ -125,7 +125,7 @@ export function AttendanceForm() {
           >
             {(turmas ?? []).map((turma) => (
               <option key={turma.id} value={turma.id}>
-                {turma.name} — {turma.gradeLevel}
+                {turma.name}
               </option>
             ))}
           </select>
@@ -145,13 +145,8 @@ export function AttendanceForm() {
 
         <div className="grid grid-cols-4 gap-2">
           {STATUS_OPTIONS.map((opcao) => (
-            <div
-              key={opcao.value}
-              className="flex flex-col items-center rounded-lg bg-gray-50 py-2"
-            >
-              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>
-                {opcao.label}
-              </span>
+            <div key={opcao.value} className="flex flex-col items-center rounded-lg bg-gray-50 py-2">
+              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>{opcao.label}</span>
               <span className="text-lg font-semibold text-gray-800">{contagem[opcao.value]}</span>
             </div>
           ))}
@@ -170,9 +165,7 @@ export function AttendanceForm() {
         </Button>
       </div>
 
-      {!groupId && (
-        <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>
-      )}
+      {!groupId && <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>}
 
       {turmas.length === 0 && !carregandoTurmas && (
         <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>

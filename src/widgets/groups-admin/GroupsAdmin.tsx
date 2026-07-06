@@ -33,10 +33,16 @@ export function GroupsAdmin() {
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-800">Turmas</h1>
-        <Button size="sm" onClick={() => setEditing(null)}>Adicionar turma</Button>
+        <Button size="sm" onClick={() => setEditing(null)}>
+          Adicionar turma
+        </Button>
       </header>
 
-      {erro && <p role="alert" className="text-sm text-error-600">{erro}</p>}
+      {erro && (
+        <p role="alert" className="text-sm text-error-600">
+          {erro}
+        </p>
+      )}
 
       {isLoading ? (
         <div className="h-24 animate-pulse rounded-xl bg-gray-100" />
@@ -48,15 +54,23 @@ export function GroupsAdmin() {
                 <div>
                   <p className="font-medium text-gray-800">{group.name}</p>
                   <p className="text-xs text-gray-500">
-                    {group.gradeLevel} · {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
+                    {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}
+                  >
                     {expandedId === group.id ? "Fechar matérias" : "Matérias"}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>Editar</Button>
-                  <Button size="sm" variant="outline" onClick={() => remover(group)}>Excluir</Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => remover(group)}>
+                    Excluir
+                  </Button>
                 </div>
               </div>
               {expandedId === group.id && <GroupAssignmentsPanel groupId={group.id} />}
