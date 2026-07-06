@@ -1,5 +1,6 @@
 import { mutateCollection, readCollection } from "@/shared/lib/storage/db";
 import { studentSchema, type Student } from "./model";
+import { fetchEnrollmentsByGroup } from "@/entities/enrollment/api";
 
 export async function fetchStudents(): Promise<Student[]> {
   const rows = await readCollection("students");
@@ -7,8 +8,11 @@ export async function fetchStudents(): Promise<Student[]> {
 }
 
 export async function fetchStudentsByGroup(groupId: string): Promise<Student[]> {
-  const students = await fetchStudents();
-  return students.filter((student) => student.groupId === groupId);
+  const [students, enrollments] = await Promise.all([fetchStudents(), fetchEnrollmentsByGroup(groupId)]);
+  const studentIds = new Set(
+    enrollments.filter((enrollment) => enrollment.active).map((enrollment) => enrollment.studentId),
+  );
+  return students.filter((student) => studentIds.has(student.id));
 }
 
 export async function fetchStudentById(id: string): Promise<Student | null> {
@@ -18,33 +22,26 @@ export async function fetchStudentById(id: string): Promise<Student | null> {
 
 export interface NewStudentInput {
   name: string;
-  groupId: string;
+  birthDate: string;
+  guardianName: string;
+  guardianPhone: string;
 }
 
 export interface StudentUpdate {
   name?: string;
-  groupId?: string;
+  birthDate?: string;
+  guardianName?: string;
+  guardianPhone?: string;
   active?: boolean;
 }
 
-// ponytail: sequential demo enrollment (EDU-2026-N), auto-assigned so the user
-// never types a matrícula. The backend will own id/enrollment generation later.
-function nextEnrollment(students: Student[]): string {
-  const highest = students.reduce((max, student) => {
-    const seq = Number(student.enrollment.split("-").pop());
-    return Number.isFinite(seq) ? Math.max(max, seq) : max;
-  }, 999);
-  return `EDU-2026-${highest + 1}`;
-}
-
 export async function createStudent(input: NewStudentInput): Promise<Student> {
-  const students = await fetchStudents();
-  const enrollment = nextEnrollment(students);
   const student: Student = {
-    id: `aluno-${enrollment}`,
+    id: crypto.randomUUID(),
     name: input.name.trim(),
-    enrollment,
-    groupId: input.groupId,
+    birthDate: input.birthDate,
+    guardianName: input.guardianName.trim(),
+    guardianPhone: input.guardianPhone.trim(),
     active: true,
   };
   studentSchema.parse(student);
@@ -54,7 +51,18 @@ export async function createStudent(input: NewStudentInput): Promise<Student> {
 
 export async function updateStudent(id: string, patch: StudentUpdate): Promise<void> {
   await mutateCollection<Student>("students", (rows) =>
-    rows.map((student) => (student.id === id ? { ...student, ...patch } : student)),
+    rows.map((student) =>
+      student.id === id
+        ? {
+            ...student,
+            ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
+            ...(patch.birthDate !== undefined ? { birthDate: patch.birthDate } : {}),
+            ...(patch.guardianName !== undefined ? { guardianName: patch.guardianName.trim() } : {}),
+            ...(patch.guardianPhone !== undefined ? { guardianPhone: patch.guardianPhone.trim() } : {}),
+            ...(patch.active !== undefined ? { active: patch.active } : {}),
+          }
+        : student,
+    ),
   );
 }
 

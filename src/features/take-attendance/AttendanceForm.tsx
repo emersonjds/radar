@@ -68,10 +68,7 @@ export function AttendanceForm() {
 
   const termoBusca = busca.trim().toLowerCase();
   const alunosFiltrados = (alunos ?? []).filter(
-    (aluno) =>
-      !termoBusca ||
-      aluno.name.toLowerCase().includes(termoBusca) ||
-      aluno.enrollment.toLowerCase().includes(termoBusca),
+    (aluno) => !termoBusca || aluno.name.toLowerCase().includes(termoBusca),
   );
 
   function selecionarStatus(studentId: string, status: AttendanceStatus) {
@@ -121,11 +118,11 @@ export function AttendanceForm() {
             value={groupId}
             disabled={carregandoTurmas}
             onChange={(event) => setTurmaSelecionada(event.target.value)}
-            aria-label="Selecionar turma"
+            aria-label="Selecionar aula"
           >
             {(turmas ?? []).map((turma) => (
               <option key={turma.id} value={turma.id}>
-                {turma.name} — {turma.gradeLevel}
+                {turma.name}
               </option>
             ))}
           </select>
@@ -145,13 +142,8 @@ export function AttendanceForm() {
 
         <div className="grid grid-cols-4 gap-2">
           {STATUS_OPTIONS.map((opcao) => (
-            <div
-              key={opcao.value}
-              className="flex flex-col items-center rounded-lg bg-gray-50 py-2"
-            >
-              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>
-                {opcao.label}
-              </span>
+            <div key={opcao.value} className="flex flex-col items-center rounded-lg bg-gray-50 py-2">
+              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>{opcao.label}</span>
               <span className="text-lg font-semibold text-gray-800">{contagem[opcao.value]}</span>
             </div>
           ))}
@@ -170,12 +162,10 @@ export function AttendanceForm() {
         </Button>
       </div>
 
-      {!groupId && (
-        <p className="text-sm text-gray-500">Selecione uma turma para iniciar a chamada.</p>
-      )}
+      {!groupId && <p className="text-sm text-gray-500">Selecione uma aula para iniciar a chamada.</p>}
 
       {turmas.length === 0 && !carregandoTurmas && (
-        <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>
+        <p className="text-sm text-gray-500">Você não é regente de nenhuma aula.</p>
       )}
 
       {groupId && carregandoAlunos && (
@@ -187,7 +177,7 @@ export function AttendanceForm() {
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
-        <p className="text-sm text-gray-500">Turma sem alunos cadastrados.</p>
+        <p className="text-sm text-gray-500">Aula sem alunos cadastrados.</p>
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && alunosFiltrados.length === 0 && (

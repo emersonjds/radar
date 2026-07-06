@@ -3,9 +3,9 @@ import type { Group } from "@/entities/group/model";
 import { groupsForRegente } from "./scope";
 
 const groups: Group[] = [
-  { id: "g1", name: "A", gradeLevel: "1", shift: "manhã", teacherId: "t1" },
-  { id: "g2", name: "B", gradeLevel: "2", shift: "manhã", teacherId: "t2" },
-  { id: "g3", name: "C", gradeLevel: "3", shift: "manhã", teacherId: "t1" },
+  { id: "g1", name: "A", shift: "manhã", teacherId: "t1" },
+  { id: "g2", name: "B", shift: "manhã", teacherId: "t2" },
+  { id: "g3", name: "C", shift: "manhã", teacherId: "t1" },
 ];
 
 describe("groupsForRegente", () => {

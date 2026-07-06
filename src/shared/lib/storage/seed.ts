@@ -10,28 +10,36 @@ const PROFESSOR_ID = "perfil-ricardo";
 const TEACHER_TWO_ID = "perfil-bruno";
 const ADMIN_ID = "perfil-ana";
 const COORDINATOR_ID = "perfil-carla";
+const PO_ID = "perfil-vanessa";
 
 const TURMAS = [
-  { id: "turma-mat-b", name: "Matemática Avançada II", gradeLevel: "3ª série", shift: "manhã" },
-  { id: "turma-fis-a", name: "Física I", gradeLevel: "2ª série", shift: "manhã" },
-  { id: "turma-cie-c", name: "Ciências Gerais", gradeLevel: "1ª série", shift: "afternoon" },
+  { id: "turma-mat-b", name: "Reforço de Matemática — Segunda", shift: "afternoon" },
+  { id: "turma-fis-a", name: "Reforço de Física — Terça", shift: "afternoon" },
+  { id: "turma-cie-c", name: "Reforço de Ciências — Quarta", shift: "afternoon" },
 ];
 
 // Weekday ISO dates leading up to 2026-07-01, oldest first.
-const DATAS = [
-  "2026-06-16",
-  "2026-06-18",
-  "2026-06-23",
-  "2026-06-25",
-  "2026-06-30",
-  "2026-07-01",
-];
+const DATAS = ["2026-06-16", "2026-06-18", "2026-06-23", "2026-06-25", "2026-06-30", "2026-07-01"];
 
 const NOMES = [
-  "Marcus Thorne", "Sasha Kim", "Julian Rossi", "Elena Rodrigues", "Tobias Jenkins",
-  "Amara Gupta", "Benjamin Harrison", "Clara Mendes", "Diego Santos", "Fatima Oliveira",
-  "Gabriel Lima", "Helena Costa", "Igor Petrov", "Julia Ferreira", "Kaique Souza",
-  "Lara Nunes", "Mateus Rocha", "Nina Barros",
+  "Marcus Thorne",
+  "Sasha Kim",
+  "Julian Rossi",
+  "Elena Rodrigues",
+  "Tobias Jenkins",
+  "Amara Gupta",
+  "Benjamin Harrison",
+  "Clara Mendes",
+  "Diego Santos",
+  "Fatima Oliveira",
+  "Gabriel Lima",
+  "Helena Costa",
+  "Igor Petrov",
+  "Julia Ferreira",
+  "Kaique Souza",
+  "Lara Nunes",
+  "Mateus Rocha",
+  "Nina Barros",
 ];
 
 // 8 matérias, 2 por área — base para notas, matérias de destaque e aptidão.
@@ -77,14 +85,60 @@ function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
 }
 
 export function seedDb(): Db {
-  // Demo credentials (username / password): ricardo / prof123, ana / admin123,
-  // carla / coord123. passwordHash is the SHA-256 hex of the password
-  // (shared/lib/auth/password) — temporary until Supabase Auth.
+  // Demo credentials (username / password):
+  // ricardo / prof123, bruno / prof123, ana / admin123, carla / coord123, vanessa / 123456
+  // passwordHash is the SHA-256 hex of the password (shared/lib/auth/password) — temporary until Supabase Auth.
   const perfis = [
-    { id: PROFESSOR_ID, name: "Ricardo Alves", email: "ricardo@radar.escola", role: "teacher", jobTitle: "Professor Titular", username: "ricardo", passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf", active: true },
-    { id: ADMIN_ID, name: "Ana Vance", email: "ana@radar.escola", role: "admin", jobTitle: "Administração", username: "ana", passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9", active: true },
-    { id: COORDINATOR_ID, name: "Carla Dias", email: "carla@radar.escola", role: "coordinator", jobTitle: "Coordenação Pedagógica", username: "carla", passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65", active: true },
-    { id: TEACHER_TWO_ID, name: "Bruno Farias", email: "bruno@radar.escola", role: "teacher", jobTitle: "Professor", username: "bruno", passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf", active: true },
+    {
+      id: PROFESSOR_ID,
+      name: "Ricardo Alves",
+      email: "ricardo@radar.escola",
+      role: "teacher",
+      jobTitle: "Professor Titular",
+      username: "ricardo",
+      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
+      active: true,
+    },
+    {
+      id: ADMIN_ID,
+      name: "Ana Vance",
+      email: "ana@radar.escola",
+      role: "admin",
+      jobTitle: "Administração",
+      username: "ana",
+      passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      active: true,
+    },
+    {
+      id: COORDINATOR_ID,
+      name: "Carla Dias",
+      email: "carla@radar.escola",
+      role: "coordinator",
+      jobTitle: "Coordenação Pedagógica",
+      username: "carla",
+      passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65",
+      active: true,
+    },
+    {
+      id: TEACHER_TWO_ID,
+      name: "Bruno Farias",
+      email: "bruno@radar.escola",
+      role: "teacher",
+      jobTitle: "Professor",
+      username: "bruno",
+      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
+      active: true,
+    },
+    {
+      id: PO_ID,
+      name: "Vanessa Moreira",
+      email: "vanessa@radar.escola",
+      role: "admin",
+      jobTitle: "Product Owner",
+      username: "vanessa",
+      passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      active: true,
+    },
   ];
 
   const REGENTE_POR_TURMA: Record<string, string> = {
@@ -94,11 +148,36 @@ export function seedDb(): Db {
   };
   const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: REGENTE_POR_TURMA[turma.id] }));
 
-  const alunos = NOMES.map((name, index) => ({
-    id: `aluno-${index + 1}`,
-    name,
-    enrollment: `EDU-2026-${String(1000 + index)}`,
-    groupId: TURMAS[index % TURMAS.length].id,
+  const SEED_DATE = "2026-07-05";
+
+  // Alocacao original (aluno -> aula). Antes vivia em student.groupId; agora vira enrollment.
+  const alunoGroupById: Record<string, string> = {};
+
+  const alunos = NOMES.map((name, index) => {
+    const id = `aluno-${index + 1}`;
+    alunoGroupById[id] = TURMAS[index % TURMAS.length].id;
+    // Idade determinística entre 11 e 17 anos, com mês/dia variando pelo índice.
+    const age = 11 + (index % 7);
+    const birthYear = 2026 - age;
+    const birthMonth = String(((index * 3) % 12) + 1).padStart(2, "0");
+    const birthDay = String(((index * 5) % 27) + 1).padStart(2, "0");
+    const lastName = name.split(" ").slice(-1)[0];
+    const guardianRelation = index % 2 === 0 ? "Mãe" : "Pai";
+    return {
+      id,
+      name,
+      birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
+      guardianName: `${guardianRelation} de ${lastName}`,
+      guardianPhone: `(11) 9${String(10000 + index * 137).slice(0, 4)}-${String(1000 + index * 17).slice(-4)}`,
+      active: true,
+    };
+  });
+
+  const enrollments = alunos.map((aluno) => ({
+    id: `matricula-${aluno.id}-${alunoGroupById[aluno.id]}`,
+    studentId: aluno.id,
+    groupId: alunoGroupById[aluno.id],
+    joinedAt: SEED_DATE,
     active: true,
   }));
 
@@ -106,7 +185,7 @@ export function seedDb(): Db {
   const presencas: Db["attendanceRecords"] = [];
 
   for (const turma of turmas) {
-    const turmaAlunos = alunos.filter((aluno) => aluno.groupId === turma.id);
+    const turmaAlunos = alunos.filter((aluno) => alunoGroupById[aluno.id] === turma.id);
     DATAS.forEach((data, dataIdx) => {
       const sessionId = `chamada-${turma.id}-${data}`;
       chamadas.push({
@@ -128,24 +207,23 @@ export function seedDb(): Db {
 
   // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
   const eventosEscolares = [
-    { id: "evento-ferias-julho", type: "vacation", title: "Férias de julho", startDate: "2026-07-06", endDate: "2026-07-24" },
-    { id: "evento-recuperacao-julho", type: "makeup", title: "Recuperação semestral", startDate: "2026-07-27", endDate: "2026-07-31" },
+    {
+      id: "evento-ferias-julho",
+      type: "vacation",
+      title: "Férias de julho",
+      startDate: "2026-07-06",
+      endDate: "2026-07-24",
+    },
+    {
+      id: "evento-recuperacao-julho",
+      type: "makeup",
+      title: "Recuperação semestral",
+      startDate: "2026-07-27",
+      endDate: "2026-07-31",
+    },
   ];
 
   const materias = MATERIAS.map((materia) => ({ ...materia }));
-
-  const notas: Db["grades"] = [];
-  for (const aluno of alunos) {
-    const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
-    MATERIAS.forEach((materia, materiaIdx) => {
-      notas.push({
-        id: `nota-${aluno.id}-${materia.id}`,
-        studentId: aluno.id,
-        subjectId: materia.id,
-        score: scoreFor(alunoIdx, materiaIdx, materia.area),
-      });
-    });
-  }
 
   const assignments = [
     { id: "assign-matb-mat", groupId: "turma-mat-b", subjectId: "materia-matematica", teacherId: PROFESSOR_ID },
@@ -157,6 +235,45 @@ export function seedDb(): Db {
     { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
   ];
 
+  const evaluations: Db["evaluations"] = [];
+  const evaluationGrades: Db["evaluationGrades"] = [];
+  for (const assignment of assignments) {
+    const materiaIdx = MATERIAS.findIndex((m) => m.id === assignment.subjectId);
+    const area = MATERIAS[materiaIdx].area;
+    const groupStudents = alunos.filter((aluno) => alunoGroupById[aluno.id] === assignment.groupId);
+    const examId = `eval-${assignment.id}-p1`;
+    const homeworkId = `eval-${assignment.id}-t1`;
+    evaluations.push(
+      {
+        id: examId,
+        groupId: assignment.groupId,
+        subjectId: assignment.subjectId,
+        name: "P1",
+        type: "exam",
+        date: "2026-06-20",
+        weight: 3,
+      },
+      {
+        id: homeworkId,
+        groupId: assignment.groupId,
+        subjectId: assignment.subjectId,
+        name: "Trabalho 1",
+        type: "homework",
+        date: "2026-06-27",
+        weight: 1,
+      },
+    );
+    for (const aluno of groupStudents) {
+      const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
+      const examScore = scoreFor(alunoIdx, materiaIdx, area);
+      const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
+      evaluationGrades.push(
+        { id: `eg-${examId}-${aluno.id}`, evaluationId: examId, studentId: aluno.id, score: examScore },
+        { id: `eg-${homeworkId}-${aluno.id}`, evaluationId: homeworkId, studentId: aluno.id, score: homeworkScore },
+      );
+    }
+  }
+
   return {
     profiles: perfis,
     groups: turmas,
@@ -165,7 +282,9 @@ export function seedDb(): Db {
     attendanceRecords: presencas,
     schoolEvents: eventosEscolares,
     subjects: materias,
-    grades: notas,
     assignments,
+    evaluations,
+    evaluationGrades,
+    enrollments,
   };
 }

@@ -14,6 +14,7 @@ import {
   UserCircleIcon,
   DocsIcon,
   TableIcon,
+  TaskIcon,
 } from "@tailadmin/icons";
 
 const navIcons: Record<NavIcon, ReactNode> = {
@@ -24,6 +25,7 @@ const navIcons: Record<NavIcon, ReactNode> = {
   admin: <UserCircleIcon />,
   materia: <DocsIcon />,
   turma: <TableIcon />,
+  grades: <TaskIcon />,
 };
 
 export interface AppSidebarProps {
@@ -40,24 +42,19 @@ export function AppSidebar({ role }: AppSidebarProps) {
   return (
     <aside
       className={`fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-gray-200 bg-white px-5 transition-all duration-300 ease-in-out ${
-        showText ? "w-[290px]" : "w-[90px]"
-      } ${isMobileOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+        showText ? "w-72.5" : "w-22.5"
+      } ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`flex flex-col py-8 ${showText ? "items-start" : "items-center"}`}>
-        <span className="text-2xl font-bold text-brand-500">
-          {showText ? "Radar" : "R"}
-        </span>
-        {showText && (
-          <span className="text-xs font-medium text-gray-500">Gestão Estudantil</span>
-        )}
+        <span className="text-2xl font-bold text-brand-500">{showText ? "Radar" : "R"}</span>
+        {showText && <span className="text-xs font-medium text-gray-500">Gestão Estudantil</span>}
       </div>
 
       <nav aria-label="Navegação principal" className="flex flex-col gap-1">
         {items.map((item) => {
-          const active =
-            item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const active = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}
@@ -66,9 +63,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
                 active ? "menu-item-active" : "menu-item-inactive"
               } ${showText ? "" : "justify-center"}`}
             >
-              <span
-                className={active ? "menu-item-icon-active" : "menu-item-icon-inactive"}
-              >
+              <span className={active ? "menu-item-icon-active" : "menu-item-icon-inactive"}>
                 {navIcons[item.icon]}
               </span>
               <span className={showText ? "" : "sr-only"}>{item.label}</span>

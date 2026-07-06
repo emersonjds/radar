@@ -19,9 +19,7 @@ export interface GroupFormModalProps {
 export function GroupFormModal({ group, onClose }: GroupFormModalProps) {
   return (
     <Modal isOpen={group !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {group !== undefined && (
-        <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />
-      )}
+      {group !== undefined && <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />}
     </Modal>
   );
 }
@@ -33,8 +31,7 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
   const teachers = (profiles ?? []).filter((profile) => profile.role === "teacher");
 
   const [name, setName] = useState(group?.name ?? "");
-  const [gradeLevel, setGradeLevel] = useState(group?.gradeLevel ?? "");
-  const [shift, setShift] = useState<Shift>(group?.shift ?? "manhã");
+  const [shift, setShift] = useState<Shift>(group?.shift ?? "afternoon");
   const [teacherId, setTeacherId] = useState(group?.teacherId ?? "");
   const [erro, setErro] = useState<string | null>(null);
   const saving = createGroup.isPending || updateGroup.isPending;
@@ -48,41 +45,45 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
       if (group) {
         await updateGroup.mutateAsync({
           id: group.id,
-          patch: { name: name.trim(), gradeLevel: gradeLevel.trim(), shift, teacherId: regente },
+          patch: { name: name.trim(), shift, teacherId: regente },
         });
       } else {
         await createGroup.mutateAsync({
           name,
-          gradeLevel,
           shift,
           teacherId: regente,
         });
       }
       onClose();
     } catch {
-      setErro("Não foi possível salvar a turma.");
+      setErro("Não foi possível salvar a aula.");
     }
   }
 
   return (
     <form onSubmit={save}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">
-        {group ? "Editar turma" : "Adicionar turma"}
-      </h4>
+      <h4 className="mb-6 text-lg font-semibold text-gray-800">{group ? "Editar aula" : "Adicionar aula"}</h4>
 
       <div className="mb-5">
         <Label htmlFor="turma-nome">Nome</Label>
-        <input id="turma-nome" value={name} onChange={(e) => setName(e.target.value)} required autoFocus className={controlClasses} />
-      </div>
-
-      <div className="mb-5">
-        <Label htmlFor="turma-serie">Série</Label>
-        <input id="turma-serie" value={gradeLevel} onChange={(e) => setGradeLevel(e.target.value)} required className={controlClasses} />
+        <input
+          id="turma-nome"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoFocus
+          className={controlClasses}
+        />
       </div>
 
       <div className="mb-5">
         <Label htmlFor="turma-turno">Turno</Label>
-        <select id="turma-turno" value={shift} onChange={(e) => setShift(e.target.value as Shift)} className={controlClasses}>
+        <select
+          id="turma-turno"
+          value={shift}
+          onChange={(e) => setShift(e.target.value as Shift)}
+          className={controlClasses}
+        >
           {shiftSchema.options.map((value) => (
             <option key={value} value={value}>
               {shiftLabels[value]}
@@ -93,7 +94,13 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
 
       <div className="mb-5">
         <Label htmlFor="turma-regente">Professor regente</Label>
-        <select id="turma-regente" value={teacherId} onChange={(e) => setTeacherId(e.target.value)} required className={controlClasses}>
+        <select
+          id="turma-regente"
+          value={teacherId}
+          onChange={(e) => setTeacherId(e.target.value)}
+          required
+          className={controlClasses}
+        >
           {teachers.map((teacher) => (
             <option key={teacher.id} value={teacher.id}>
               {teacher.name}
@@ -103,11 +110,15 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
       </div>
 
       {erro && (
-        <p role="alert" className="mb-5 text-sm text-error-600">{erro}</p>
+        <p role="alert" className="mb-5 text-sm text-error-600">
+          {erro}
+        </p>
       )}
 
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+        <Button type="button" variant="outline" onClick={onClose}>
+          Cancelar
+        </Button>
         <Button disabled={saving}>{saving ? "Salvando…" : "Salvar"}</Button>
       </div>
     </form>

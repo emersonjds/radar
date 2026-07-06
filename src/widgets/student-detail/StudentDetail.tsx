@@ -7,9 +7,11 @@ import { useSchoolEvents } from "@/entities/school-event/queries";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
 import { useAttendanceRecordsByStudent } from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
+import { useEnrollmentsByStudent } from "@/entities/enrollment/queries";
 import { useGradesByStudent } from "@/entities/grade/queries";
 import { useSubjects } from "@/entities/subject/queries";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
+import { computeAgeAt, todayIso } from "@/entities/student/age";
 import { formatPercent } from "@/shared/lib/format";
 import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
 import Badge from "@tailadmin/components/ui/badge/Badge";
@@ -39,6 +41,7 @@ export interface StudentDetailProps {
 export function StudentDetail({ studentId }: StudentDetailProps) {
   const { data: aluno, isLoading: carregandoAluno } = useStudent(studentId);
   const { data: turmas } = useGroups();
+  const { data: enrollments } = useEnrollmentsByStudent(studentId);
   const { data: chamadas } = useAttendanceSessions();
   const { data: presencas, isLoading: carregandoPresencas } = useAttendanceRecordsByStudent(studentId);
   const { data: eventosEscolares } = useSchoolEvents();
@@ -53,7 +56,10 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     return <p className="text-sm text-gray-500">Aluno não encontrado</p>;
   }
 
-  const turma = turmas?.find((turmaCandidata) => turmaCandidata.id === aluno.groupId);
+  const aulasDoAluno = (enrollments ?? [])
+    .filter((enrollment) => enrollment.active)
+    .map((enrollment) => turmas?.find((turma) => turma.id === enrollment.groupId))
+    .filter((turma): turma is NonNullable<typeof turma> => Boolean(turma));
   const chamadaPorId = new Map((chamadas ?? []).map((chamada) => [chamada.id, chamada]));
 
   const statusPorData = new Map<string, AttendanceStatus>();
@@ -78,21 +84,9 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Desempenho &amp; Presença</h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Relatório acadêmico e de frequência do período atual
-          </p>
+          <p className="mt-1 text-sm text-gray-500">Relatório acadêmico e de frequência do período atual</p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
-            Turma
-            <select className={control} defaultValue={aluno.groupId}>
-              {(turmas ?? []).map((opcaoTurma) => (
-                <option key={opcaoTurma.id} value={opcaoTurma.id}>
-                  {opcaoTurma.name}
-                </option>
-              ))}
-            </select>
-          </label>
           <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
             Período
             <select className={control} defaultValue="2026-1">
@@ -117,32 +111,46 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <AvatarText name={aluno.name} />
             <div>
               <h2 className="text-lg font-semibold text-gray-800">{aluno.name}</h2>
-              <Badge color={aluno.active ? "success" : "error"}>
-                {aluno.active ? "ATIVO" : "INATIVO"}
-              </Badge>
+              <Badge color={aluno.active ? "success" : "error"}>{aluno.active ? "ATIVO" : "INATIVO"}</Badge>
             </div>
           </div>
 
           <dl className="mt-6 grid grid-cols-3 gap-3 text-sm">
             <div>
-              <dt className="text-gray-500">Turma</dt>
-              <dd className="font-medium text-gray-800">{turma?.name ?? "—"}</dd>
+              <dt className="text-gray-500">Idade</dt>
+              <dd className="font-medium text-gray-800">{computeAgeAt(aluno.birthDate, todayIso())} anos</dd>
             </div>
             <div>
-              <dt className="text-gray-500">Ano letivo</dt>
-              <dd className="font-medium text-gray-800">2026</dd>
+              <dt className="text-gray-500">Responsável</dt>
+              <dd className="font-medium text-gray-800">{aluno.guardianName}</dd>
             </div>
             <div>
-              <dt className="text-gray-500">Sala</dt>
-              <dd className="font-medium text-gray-800">Sala 12</dd>
+              <dt className="text-gray-500">Telefone</dt>
+              <dd className="font-medium text-gray-800">{aluno.guardianPhone}</dd>
             </div>
           </dl>
 
+          <div className="mt-6">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Aulas</p>
+            {aulasDoAluno.length === 0 ? (
+              <p className="text-sm text-gray-500">Sem aulas matriculadas.</p>
+            ) : (
+              <ul className="flex flex-wrap gap-2">
+                {aulasDoAluno.map((aula) => (
+                  <li
+                    key={aula.id}
+                    className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-700"
+                  >
+                    {aula.name}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <div className="mt-6 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-gray-50 p-4 text-center">
-              <p className="text-2xl font-bold text-gray-800">
-                {formatPercent(attendanceRate(presencas ?? []))}
-              </p>
+              <p className="text-2xl font-bold text-gray-800">{formatPercent(attendanceRate(presencas ?? []))}</p>
               <p className="text-xs text-gray-500">Frequência</p>
             </div>
             <div className="rounded-xl bg-gray-50 p-4 text-center">
@@ -162,9 +170,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               eventosPorData={eventosPorData}
             />
           )}
-          {!carregandoPresencas && !mes && (
-            <p className="text-sm text-gray-500">Sem registros de presença.</p>
-          )}
+          {!carregandoPresencas && !mes && <p className="text-sm text-gray-500">Sem registros de presença.</p>}
         </section>
       </div>
 
