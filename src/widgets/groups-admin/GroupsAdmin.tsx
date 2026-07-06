@@ -7,6 +7,7 @@ import { useProfiles } from "@/entities/profile/queries";
 import Button from "@tailadmin/components/ui/button/Button";
 import { GroupFormModal } from "./GroupFormModal";
 import { GroupAssignmentsPanel } from "./GroupAssignmentsPanel";
+import { EnrollmentPanel } from "./EnrollmentPanel";
 
 export function GroupsAdmin() {
   const { data: groups, isLoading } = useGroups();
@@ -63,7 +64,7 @@ export function GroupsAdmin() {
                     variant="outline"
                     onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}
                   >
-                    {expandedId === group.id ? "Fechar matérias" : "Matérias"}
+                    {expandedId === group.id ? "Fechar" : "Ver detalhes"}
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => setEditing(group)}>
                     Editar
@@ -73,7 +74,12 @@ export function GroupsAdmin() {
                   </Button>
                 </div>
               </div>
-              {expandedId === group.id && <GroupAssignmentsPanel groupId={group.id} />}
+              {expandedId === group.id && (
+                <>
+                  <EnrollmentPanel groupId={group.id} />
+                  <GroupAssignmentsPanel groupId={group.id} />
+                </>
+              )}
             </li>
           ))}
         </ul>
