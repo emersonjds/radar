@@ -68,10 +68,7 @@ export function AttendanceForm() {
 
   const termoBusca = busca.trim().toLowerCase();
   const alunosFiltrados = (alunos ?? []).filter(
-    (aluno) =>
-      !termoBusca ||
-      aluno.name.toLowerCase().includes(termoBusca) ||
-      aluno.enrollment.toLowerCase().includes(termoBusca),
+    (aluno) => !termoBusca || aluno.name.toLowerCase().includes(termoBusca),
   );
 
   function selecionarStatus(studentId: string, status: AttendanceStatus) {

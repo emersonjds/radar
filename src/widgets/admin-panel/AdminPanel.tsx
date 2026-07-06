@@ -8,6 +8,7 @@ import { useAttendanceRecords } from "@/entities/attendance-record/queries";
 import { useAttendanceSessions } from "@/entities/attendance-session/queries";
 import { useProfiles } from "@/entities/profile/queries";
 import { useGroups } from "@/entities/group/queries";
+import { useEnrollments } from "@/entities/enrollment/queries";
 import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
 import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
@@ -53,6 +54,7 @@ function StatCard({ label, value, icon }: { label: string; value: string; icon: 
 export function AdminPanel() {
   const alunos = useStudents();
   const turmas = useGroups();
+  const enrollments = useEnrollments();
   const perfis = useProfiles();
   const presencas = useAttendanceRecords();
   const chamadas = useAttendanceSessions();
@@ -65,12 +67,19 @@ export function AdminPanel() {
   const turmaPorId = new Map((turmas.data ?? []).map((turma) => [turma.id, turma]));
   const chamadaPorId = new Map((chamadas.data ?? []).map((chamada) => [chamada.id, chamada]));
 
+  // Aula(s) por aluno vem do enrollment ativo (N:N).
+  const turmasDoAluno = new Map<string, string[]>();
+  for (const enrollment of enrollments.data ?? []) {
+    if (!enrollment.active) continue;
+    turmasDoAluno.set(enrollment.studentId, [...(turmasDoAluno.get(enrollment.studentId) ?? []), enrollment.groupId]);
+  }
+
   const presencasPorTurma = new Map<string, AttendanceRecord[]>();
   const recordsByStudent = new Map<string, AttendanceRecord[]>();
   for (const presenca of presencas.data ?? []) {
-    const aluno = alunoPorId.get(presenca.studentId);
-    if (aluno) {
-      presencasPorTurma.set(aluno.groupId, [...(presencasPorTurma.get(aluno.groupId) ?? []), presenca]);
+    const chamada = chamadaPorId.get(presenca.sessionId);
+    if (chamada) {
+      presencasPorTurma.set(chamada.groupId, [...(presencasPorTurma.get(chamada.groupId) ?? []), presenca]);
     }
     recordsByStudent.set(presenca.studentId, [...(recordsByStudent.get(presenca.studentId) ?? []), presenca]);
   }
@@ -85,8 +94,15 @@ export function AdminPanel() {
     .slice(0, MAX_ALERTAS)
     .map((risco) => {
       const aluno = alunoPorId.get(risco.studentId);
-      const turma = aluno ? turmaPorId.get(aluno.groupId) : undefined;
-      return { ...risco, name: aluno?.name ?? "Aluno", turma: turma?.name ?? "—" };
+      const groupIds = turmasDoAluno.get(risco.studentId) ?? [];
+      const nomesTurmas = groupIds
+        .map((groupId) => turmaPorId.get(groupId)?.name)
+        .filter((name): name is string => Boolean(name));
+      return {
+        ...risco,
+        name: aluno?.name ?? "Aluno",
+        turma: nomesTurmas.join(", ") || "—",
+      };
     });
 
   const registrosPorData: { date: string; status: AttendanceStatus }[] = [];

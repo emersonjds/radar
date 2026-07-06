@@ -51,12 +51,13 @@ export async function updateGroup(id: string, patch: GroupUpdate): Promise<Group
 }
 
 export async function deleteGroup(id: string): Promise<void> {
-  const students = await readCollection<{ groupId: string }>("students");
+  const enrollments = await readCollection<{ groupId: string; active: boolean }>("enrollments");
   const sessions = await readCollection<{ groupId: string }>("attendanceSessions");
   const inUse =
-    students.some((student) => student.groupId === id) || sessions.some((session) => session.groupId === id);
+    enrollments.some((enrollment) => enrollment.groupId === id && enrollment.active) ||
+    sessions.some((session) => session.groupId === id);
   if (inUse) {
-    throw new Error("Aula com alunos ou chamadas não pode ser removida.");
+    throw new Error("Aula com alunos matriculados ou chamadas não pode ser removida.");
   }
   await mutateCollection<{ groupId: string }>("assignments", (assignments) =>
     assignments.filter((assignment) => assignment.groupId !== id),
