@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useEnrollmentsByGroup, useEnrollStudent, useUnenrollStudent } from "@/entities/enrollment/queries";
 import { useStudents } from "@/entities/student/queries";
 import Button from "@tailadmin/components/ui/button/Button";
-import Select from "@tailadmin/components/form/select/SelectField";
 import Label from "@tailadmin/components/form/Label";
 
 interface Props {
@@ -19,11 +18,11 @@ export function EnrollmentPanel({ groupId }: Props) {
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [erro, setErro] = useState<string | null>(null);
 
-  const activeEnrollments = (enrollments ?? []).filter((e) => e.active);
-  const enrolledIds = new Set(activeEnrollments.map((e) => e.studentId));
-  const availableStudents = (allStudents ?? []).filter((s) => s.active && !enrolledIds.has(s.id));
+  const activeEnrollments = (enrollments ?? []).filter((enrollment) => enrollment.active);
+  const enrolledIds = new Set(activeEnrollments.map((enrollment) => enrollment.studentId));
+  const availableStudents = (allStudents ?? []).filter((student) => student.active && !enrolledIds.has(student.id));
 
-  const studentMap = new Map((allStudents ?? []).map((s) => [s.id, s]));
+  const studentMap = new Map((allStudents ?? []).map((student) => [student.id, student]));
 
   async function adicionar() {
     if (!selectedStudentId) return;
@@ -71,7 +70,7 @@ export function EnrollmentPanel({ groupId }: Props) {
                 className="flex items-center justify-between rounded-md bg-white px-3 py-2 text-sm"
               >
                 <span className="text-gray-800">{student?.name ?? "—"}</span>
-                <Button size="xs" variant="outline" onClick={() => remover(enrollment.studentId)}>
+                <Button size="sm" variant="outline" onClick={() => remover(enrollment.studentId)}>
                   Remover
                 </Button>
               </li>
@@ -84,10 +83,11 @@ export function EnrollmentPanel({ groupId }: Props) {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
             <Label htmlFor={`select-${groupId}`}>Adicionar aluno</Label>
-            <Select
+            <select
               id={`select-${groupId}`}
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
             >
               <option value="">Selecione um aluno</option>
               {availableStudents.map((student) => (
@@ -95,7 +95,7 @@ export function EnrollmentPanel({ groupId }: Props) {
                   {student.name}
                 </option>
               ))}
-            </Select>
+            </select>
           </div>
           <Button size="sm" onClick={adicionar} disabled={!selectedStudentId || enrollStudent.isPending}>
             Matricular

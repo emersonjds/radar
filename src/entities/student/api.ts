@@ -9,7 +9,9 @@ export async function fetchStudents(): Promise<Student[]> {
 
 export async function fetchStudentsByGroup(groupId: string): Promise<Student[]> {
   const [students, enrollments] = await Promise.all([fetchStudents(), fetchEnrollmentsByGroup(groupId)]);
-  const studentIds = new Set(enrollments.filter((e) => e.active).map((e) => e.studentId));
+  const studentIds = new Set(
+    enrollments.filter((enrollment) => enrollment.active).map((enrollment) => enrollment.studentId),
+  );
   return students.filter((student) => studentIds.has(student.id));
 }
 
