@@ -18,7 +18,10 @@ if (typeof window !== "undefined" && !window.localStorage) {
     setItem: (key, value) => void store.set(key, String(value)),
   };
   Object.defineProperty(window, "localStorage", { value: localStorageMock, configurable: true });
-  Object.defineProperty(globalThis, "localStorage", { value: localStorageMock, configurable: true });
+  Object.defineProperty(globalThis, "localStorage", {
+    value: localStorageMock,
+    configurable: true,
+  });
 }
 
 // No HTTP happens today (data lives in localStorage) — "bypass" instead of
