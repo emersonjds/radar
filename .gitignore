@@ -30,6 +30,9 @@ next-env.d.ts
 .claude/settings.local.json
 .serena/
 
+# Editor config (personal)
+/.zed/
+
 # Third-party agent skills (installed via `npx skills add`, re-installable)
 /.agents/
 /.claude/skills/vercel-react-best-practices
