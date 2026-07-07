@@ -20,7 +20,9 @@ async function login(page: Page, usuario: string, senha: string) {
 test.use({ viewport: MOBILE_VIEWPORT });
 
 test.describe("login", () => {
-  test("usuário ou senha inválidos mostra alerta e não tem seletor de persona", async ({ page }) => {
+  test("usuário ou senha inválidos mostra alerta e não tem seletor de persona", async ({
+    page,
+  }) => {
     await page.goto("/login");
 
     await expect(page.getByRole("button", { name: "Professor" })).toHaveCount(0);

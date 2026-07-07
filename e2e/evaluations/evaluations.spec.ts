@@ -24,7 +24,10 @@ test.describe("teacher grades flow", () => {
     await page.getByLabel("Data").fill("2026-07-10");
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("P2")).toBeVisible();
-    await page.screenshot({ path: "e2e/evaluations/evidencias/avaliacao-criada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/evaluations/evidencias/avaliacao-criada.png",
+      fullPage: true,
+    });
 
     const card = page.locator("li", { hasText: "P2" });
     await card.getByRole("button", { name: "Lançar notas" }).click();

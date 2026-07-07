@@ -30,7 +30,9 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
 
   // Recorte por turma atualiza o panorama.
   await page.getByLabel("Selecionar turma").selectOption({ label: "Matemática Avançada II" });
-  await expect(page.getByRole("heading", { name: "Panorama — Matemática Avançada II" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Panorama — Matemática Avançada II" }),
+  ).toBeVisible();
 
   // Export CSV baixa de verdade.
   const [download] = await Promise.all([

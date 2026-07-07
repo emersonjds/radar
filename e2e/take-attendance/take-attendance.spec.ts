@@ -53,7 +53,10 @@ test.describe("chamada mobile (cards)", () => {
 
     await semOverflowHorizontal(page);
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-mobile.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/chamada-mobile.png",
+      fullPage: true,
+    });
   });
 
   test("toggle abre o drawer e o backdrop fecha a sidebar", async ({ page }) => {
@@ -83,7 +86,10 @@ test.describe("chamada desktop", () => {
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(page.getByLabel("Selecionar turma")).toBeVisible();
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-desktop.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/chamada-desktop.png",
+      fullPage: true,
+    });
   });
 
   test("toggle colapsa a sidebar para os ícones e reexpande", async ({ page }) => {
@@ -96,7 +102,10 @@ test.describe("chamada desktop", () => {
     await page.getByRole("button", { name: "Alternar menu" }).click();
     await expect.poll(async () => (await aside.boundingBox())?.width).toBe(90);
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/sidebar-colapsada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/sidebar-colapsada.png",
+      fullPage: true,
+    });
 
     await page.getByRole("button", { name: "Alternar menu" }).click();
     await expect.poll(async () => (await aside.boundingBox())?.width).toBe(290);

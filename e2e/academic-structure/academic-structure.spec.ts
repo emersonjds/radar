@@ -19,7 +19,10 @@ test.describe("academic structure admin", () => {
     await page.getByLabel("Nome").fill("Filosofia");
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("Filosofia")).toBeVisible();
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/materia-criada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/materia-criada.png",
+      fullPage: true,
+    });
   });
 
   test("admin creates a turma and assigns a matéria to a teacher", async ({ page }) => {
@@ -38,7 +41,10 @@ test.describe("academic structure admin", () => {
     await card.getByRole("button", { name: "Adicionar matéria à turma" }).click();
     await expect(card.getByText("Nenhuma matéria atribuída ainda.")).toHaveCount(0);
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/turma-com-lecionamento.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/turma-com-lecionamento.png",
+      fullPage: true,
+    });
   });
 });
 
@@ -54,7 +60,10 @@ test.describe("roll-call scoping", () => {
     expect(options.join(" ")).toContain("Física I");
     expect(options.join(" ")).not.toContain("Ciências Gerais");
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/chamada-ricardo.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/chamada-ricardo.png",
+      fullPage: true,
+    });
   });
 
   test("bruno sees only Ciências Gerais in the roll-call select", async ({ page }) => {
@@ -67,6 +76,9 @@ test.describe("roll-call scoping", () => {
     expect(options.join(" ")).toContain("Ciências Gerais");
     expect(options.join(" ")).not.toContain("Matemática Avançada II");
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/chamada-bruno.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/chamada-bruno.png",
+      fullPage: true,
+    });
   });
 });

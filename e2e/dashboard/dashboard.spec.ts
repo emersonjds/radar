@@ -31,6 +31,9 @@ test.describe("painel coordenação", () => {
     await expect(page.getByText("Total de alunos")).toBeVisible();
     await expect(page.locator(".apexcharts-canvas").first()).toBeVisible({ timeout: 15000 });
 
-    await page.screenshot({ path: "e2e/dashboard/evidencias/painel-coordenacao-mobile.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/dashboard/evidencias/painel-coordenacao-mobile.png",
+      fullPage: true,
+    });
   });
 });

@@ -13,12 +13,16 @@ async function sidebar(page: Page) {
 }
 
 test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
-  test("admin cria ficha do aluno, matricula em aula, e professor vê na chamada", async ({ page }) => {
+  test("admin cria ficha do aluno, matricula em aula, e professor vê na chamada", async ({
+    page,
+  }) => {
     // 1. Admin faz login
     await login(page, "ana", "admin123");
 
     // 2. Navega para a tela de alunos
-    await sidebar(page).then((nav) => nav.getByRole("link", { name: "Alunos", exact: true }).click());
+    await sidebar(page).then((nav) =>
+      nav.getByRole("link", { name: "Alunos", exact: true }).click(),
+    );
     await expect(page.getByRole("heading", { name: "Alunos" })).toBeVisible({ timeout: 10000 });
 
     // 3. Cria um novo aluno com ficha completa
@@ -34,7 +38,9 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await page.screenshot({ path: "e2e/pivot/evidencias/aluno-criado.png", fullPage: true });
 
     // 4. Navega para aulas e matricula o aluno
-    await sidebar(page).then((nav) => nav.getByRole("link", { name: "Aulas", exact: true }).click());
+    await sidebar(page).then((nav) =>
+      nav.getByRole("link", { name: "Aulas", exact: true }).click(),
+    );
     await expect(page.getByRole("heading", { name: "Aulas" })).toBeVisible();
 
     // Encontra a card da aula "Matemática Avançada II" e clica em "Ver detalhes"
@@ -57,7 +63,9 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
 
     // 5. Professor Ricardo faz login e vê João Pedro na lista da chamada
     await login(page, "ricardo", "prof123");
-    await sidebar(page).then((nav) => nav.getByRole("link", { name: "Chamada", exact: true }).click());
+    await sidebar(page).then((nav) =>
+      nav.getByRole("link", { name: "Chamada", exact: true }).click(),
+    );
 
     // Seleciona a aula "Matemática Avançada II"
     await page.getByLabel("Selecionar aula").selectOption({ label: "Matemática Avançada II" });
