@@ -32,8 +32,8 @@ naquela página.
 
 ```ts
 interface Reforco {
-  materias: string[];        // subconjunto de MATERIAS_REFORCO
-  horario: string | null;    // texto livre curto, ex.: "Terça, 14h"
+  materias: string[]; // subconjunto de MATERIAS_REFORCO
+  horario: string | null; // texto livre curto, ex.: "Terça, 14h"
   observacao: string | null; // anotação livre do professor
 }
 ```

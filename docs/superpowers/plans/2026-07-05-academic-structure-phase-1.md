@@ -26,6 +26,7 @@
 ### Task 1: `assignment` entity + store wiring + seed
 
 **Files:**
+
 - Create: `src/entities/assignment/model.ts`
 - Create: `src/entities/assignment/api.ts`
 - Create: `src/entities/assignment/queries.ts`
@@ -34,6 +35,7 @@
 - Modify: `src/shared/lib/storage/seed.ts` (add a second teacher + `assignments`)
 
 **Interfaces:**
+
 - Consumes: `readCollection`, `mutateCollection` from `@/shared/lib/storage/db`.
 - Produces:
   - `Assignment = { id: string; groupId: string; subjectId: string; teacherId: string }`
@@ -305,12 +307,12 @@ In `seedDb()`, add Bruno to `perfis` (reuse the `prof123` hash — demo only):
 Replace the `const turmas = …` line so each turma has an explicit regente (Bruno is regente of Ciências):
 
 ```ts
-  const REGENTE_POR_TURMA: Record<string, string> = {
-    "turma-mat-b": PROFESSOR_ID,
-    "turma-fis-a": PROFESSOR_ID,
-    "turma-cie-c": TEACHER_TWO_ID,
-  };
-  const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: REGENTE_POR_TURMA[turma.id] }));
+const REGENTE_POR_TURMA: Record<string, string> = {
+  "turma-mat-b": PROFESSOR_ID,
+  "turma-fis-a": PROFESSOR_ID,
+  "turma-cie-c": TEACHER_TWO_ID,
+};
+const turmas = TURMAS.map((turma) => ({ ...turma, teacherId: REGENTE_POR_TURMA[turma.id] }));
 ```
 
 In the chamada loop, seed each session with the turma's regente instead of the hardcoded professor:
@@ -322,31 +324,66 @@ In the chamada loop, seed each session with the turma's regente instead of the h
 Add the `assignments` array before the `return`:
 
 ```ts
-  const assignments = [
-    { id: "assign-matb-mat", groupId: "turma-mat-b", subjectId: "materia-matematica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-fis", groupId: "turma-mat-b", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-his", groupId: "turma-mat-b", subjectId: "materia-historia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-fisa-fis", groupId: "turma-fis-a", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-fisa-ing", groupId: "turma-fis-a", subjectId: "materia-ingles", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-bio", groupId: "turma-cie-c", subjectId: "materia-biologia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
-  ];
+const assignments = [
+  {
+    id: "assign-matb-mat",
+    groupId: "turma-mat-b",
+    subjectId: "materia-matematica",
+    teacherId: PROFESSOR_ID,
+  },
+  {
+    id: "assign-matb-fis",
+    groupId: "turma-mat-b",
+    subjectId: "materia-fisica",
+    teacherId: PROFESSOR_ID,
+  },
+  {
+    id: "assign-matb-his",
+    groupId: "turma-mat-b",
+    subjectId: "materia-historia",
+    teacherId: TEACHER_TWO_ID,
+  },
+  {
+    id: "assign-fisa-fis",
+    groupId: "turma-fis-a",
+    subjectId: "materia-fisica",
+    teacherId: PROFESSOR_ID,
+  },
+  {
+    id: "assign-fisa-ing",
+    groupId: "turma-fis-a",
+    subjectId: "materia-ingles",
+    teacherId: TEACHER_TWO_ID,
+  },
+  {
+    id: "assign-ciec-bio",
+    groupId: "turma-cie-c",
+    subjectId: "materia-biologia",
+    teacherId: TEACHER_TWO_ID,
+  },
+  {
+    id: "assign-ciec-por",
+    groupId: "turma-cie-c",
+    subjectId: "materia-portugues",
+    teacherId: PROFESSOR_ID,
+  },
+];
 ```
 
 Add `assignments` to the returned object:
 
 ```ts
-  return {
-    profiles: perfis,
-    groups: turmas,
-    students: alunos,
-    attendanceSessions: chamadas,
-    attendanceRecords: presencas,
-    schoolEvents: eventosEscolares,
-    subjects: materias,
-    grades: notas,
-    assignments,
-  };
+return {
+  profiles: perfis,
+  groups: turmas,
+  students: alunos,
+  attendanceSessions: chamadas,
+  attendanceRecords: presencas,
+  schoolEvents: eventosEscolares,
+  subjects: materias,
+  grades: notas,
+  assignments,
+};
 ```
 
 - [ ] **Step 8: Run the test — verify it passes**
@@ -368,11 +405,13 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 2: `subject` writes (create/update/delete + guard)
 
 **Files:**
+
 - Modify: `src/entities/subject/api.ts`
 - Modify: `src/entities/subject/queries.ts`
 - Create: `src/entities/subject/write.test.ts`
 
 **Interfaces:**
+
 - Consumes: `mutateCollection`, `readCollection`; `Assignment`, `Grade` shapes for the delete guard.
 - Produces:
   - `NewSubjectInput = { name: string; area: Area }`
@@ -548,12 +587,14 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 3: `group` writes (create/update/delete + guard) + shift labels
 
 **Files:**
+
 - Modify: `src/entities/group/model.ts` (add `shiftLabels`)
 - Modify: `src/entities/group/api.ts`
 - Modify: `src/entities/group/queries.ts`
 - Create: `src/entities/group/write.test.ts`
 
 **Interfaces:**
+
 - Produces:
   - `shiftLabels: Record<Shift, string>` (PT-BR display for the shift enum)
   - `NewGroupInput = { name: string; gradeLevel: string; shift: Shift; teacherId: string }`
@@ -569,7 +610,7 @@ Append to `src/entities/group/model.ts`:
 
 ```ts
 export const shiftLabels: Record<Shift, string> = {
-  "manhã": "Manhã",
+  manhã: "Manhã",
   afternoon: "Tarde",
   evening: "Noite",
 };
@@ -707,13 +748,7 @@ Append to `src/entities/group/queries.ts`:
 
 ```ts
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import {
-  createGroup,
-  deleteGroup,
-  updateGroup,
-  type NewGroupInput,
-  type GroupUpdate,
-} from "./api";
+import { createGroup, deleteGroup, updateGroup, type NewGroupInput, type GroupUpdate } from "./api";
 
 export function useCreateGroup() {
   const queryClient = useQueryClient();
@@ -759,6 +794,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 4: Matérias admin screen (`subjects-admin` widget + route + nav)
 
 **Files:**
+
 - Create: `src/widgets/subjects-admin/SubjectsAdmin.tsx`
 - Create: `src/widgets/subjects-admin/SubjectFormModal.tsx`
 - Create: `src/app/(app)/subjects/page.tsx`
@@ -766,6 +802,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 - Modify: `src/widgets/app-shell/AppSidebar.tsx` (map `materia` → `DocsIcon`)
 
 **Interfaces:**
+
 - Consumes: `useSubjects`, `useCreateSubject`, `useUpdateSubject`, `useDeleteSubject`; `areaLabels`, `AREAS`, `type Subject`, `type Area`.
 - Produces: route `/subjects` (admin-only).
 
@@ -1017,6 +1054,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 5: Turmas admin screen + lecionamentos (`groups-admin` widget + route + nav)
 
 **Files:**
+
 - Create: `src/widgets/groups-admin/GroupsAdmin.tsx`
 - Create: `src/widgets/groups-admin/GroupFormModal.tsx`
 - Create: `src/widgets/groups-admin/GroupAssignmentsPanel.tsx`
@@ -1025,6 +1063,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 - Modify: `src/widgets/app-shell/AppSidebar.tsx` (map `turma` → `TableIcon`)
 
 **Interfaces:**
+
 - Consumes: `useGroups`, `useCreateGroup`, `useUpdateGroup`, `useDeleteGroup`, `shiftLabels`, `shiftSchema`, `type Group`, `type Shift`; `useProfiles` (regente/teacher select, filter `role === "teacher"`); `useSubjects`; `useAssignmentsByGroup`, `useCreateAssignment`, `useUpdateAssignmentTeacher`, `useDeleteAssignment`.
 - Produces: route `/groups` (admin-only).
 
@@ -1124,17 +1163,35 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
 
       <div className="mb-5">
         <Label htmlFor="turma-nome">Nome</Label>
-        <input id="turma-nome" value={name} onChange={(e) => setName(e.target.value)} required autoFocus className={controlClasses} />
+        <input
+          id="turma-nome"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+          autoFocus
+          className={controlClasses}
+        />
       </div>
 
       <div className="mb-5">
         <Label htmlFor="turma-serie">Série</Label>
-        <input id="turma-serie" value={gradeLevel} onChange={(e) => setGradeLevel(e.target.value)} required className={controlClasses} />
+        <input
+          id="turma-serie"
+          value={gradeLevel}
+          onChange={(e) => setGradeLevel(e.target.value)}
+          required
+          className={controlClasses}
+        />
       </div>
 
       <div className="mb-5">
         <Label htmlFor="turma-turno">Turno</Label>
-        <select id="turma-turno" value={shift} onChange={(e) => setShift(e.target.value as Shift)} className={controlClasses}>
+        <select
+          id="turma-turno"
+          value={shift}
+          onChange={(e) => setShift(e.target.value as Shift)}
+          className={controlClasses}
+        >
           {shiftSchema.options.map((value) => (
             <option key={value} value={value}>
               {shiftLabels[value]}
@@ -1145,7 +1202,13 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
 
       <div className="mb-5">
         <Label htmlFor="turma-regente">Professor regente</Label>
-        <select id="turma-regente" value={teacherId} onChange={(e) => setTeacherId(e.target.value)} required className={controlClasses}>
+        <select
+          id="turma-regente"
+          value={teacherId}
+          onChange={(e) => setTeacherId(e.target.value)}
+          required
+          className={controlClasses}
+        >
           {teachers.map((teacher) => (
             <option key={teacher.id} value={teacher.id}>
               {teacher.name}
@@ -1155,11 +1218,15 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
       </div>
 
       {erro && (
-        <p role="alert" className="mb-5 text-sm text-error-600">{erro}</p>
+        <p role="alert" className="mb-5 text-sm text-error-600">
+          {erro}
+        </p>
       )}
 
       <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
+        <Button type="button" variant="outline" onClick={onClose}>
+          Cancelar
+        </Button>
         <Button disabled={saving}>{saving ? "Salvando…" : "Salvar"}</Button>
       </div>
     </form>
@@ -1229,18 +1296,28 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
       <ul className="mb-4 flex flex-col gap-2">
         {(assignments ?? []).map((assignment) => (
           <li key={assignment.id} className="flex flex-wrap items-center gap-2">
-            <span className="min-w-32 text-sm text-gray-800">{subjectName(assignment.subjectId)}</span>
+            <span className="min-w-32 text-sm text-gray-800">
+              {subjectName(assignment.subjectId)}
+            </span>
             <select
               aria-label={`Professor de ${subjectName(assignment.subjectId)}`}
               value={assignment.teacherId}
-              onChange={(e) => updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })}
+              onChange={(e) =>
+                updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })
+              }
               className={controlClasses}
             >
               {teachers.map((teacher) => (
-                <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+                <option key={teacher.id} value={teacher.id}>
+                  {teacher.name}
+                </option>
               ))}
             </select>
-            <Button size="sm" variant="outline" onClick={() => deleteAssignment.mutate(assignment.id)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => deleteAssignment.mutate(assignment.id)}
+            >
               Remover
             </Button>
           </li>
@@ -1250,21 +1327,41 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
         )}
       </ul>
 
-      {erro && <p role="alert" className="mb-2 text-sm text-error-600">{erro}</p>}
+      {erro && (
+        <p role="alert" className="mb-2 text-sm text-error-600">
+          {erro}
+        </p>
+      )}
 
       {availableSubjects.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">
-          <select aria-label="Matéria a adicionar" value={newSubjectId} onChange={(e) => setNewSubjectId(e.target.value)} className={controlClasses}>
+          <select
+            aria-label="Matéria a adicionar"
+            value={newSubjectId}
+            onChange={(e) => setNewSubjectId(e.target.value)}
+            className={controlClasses}
+          >
             {availableSubjects.map((subject) => (
-              <option key={subject.id} value={subject.id}>{subject.name}</option>
+              <option key={subject.id} value={subject.id}>
+                {subject.name}
+              </option>
             ))}
           </select>
-          <select aria-label="Professor da matéria" value={newTeacherId} onChange={(e) => setNewTeacherId(e.target.value)} className={controlClasses}>
+          <select
+            aria-label="Professor da matéria"
+            value={newTeacherId}
+            onChange={(e) => setNewTeacherId(e.target.value)}
+            className={controlClasses}
+          >
             {teachers.map((teacher) => (
-              <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+              <option key={teacher.id} value={teacher.id}>
+                {teacher.name}
+              </option>
             ))}
           </select>
-          <Button size="sm" onClick={adicionar}>Adicionar matéria à turma</Button>
+          <Button size="sm" onClick={adicionar}>
+            Adicionar matéria à turma
+          </Button>
         </div>
       )}
     </div>
@@ -1312,10 +1409,16 @@ export function GroupsAdmin() {
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
         <h1 className="text-xl font-semibold text-gray-800">Turmas</h1>
-        <Button size="sm" onClick={() => setEditing(null)}>Adicionar turma</Button>
+        <Button size="sm" onClick={() => setEditing(null)}>
+          Adicionar turma
+        </Button>
       </header>
 
-      {erro && <p role="alert" className="text-sm text-error-600">{erro}</p>}
+      {erro && (
+        <p role="alert" className="text-sm text-error-600">
+          {erro}
+        </p>
+      )}
 
       {isLoading ? (
         <div className="h-24 animate-pulse rounded-xl bg-gray-100" />
@@ -1327,15 +1430,24 @@ export function GroupsAdmin() {
                 <div>
                   <p className="font-medium text-gray-800">{group.name}</p>
                   <p className="text-xs text-gray-500">
-                    {group.gradeLevel} · {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
+                    {group.gradeLevel} · {shiftLabels[group.shift]} · Regente:{" "}
+                    {regenteName(group.teacherId)}
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}
+                  >
                     {expandedId === group.id ? "Fechar matérias" : "Matérias"}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>Editar</Button>
-                  <Button size="sm" variant="outline" onClick={() => remover(group)}>Excluir</Button>
+                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>
+                    Editar
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => remover(group)}>
+                    Excluir
+                  </Button>
                 </div>
               </div>
               {expandedId === group.id && <GroupAssignmentsPanel groupId={group.id} />}
@@ -1384,11 +1496,13 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 6: Fix roll-call scoping (drop hardcoded professor, scope to regente)
 
 **Files:**
+
 - Create: `src/features/take-attendance/scope.ts` (pure helper + its test target)
 - Create: `src/features/take-attendance/scope.test.ts`
 - Modify: `src/features/take-attendance/AttendanceForm.tsx`
 
 **Interfaces:**
+
 - Produces: `groupsForRegente(groups: Group[], teacherId: string | null): Group[]`.
 
 - [ ] **Step 1: Write the failing test for the scope helper**
@@ -1456,23 +1570,29 @@ import { groupsForRegente } from "./scope";
 3. Inside the component, derive the scoped turmas and the teacher id from the session (replace the `const { data: turmas, … } = useGroups();` usage so the select is scoped):
 
 ```tsx
-  const { profileId } = useSession();
-  const { data: allGroups, isLoading: carregandoTurmas } = useGroups();
-  const turmas = groupsForRegente(allGroups ?? [], profileId);
+const { profileId } = useSession();
+const { data: allGroups, isLoading: carregandoTurmas } = useGroups();
+const turmas = groupsForRegente(allGroups ?? [], profileId);
 ```
 
 4. In `salvarChamada`, use the session id instead of the removed constant:
 
 ```tsx
-      const chamada = await createAttendanceSession.mutateAsync({ groupId, date: HOJE, teacherId: profileId ?? "" });
+const chamada = await createAttendanceSession.mutateAsync({
+  groupId,
+  date: HOJE,
+  teacherId: profileId ?? "",
+});
 ```
 
 5. Add an empty state when the teacher is regente of no turma — right after the header block's `{!groupId && …}` message, adjust it to cover the no-turmas case:
 
 ```tsx
-      {turmas.length === 0 && !carregandoTurmas && (
-        <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>
-      )}
+{
+  turmas.length === 0 && !carregandoTurmas && (
+    <p className="text-sm text-gray-500">Você não é regente de nenhuma turma.</p>
+  );
+}
 ```
 
 (Keep the rest of the component unchanged. `groupId` already derives from `turmas?.[0]?.id`, so with an empty list it becomes `""` and the roll-call stays disabled.)
@@ -1495,10 +1615,12 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 7: E2E — admin builds structure, professor sees scoped roll-call
 
 **Files:**
+
 - Create: `e2e/academic-structure/academic-structure.spec.ts`
 - Produces evidence PNGs in `e2e/academic-structure/evidencias/`.
 
 **Interfaces:**
+
 - Consumes: seed credentials — `ana`/`admin123` (admin), `ricardo`/`prof123` (teacher, regente of turma-mat-b + turma-fis-a), `bruno`/`prof123` (teacher, regente of turma-cie-c).
 
 - [ ] **Step 1: Write the E2E spec**
@@ -1527,7 +1649,10 @@ test.describe("academic structure admin", () => {
     await page.getByLabel("Nome").fill("Filosofia");
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("Filosofia")).toBeVisible();
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/materia-criada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/materia-criada.png",
+      fullPage: true,
+    });
   });
 
   test("admin creates a turma and assigns a matéria to a teacher", async ({ page }) => {
@@ -1546,7 +1671,10 @@ test.describe("academic structure admin", () => {
     await card.getByRole("button", { name: "Adicionar matéria à turma" }).click();
     await expect(card.getByText("Nenhuma matéria atribuída ainda.")).toHaveCount(0);
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/turma-com-lecionamento.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/turma-com-lecionamento.png",
+      fullPage: true,
+    });
   });
 });
 
@@ -1561,7 +1689,10 @@ test.describe("roll-call scoping", () => {
     expect(options.join(" ")).toContain("Física I");
     expect(options.join(" ")).not.toContain("Ciências Gerais");
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/chamada-ricardo.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/chamada-ricardo.png",
+      fullPage: true,
+    });
   });
 
   test("bruno sees only Ciências Gerais in the roll-call select", async ({ page }) => {
@@ -1573,7 +1704,10 @@ test.describe("roll-call scoping", () => {
     expect(options.join(" ")).toContain("Ciências Gerais");
     expect(options.join(" ")).not.toContain("Matemática Avançada II");
 
-    await page.screenshot({ path: "e2e/academic-structure/evidencias/chamada-bruno.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/academic-structure/evidencias/chamada-bruno.png",
+      fullPage: true,
+    });
   });
 });
 ```
@@ -1601,6 +1735,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ## Self-Review
 
 **Spec coverage:**
+
 - Admin CRUD matéria → Task 2 (api) + Task 4 (UI). ✓
 - Admin CRUD turma with regente → Task 3 (api) + Task 5 (UI). ✓
 - Lecionamentos inside turma → Task 1 (assignment) + Task 5 (panel). ✓

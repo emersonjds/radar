@@ -28,26 +28,32 @@ Sem duplicação: Painel não ganha notas; Relatórios não repete os KPIs ao vi
 ## Domínio novo (fase front-only, dados no seed — sem CRUD)
 
 ### `entities/subject`
+
 ```
 Subject { id: string; name: string; area: Area }
 Area = "exatas" | "biologicas" | "linguagens" | "humanas"
 areaLabels: { exatas: "Exatas", biologicas: "Biológicas",
               linguagens: "Linguagens", humanas: "Humanas" }
 ```
+
 8 matérias, 2 por área:
+
 - Exatas: Matemática, Física
 - Biológicas: Biologia, Química
 - Linguagens: Português, Inglês
 - Humanas: História, Geografia
 
 ### `entities/grade`
+
 ```
 Grade { studentId: string; subjectId: string; score: number }  // 0–10, uma casa
 ```
+
 Representa a **média já agregada por matéria** (não há avaliações individuais
 nesta fase). Único por `(studentId, subjectId)`.
 
 ### Seed (`shared/lib/storage/seed.ts` + `db.ts`)
+
 - Novas coleções `subjects` e `grades`.
 - Cada um dos 18 alunos recebe nota em todas as 8 matérias.
 - Geração **determinística** (sem `Math.random`): `score` derivado de
@@ -72,12 +78,14 @@ Regras: entradas vazias retornam neutro (0 / arrays vazios), nunca `NaN`.
 ## Tela `/reports` — Central (`widgets/reports/`)
 
 Evolui o `reports-list` atual. Componentes:
+
 - `ReportsCenter.tsx` — orquestra seletor + panorama + tabela.
 - `ClassOverview.tsx` — card de panorama (freq média, nota média, área forte,
   matérias destaque, barra por área).
 - `StudentsReportTable.tsx` — tabela de alunos do escopo.
 
 Layout:
+
 ```
 [Turma: Todas ▾] [Período: Sem.1 ▾]            [Exportar CSV]
 ┌ PANORAMA ────────────────────────────────────────────┐
@@ -88,6 +96,7 @@ Layout:
 ALUNO      TURMA     NOTA   FREQ   APTIDÃO   SITUAÇÃO
 Marcus     Mat II    7,4    50%    Exatas    Em risco   → ficha
 ```
+
 - Seletor de **Turma** (`Todas` + cada turma) reduz o escopo da tabela e do
   panorama; `Todas` = visão global.
 - Seletor de **Período** (Semestre 1 / 2) — visual nesta fase (dados do seed não
@@ -106,6 +115,7 @@ marcado com `ponytail:` (depende de endpoint).
 ## Ficha do aluno (`widgets/student-detail/StudentDetail.tsx`) — enriquecida
 
 Mantém frequência + calendário e **acrescenta bloco acadêmico**:
+
 - Nota geral do aluno.
 - Notas por matéria (barras).
 - **Aptidão**: área forte + barras por área.

@@ -53,6 +53,7 @@ lançadas. Arredonda a 1 casa.
 ## 4. Personas / UI
 
 ### Professor — rota `/avaliacoes` (nova)
+
 - Item "Avaliações" no `navProfessor` (ícone novo `nota` no design system).
 - Guarda `useExigirPapel(["professor"])`.
 - Tela (`features/lancar-notas/` + página): seletor de turma (padrão primeira),
@@ -64,6 +65,7 @@ lançadas. Arredonda a 1 casa.
   existentes.
 
 ### Coordenação — relatório do aluno real
+
 - Em `DetalheAluno`, a tabela mock "Desempenho por atividade" passa a listar as
   avaliações da turma do aluno com a nota dele: colunas Avaliação · Data · Peso
   · Nota · Status (Badge: "Lançada" / "Pendente"). Sem coluna de ação (nada de

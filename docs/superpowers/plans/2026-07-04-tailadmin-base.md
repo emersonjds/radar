@@ -30,7 +30,7 @@
 **Files:** Modify `package.json`, generate `pnpm-lock.yaml`.
 
 - [ ] Add deps with pnpm (only what Radar needs now — ApexCharts yes; skip fullcalendar/jvectormap/swiper/flatpickr/dnd/dropzone):
-  `rtk proxy pnpm add tailwindcss@^4.1.17 @tailwindcss/postcss@^4.1.17 @tailwindcss/forms@^0.5.10 tailwind-merge@^2.6.0 apexcharts@^4.7.0 react-apexcharts@^1.8.0`
+      `rtk proxy pnpm add tailwindcss@^4.1.17 @tailwindcss/postcss@^4.1.17 @tailwindcss/forms@^0.5.10 tailwind-merge@^2.6.0 apexcharts@^4.7.0 react-apexcharts@^1.8.0`
 - [ ] `rtk proxy pnpm add -D postcss@^8.5.6 autoprefixer@^10.4.22` (autoprefixer only if a plugin needs it; `@tailwindcss/postcss` is the main one).
 - [ ] Verify install: `rtk proxy pnpm ls tailwindcss` shows 4.x.
 - [ ] Commit: `add tailwind and apexcharts dependencies`.
@@ -40,6 +40,7 @@
 **Files:** Create `postcss.config.js`; replace `src/app/globals.css`.
 
 - [ ] Create `postcss.config.js`:
+
 ```js
 module.exports = {
   plugins: {
@@ -47,8 +48,9 @@ module.exports = {
   },
 };
 ```
+
 - [ ] Copy `$TPL/src/app/globals.css` → `src/app/globals.css` **verbatim** (keeps the `@theme`, `@utility menu-*`, scrollbar, and third-party CSS blocks — inert if the lib is unused; do not trim, that would be rebuilding CSS).
-- [ ] `rtk proxy pnpm type-check` (CSS doesn't affect TS; just confirm nothing else broke). 
+- [ ] `rtk proxy pnpm type-check` (CSS doesn't affect TS; just confirm nothing else broke).
 - [ ] Commit: `add postcss config and tailwind globals`.
 
 ### Task 0.3: Root layout — Outfit font, light-only, providers
@@ -88,6 +90,7 @@ module.exports = {
 - [ ] Commit: `add tailadmin ui kit`.
 
 **Interfaces produced (memorize for later tasks):**
+
 - `Button` (default export): `{ children, size?: "sm"|"md", variant?: "primary"|"outline", startIcon?, endIcon?, onClick?, disabled?, className? }`. No `danger` — for destructive use `variant="outline"` + `className="text-error-600 ring-error-200 hover:bg-error-50"`.
 - `Badge`: `{ variant?: "light"|"solid", color?: "primary"|"success"|"error"|"warning"|"info"|"light"|"dark", size?, children }`.
 - `Table, TableHeader, TableBody, TableRow, TableCell` (named). `TableCell` has `isHeader?`.

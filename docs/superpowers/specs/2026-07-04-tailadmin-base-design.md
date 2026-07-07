@@ -7,29 +7,32 @@
 ## 1. Estratégia — híbrido "cérebro do Radar + corpo do TailAdmin"
 
 **Fica (domínio, intacto):**
+
 - `entities/*` — model/api/queries (profile, student, group, attendance-session, attendance-record, school-event).
 - `features/*` — auth, session (useSyncExternalStore), analytics (attendanceRate/countAbsences).
 - `shared/lib/*` — storage (localStorage `radar.db.v4`, seed), format, auth/password (SHA-256 demo).
 - Providers React Query, navegação por papel, guards por papel, conteúdo PT-BR.
 
 **Entra do template (passa a mandar na apresentação):**
+
 - Tailwind 4 via `@import 'tailwindcss'` + bloco `@theme` no `globals.css`.
 - Shell: `AppSidebar` + `AppHeader` + `Backdrop` + `SidebarContext`.
 - Kit `ui`: Button, Badge, Avatar, Modal, Table, Dropdown, Alert, controles de formulário.
 - Gráficos: ApexCharts (`react-apexcharts`).
 
 **Sai:**
+
 - CSS Modules (`*.module.css`) e tokens custom (`var(--color-*)`, `var(--space-*)`).
 - `AppShell` atual, bottom-nav mobile, toggle de dark mode.
 
 ## 2. Decisões travadas com o usuário
 
-| Tema | Decisão |
-|------|---------|
-| Identidade visual | **TailAdmin puro** — paleta/índigo e fonte Outfit do template, sem retematizar para o azul Radar agora. |
-| Navegação mobile | **Sidebar responsiva do template** (off-canvas + backdrop no mobile). Remove a bottom-nav custom. |
-| Dark mode | **Travar em claro (v1)** — remove o toggle; mantém só o tema claro. |
-| Gerenciador de pacotes | **pnpm** (gerar `pnpm-lock.yaml`; ignorar o `package-lock.json` do template). |
+| Tema                   | Decisão                                                                                                 |
+| ---------------------- | ------------------------------------------------------------------------------------------------------- |
+| Identidade visual      | **TailAdmin puro** — paleta/índigo e fonte Outfit do template, sem retematizar para o azul Radar agora. |
+| Navegação mobile       | **Sidebar responsiva do template** (off-canvas + backdrop no mobile). Remove a bottom-nav custom.       |
+| Dark mode              | **Travar em claro (v1)** — remove o toggle; mantém só o tema claro.                                     |
+| Gerenciador de pacotes | **pnpm** (gerar `pnpm-lock.yaml`; ignorar o `package-lock.json` do template).                           |
 
 ## 3. Estrutura de arquivos (mantendo FSD)
 

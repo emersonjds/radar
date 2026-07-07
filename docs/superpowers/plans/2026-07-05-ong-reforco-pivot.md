@@ -24,6 +24,7 @@
 ## Tarefas (ordem de execução)
 
 ### T1 · store v8 + Group perde gradeLevel
+
 - `src/shared/lib/storage/db.ts`: bump v8, v7 vira legacy.
 - `src/entities/group/model.ts`: remove `gradeLevel`.
 - `src/entities/group/api.ts`: remove `gradeLevel` de `NewGroupInput`/`GroupUpdate`.
@@ -32,6 +33,7 @@
 - **Commit:** `remove série from group model`
 
 ### T2 · Student model reformado
+
 - `src/entities/student/model.ts`: adiciona `birthDate` (regex YYYY-MM-DD), `guardianName`
   (>= 1 char), `guardianPhone` (>= 8 dígitos). Remove `enrollment`. `groupId` sai daqui
   (migrará para enrollment em T4).
@@ -43,6 +45,7 @@
 - **Commit:** `reshape student to nome guardian birthdate`
 
 ### T3 · Enrollment entity (N:N aluno↔aula)
+
 - `src/entities/enrollment/model.ts`: `{ id, studentId, groupId, joinedAt, active }`,
   zod, único por `(studentId, groupId)` ativo.
 - `src/entities/enrollment/api.ts`: `fetchEnrollments`, `fetchEnrollmentsByGroup`,
@@ -53,6 +56,7 @@
 - **Commit:** `add enrollment entity for student-aula membership`
 
 ### T4 · Seed v8
+
 - `src/shared/lib/storage/seed.ts`:
   - `TURMAS` sem `gradeLevel`.
   - `alunos` gerados com `birthDate` determinístico (11–17 anos), `guardianName`
@@ -63,6 +67,7 @@
 - **Commit:** `seed alunos com ficha e enrollments`
 
 ### T5 · Migrar readers para enrollment
+
 - `src/entities/student/api.ts`: `fetchStudentsByGroup(groupId)` agora resolve via
   `enrollments` (busca ativos, mapeia para alunos).
 - Atualiza chamadas: `AttendanceForm` continua usando `useStudentsByGroup` (transparente).
@@ -72,22 +77,26 @@
 - **Commit:** `route student-by-group through enrollments`
 
 ### T6 · Novo StudentFormModal (só ficha)
+
 - `src/widgets/student-list/StudentFormModal.tsx`: form com Nome, Data de nascimento,
   Nome do responsável, Telefone do responsável. Sem seletor de aula.
 - `StudentList`: coluna "Matrícula" some; nova coluna "Idade" (derivada) e "Responsável".
 - **Commit:** `redesign student form to ficha`
 
 ### T7 · Painel "Alunos da aula" (matrícula)
+
 - Dentro de `src/widgets/groups-admin/`: painel/modal que lista os alunos matriculados na
   aula, com "adicionar" (autocompletar por nome) e "remover" (soft: seta `active=false`).
 - **Commit:** `add alunos-da-aula panel with enroll and unenroll`
 
 ### T8 · Student detail lista todas as aulas
+
 - `src/widgets/student-detail/StudentDetail.tsx`: seção "Aulas" mostrando todas as aulas
   em que o aluno está matriculado (nome da aula, frequência agregada da aula).
 - **Commit:** `list aulas do aluno on student detail`
 
 ### T9 · Copy PT-BR "Turma" → "Aula"
+
 - Passe global no `src/**/*.tsx`: rótulos, headings, botões, aria-labels, placeholders
   que dizem "Turma" e não são sobre uma turma escolar (série) passam a "Aula".
   Mantém "aluno" e "professor".
@@ -95,12 +104,14 @@
 - **Commit:** `rename turma to aula on ui copy`
 
 ### T10 · CLAUDE.md reflete identidade ONG
+
 - Reescreve seção "Identidade do Produto" e "Domínio" para ONG de reforço no contra-turno:
   aula ≠ turma; matrícula (enrollment) N:N; sem promoção/série; ficha do aluno com
   responsável.
 - **Commit:** `update project rules to ong reforço identity`
 
 ### T11 · E2E — cadastro e matrícula
+
 - `e2e/pivot/pivot.spec.ts`:
   1. Admin cria um aluno (ficha completa).
   2. Admin abre uma aula e matricula o aluno recém criado.

@@ -25,10 +25,12 @@
 ### Task 1: `evaluation` entity + store collections (v7)
 
 **Files:**
+
 - Create: `src/entities/evaluation/model.ts`, `src/entities/evaluation/api.ts`, `src/entities/evaluation/queries.ts`, `src/entities/evaluation/api.test.ts`
 - Modify: `src/shared/lib/storage/db.ts` (add `"evaluations"` + `"evaluationGrades"`; bump v7)
 
 **Interfaces produced:**
+
 - `EvaluationType = "exam" | "homework"`; `evaluationTypeLabels: Record<EvaluationType, string>`
 - `Evaluation = { id, groupId, subjectId, name, type, date, weight }`
 - `fetchEvaluationsByAssignment(groupId, subjectId): Promise<Evaluation[]>`
@@ -44,7 +46,14 @@ In `src/shared/lib/storage/db.ts`:
 
 ```ts
 const STORAGE_KEY = "radar.db.v7";
-const LEGACY_KEYS = ["radar.db.v1", "radar.db.v2", "radar.db.v3", "radar.db.v4", "radar.db.v5", "radar.db.v6"];
+const LEGACY_KEYS = [
+  "radar.db.v1",
+  "radar.db.v2",
+  "radar.db.v3",
+  "radar.db.v4",
+  "radar.db.v5",
+  "radar.db.v6",
+];
 
 export type Collection =
   | "profiles"
@@ -103,13 +112,15 @@ export type Evaluation = z.infer<typeof evaluationSchema>;
 ```ts
 import { beforeEach, describe, expect, it } from "vitest";
 import { mutateCollection, resetDb } from "@/shared/lib/storage/db";
-import {
-  createEvaluation,
-  deleteEvaluation,
-  fetchEvaluationsByAssignment,
-} from "./api";
+import { createEvaluation, deleteEvaluation, fetchEvaluationsByAssignment } from "./api";
 
-const base = { groupId: "turma-mat-b", subjectId: "materia-matematica", type: "exam", date: "2026-07-01", weight: 3 } as const;
+const base = {
+  groupId: "turma-mat-b",
+  subjectId: "materia-matematica",
+  type: "exam",
+  date: "2026-07-01",
+  weight: 3,
+} as const;
 
 describe("evaluation api (over the store)", () => {
   beforeEach(async () => {
@@ -135,7 +146,9 @@ describe("evaluation api (over the store)", () => {
     ]);
     await deleteEvaluation(created.id);
     const remaining = await mutateCollection("evaluationGrades", (rows) => rows);
-    expect(remaining.some((row) => (row as { evaluationId: string }).evaluationId === created.id)).toBe(false);
+    expect(
+      remaining.some((row) => (row as { evaluationId: string }).evaluationId === created.id),
+    ).toBe(false);
   });
 });
 ```
@@ -276,7 +289,8 @@ export function useCreateEvaluation() {
 export function useUpdateEvaluation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, patch }: { id: string; patch: EvaluationUpdate }) => updateEvaluation(id, patch),
+    mutationFn: ({ id, patch }: { id: string; patch: EvaluationUpdate }) =>
+      updateEvaluation(id, patch),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: evaluationKeys.all }),
   });
 }
@@ -306,10 +320,12 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 2: `evaluation-grade` entity + demo seed
 
 **Files:**
+
 - Create: `src/entities/evaluation-grade/model.ts`, `.../api.ts`, `.../queries.ts`, `.../api.test.ts`
 - Modify: `src/shared/lib/storage/seed.ts` (seed evaluations + evaluationGrades; keep the existing `grades` seed for now — Task 4 removes it)
 
 **Interfaces produced:**
+
 - `EvaluationGrade = { id, evaluationId, studentId, score: number | null }`
 - `fetchEvaluationGradesByEvaluation(evaluationId): Promise<EvaluationGrade[]>`
 - `setEvaluationGrade({ evaluationId, studentId, score }): Promise<void>` (upsert by `(evaluationId, studentId)`)
@@ -406,9 +422,7 @@ export async function setEvaluationGrade(input: SetEvaluationGradeInput): Promis
       (row) => row.evaluationId === input.evaluationId && row.studentId === input.studentId,
     );
     if (existing) {
-      return rows.map((row) =>
-        row === existing ? { ...row, score: input.score } : row,
-      );
+      return rows.map((row) => (row === existing ? { ...row, score: input.score } : row));
     }
     const created: EvaluationGrade = {
       id: crypto.randomUUID(),
@@ -468,28 +482,54 @@ export function useSetEvaluationGrade() {
 In `src/shared/lib/storage/seed.ts`, after `assignments` is built and before the `return`, add (reuses the existing `scoreFor`, `MATERIAS`, `alunos`):
 
 ```ts
-  const evaluations: Db["evaluations"] = [];
-  const evaluationGrades: Db["evaluationGrades"] = [];
-  for (const assignment of assignments) {
-    const materiaIdx = MATERIAS.findIndex((m) => m.id === assignment.subjectId);
-    const area = MATERIAS[materiaIdx].area;
-    const groupStudents = alunos.filter((aluno) => aluno.groupId === assignment.groupId);
-    const examId = `eval-${assignment.id}-p1`;
-    const homeworkId = `eval-${assignment.id}-t1`;
-    evaluations.push(
-      { id: examId, groupId: assignment.groupId, subjectId: assignment.subjectId, name: "P1", type: "exam", date: "2026-06-20", weight: 3 },
-      { id: homeworkId, groupId: assignment.groupId, subjectId: assignment.subjectId, name: "Trabalho 1", type: "homework", date: "2026-06-27", weight: 1 },
+const evaluations: Db["evaluations"] = [];
+const evaluationGrades: Db["evaluationGrades"] = [];
+for (const assignment of assignments) {
+  const materiaIdx = MATERIAS.findIndex((m) => m.id === assignment.subjectId);
+  const area = MATERIAS[materiaIdx].area;
+  const groupStudents = alunos.filter((aluno) => aluno.groupId === assignment.groupId);
+  const examId = `eval-${assignment.id}-p1`;
+  const homeworkId = `eval-${assignment.id}-t1`;
+  evaluations.push(
+    {
+      id: examId,
+      groupId: assignment.groupId,
+      subjectId: assignment.subjectId,
+      name: "P1",
+      type: "exam",
+      date: "2026-06-20",
+      weight: 3,
+    },
+    {
+      id: homeworkId,
+      groupId: assignment.groupId,
+      subjectId: assignment.subjectId,
+      name: "Trabalho 1",
+      type: "homework",
+      date: "2026-06-27",
+      weight: 1,
+    },
+  );
+  for (const aluno of groupStudents) {
+    const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
+    const examScore = scoreFor(alunoIdx, materiaIdx, area);
+    const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
+    evaluationGrades.push(
+      {
+        id: `eg-${examId}-${aluno.id}`,
+        evaluationId: examId,
+        studentId: aluno.id,
+        score: examScore,
+      },
+      {
+        id: `eg-${homeworkId}-${aluno.id}`,
+        evaluationId: homeworkId,
+        studentId: aluno.id,
+        score: homeworkScore,
+      },
     );
-    for (const aluno of groupStudents) {
-      const alunoIdx = Number(aluno.id.split("-")[1]) - 1;
-      const examScore = scoreFor(alunoIdx, materiaIdx, area);
-      const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
-      evaluationGrades.push(
-        { id: `eg-${examId}-${aluno.id}`, evaluationId: examId, studentId: aluno.id, score: examScore },
-        { id: `eg-${homeworkId}-${aluno.id}`, evaluationId: homeworkId, studentId: aluno.id, score: homeworkScore },
-      );
-    }
   }
+}
 ```
 
 Add both to the returned object (keep `grades` for now):
@@ -517,6 +557,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 3: Teacher "Notas" screen (route + nav + widgets)
 
 **Files:**
+
 - Create: `src/widgets/grades-teacher/GradesTeacher.tsx`, `.../EvaluationsPanel.tsx`, `.../EvaluationFormModal.tsx`, `.../GradeEntryPanel.tsx`
 - Create: `src/app/(app)/grades/page.tsx`
 - Modify: `src/shared/config/navigation.ts` (NavIcon `"grades"`; add to `navTeacher`)
@@ -529,7 +570,8 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 `src/shared/config/navigation.ts`:
 
 ```ts
-export type NavIcon = "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma" | "grades";
+export type NavIcon =
+  "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma" | "grades";
 
 export const navTeacher: NavItem[] = [
   { href: "/attendance", label: "Chamada", icon: "session" },
@@ -564,7 +606,12 @@ export interface EvaluationFormModalProps {
   onClose: () => void;
 }
 
-export function EvaluationFormModal({ open, groupId, subjectId, onClose }: EvaluationFormModalProps) {
+export function EvaluationFormModal({
+  open,
+  groupId,
+  subjectId,
+  onClose,
+}: EvaluationFormModalProps) {
   const createEvaluation = useCreateEvaluation();
   const [name, setName] = useState("");
   const [type, setType] = useState<EvaluationType>("exam");
@@ -595,12 +642,24 @@ export function EvaluationFormModal({ open, groupId, subjectId, onClose }: Evalu
 
         <div className="mb-5">
           <Label htmlFor="aval-nome">Nome</Label>
-          <input id="aval-nome" value={name} onChange={(e) => setName(e.target.value)} required autoFocus className={controlClasses} />
+          <input
+            id="aval-nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+            autoFocus
+            className={controlClasses}
+          />
         </div>
 
         <div className="mb-5">
           <Label htmlFor="aval-tipo">Tipo</Label>
-          <select id="aval-tipo" value={type} onChange={(e) => setType(e.target.value as EvaluationType)} className={controlClasses}>
+          <select
+            id="aval-tipo"
+            value={type}
+            onChange={(e) => setType(e.target.value as EvaluationType)}
+            className={controlClasses}
+          >
             <option value="exam">{evaluationTypeLabels.exam}</option>
             <option value="homework">{evaluationTypeLabels.homework}</option>
           </select>
@@ -608,23 +667,43 @@ export function EvaluationFormModal({ open, groupId, subjectId, onClose }: Evalu
 
         <div className="mb-5">
           <Label htmlFor="aval-data">Data</Label>
-          <input id="aval-data" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={controlClasses} />
+          <input
+            id="aval-data"
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            required
+            className={controlClasses}
+          />
         </div>
 
         <div className="mb-5">
           <Label htmlFor="aval-peso">Peso</Label>
-          <select id="aval-peso" value={weight} onChange={(e) => setWeight(Number(e.target.value))} className={controlClasses}>
+          <select
+            id="aval-peso"
+            value={weight}
+            onChange={(e) => setWeight(Number(e.target.value))}
+            className={controlClasses}
+          >
             <option value={1}>1</option>
             <option value={2}>2</option>
             <option value={3}>3</option>
           </select>
         </div>
 
-        {erro && <p role="alert" className="mb-5 text-sm text-error-600">{erro}</p>}
+        {erro && (
+          <p role="alert" className="mb-5 text-sm text-error-600">
+            {erro}
+          </p>
+        )}
 
         <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={onClose}>Cancelar</Button>
-          <Button disabled={createEvaluation.isPending}>{createEvaluation.isPending ? "Salvando…" : "Salvar"}</Button>
+          <Button type="button" variant="outline" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button disabled={createEvaluation.isPending}>
+            {createEvaluation.isPending ? "Salvando…" : "Salvar"}
+          </Button>
         </div>
       </form>
     </Modal>
@@ -720,7 +799,9 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
         <h4 className="text-base font-semibold text-gray-800">Avaliações</h4>
-        <Button size="sm" onClick={() => setCreating(true)}>Nova avaliação</Button>
+        <Button size="sm" onClick={() => setCreating(true)}>
+          Nova avaliação
+        </Button>
       </div>
 
       {isLoading ? (
@@ -728,19 +809,31 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
       ) : (
         <ul className="flex flex-col gap-2">
           {(evaluations ?? []).map((evaluation: Evaluation) => (
-            <li key={evaluation.id} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <li
+              key={evaluation.id}
+              className="rounded-xl border border-gray-200 bg-white px-4 py-3"
+            >
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <p className="font-medium text-gray-800">{evaluation.name}</p>
                   <p className="text-xs text-gray-500">
-                    {evaluationTypeLabels[evaluation.type]} · peso {evaluation.weight} · {evaluation.date}
+                    {evaluationTypeLabels[evaluation.type]} · peso {evaluation.weight} ·{" "}
+                    {evaluation.date}
                   </p>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setOpenId(openId === evaluation.id ? null : evaluation.id)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setOpenId(openId === evaluation.id ? null : evaluation.id)}
+                  >
                     {openId === evaluation.id ? "Fechar notas" : "Lançar notas"}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => deleteEvaluation.mutate(evaluation.id)}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => deleteEvaluation.mutate(evaluation.id)}
+                  >
                     Excluir
                   </Button>
                 </div>
@@ -754,7 +847,12 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
         </ul>
       )}
 
-      <EvaluationFormModal open={creating} groupId={groupId} subjectId={subjectId} onClose={() => setCreating(false)} />
+      <EvaluationFormModal
+        open={creating}
+        groupId={groupId}
+        subjectId={subjectId}
+        onClose={() => setCreating(false)}
+      />
     </div>
   );
 }
@@ -854,11 +952,13 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 4: Derive per-subject analytics from real grades (Phase 3)
 
 **Files:**
+
 - Create: `src/entities/grade/derive.ts`, `src/entities/grade/derive.test.ts`
 - Modify: `src/entities/grade/api.ts` (derive instead of reading the `grades` collection)
 - Modify: `src/shared/lib/storage/seed.ts` (remove the `grades`/`notas` block + key), `src/shared/lib/storage/db.ts` (remove `"grades"` from the union + `Db`)
 
 **Interfaces produced:**
+
 - `deriveSubjectGrades(evaluations: Evaluation[], evaluationGrades: EvaluationGrade[], studentIds?: string[]): Grade[]`
 
 - [ ] **Step 1: Write the failing derive test**
@@ -872,9 +972,33 @@ import type { EvaluationGrade } from "@/entities/evaluation-grade/model";
 import { deriveSubjectGrades } from "./derive";
 
 const evaluations: Evaluation[] = [
-  { id: "e1", groupId: "g1", subjectId: "math", name: "P1", type: "exam", date: "2026-06-20", weight: 3 },
-  { id: "e2", groupId: "g1", subjectId: "math", name: "T1", type: "homework", date: "2026-06-27", weight: 1 },
-  { id: "e3", groupId: "g1", subjectId: "hist", name: "P1", type: "exam", date: "2026-06-20", weight: 1 },
+  {
+    id: "e1",
+    groupId: "g1",
+    subjectId: "math",
+    name: "P1",
+    type: "exam",
+    date: "2026-06-20",
+    weight: 3,
+  },
+  {
+    id: "e2",
+    groupId: "g1",
+    subjectId: "math",
+    name: "T1",
+    type: "homework",
+    date: "2026-06-27",
+    weight: 1,
+  },
+  {
+    id: "e3",
+    groupId: "g1",
+    subjectId: "hist",
+    name: "P1",
+    type: "exam",
+    date: "2026-06-20",
+    weight: 1,
+  },
 ];
 
 describe("deriveSubjectGrades", () => {
@@ -885,7 +1009,9 @@ describe("deriveSubjectGrades", () => {
     ];
     const derived = deriveSubjectGrades(evaluations, eg);
     // (8*3 + 4*1) / (3+1) = 7
-    expect(derived).toEqual([{ id: "derived-s1-math", studentId: "s1", subjectId: "math", score: 7 }]);
+    expect(derived).toEqual([
+      { id: "derived-s1-math", studentId: "s1", subjectId: "math", score: 7 },
+    ]);
   });
 
   it("ignores pending (null) grades and omits subjects with no scores", () => {
@@ -894,7 +1020,9 @@ describe("deriveSubjectGrades", () => {
       { id: "b", evaluationId: "e3", studentId: "s1", score: 6 },
     ];
     const derived = deriveSubjectGrades(evaluations, eg);
-    expect(derived).toEqual([{ id: "derived-s1-hist", studentId: "s1", subjectId: "hist", score: 6 }]);
+    expect(derived).toEqual([
+      { id: "derived-s1-hist", studentId: "s1", subjectId: "hist", score: 6 },
+    ]);
   });
 });
 ```
@@ -927,7 +1055,10 @@ export function deriveSubjectGrades(
 ): Grade[] {
   const evaluationById = new Map(evaluations.map((evaluation) => [evaluation.id, evaluation]));
   const allow = studentIds ? new Set(studentIds) : null;
-  const acc = new Map<string, { studentId: string; subjectId: string; sum: number; weight: number }>();
+  const acc = new Map<
+    string,
+    { studentId: string; subjectId: string; sum: number; weight: number }
+  >();
 
   for (const grade of evaluationGrades) {
     if (grade.score === null) continue;
@@ -1022,6 +1153,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ### Task 5: E2E — teacher creates an evaluation and enters grades
 
 **Files:**
+
 - Create: `e2e/evaluations/evaluations.spec.ts` (+ PNG evidence in `e2e/evaluations/evidencias/`)
 
 **Interfaces consumed:** seed creds `ricardo`/`prof123` (teacher); Ricardo teaches Matemática/Física in his turmas. The teacher nav has a "Notas" link (`/grades`).
@@ -1059,7 +1191,10 @@ test.describe("teacher grades flow", () => {
     await page.getByLabel("Data").fill("2026-07-10");
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("P2")).toBeVisible();
-    await page.screenshot({ path: "e2e/evaluations/evidencias/avaliacao-criada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/evaluations/evidencias/avaliacao-criada.png",
+      fullPage: true,
+    });
 
     // Open its grade entry and set a score for the first student.
     const card = page.locator("li", { hasText: "P2" });
@@ -1093,6 +1228,7 @@ git -c user.name="Emerson Silva" -c user.email="emerson_jdss@hotmail.com" commit
 ## Self-Review
 
 **Spec coverage:**
+
 - `evaluation` entity + uniqueness + cascade → Task 1. ✓
 - `evaluation-grade` upsert + pending null → Task 2. ✓
 - Demo seed of evaluations+grades → Task 2. ✓

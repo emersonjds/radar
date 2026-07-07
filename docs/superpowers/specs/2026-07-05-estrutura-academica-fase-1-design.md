@@ -90,10 +90,12 @@ Papéis seguem `teacher` / `coordinator` / `admin`.
 ## Camada de dados (store local)
 
 `src/shared/lib/storage/db.ts`
+
 - Adicionar `"assignments"` ao union `Collection` e ao tipo `Db`.
 - Bump `STORAGE_KEY` `radar.db.v5 → radar.db.v6`; adicionar `radar.db.v5` a `LEGACY_KEYS`.
 
 `src/shared/lib/storage/seed.ts`
+
 - Adicionar array `assignments`. Semear de forma que:
   - Ricardo (regente das 3 turmas) leciona algumas matérias nelas.
   - **Carla** recebe **uma** matéria em **uma** turma — prova o caso multi-professor
@@ -103,18 +105,21 @@ Papéis seguem `teacher` / `coordinator` / `admin`.
 ## Superfícies de API (mantêm a assinatura async do store → futuro adapter Supabase)
 
 `entities/subject/api.ts`
+
 - `createSubject(input: { name; area }): Promise<Subject>`
 - `updateSubject(id, patch: Partial<{ name; area }>): Promise<Subject>`
 - `deleteSubject(id): Promise<void>` — **bloqueia** se houver `assignment` ou `grade`
   referenciando a matéria (lança erro; a UI mostra mensagem PT-BR).
 
 `entities/group/api.ts`
+
 - `createGroup(input: { name; gradeLevel; shift; teacherId }): Promise<Group>`
 - `updateGroup(id, patch): Promise<Group>`
 - `deleteGroup(id): Promise<void>` — **bloqueia** se houver `student` ou
   `attendance-session` na turma.
 
 `entities/assignment/api.ts` (novo)
+
 - `fetchAssignments(): Promise<Assignment[]>`
 - `fetchAssignmentsByGroup(groupId): Promise<Assignment[]>`
 - `fetchAssignmentsByTeacher(teacherId): Promise<Assignment[]>`
@@ -129,8 +134,9 @@ mutations (padrão dos outros entities). Idem hooks de mutation novos para subje
 ## UI / Arquitetura de informação
 
 Reutiliza o padrão que já existe: **lista (TanStack Table no desktop / cards no mobile)
-+ modal de formulário** — como `ProfilesAdmin`/`ProfileFormModal` e `StudentList`/
-`StudentFormModal`. Tudo em PT-BR.
+
+- modal de formulário** — como `ProfilesAdmin`/`ProfileFormModal` e `StudentList`/
+  `StudentFormModal`. Tudo em PT-BR.
 
 ### Navegação (admin)
 
@@ -236,8 +242,8 @@ switcher, domínio próprio, motor de tema por tenant.
 
 ## Decomposição (visão geral)
 
-| Fase | Entrega | Depende de |
-|---|---|---|
-| **1 — Estrutura & associações** _(este spec)_ | Admin cria turma/matéria/lecionamento; corrige scoping da chamada | — |
-| 2 — Avaliações & notas | Professor cria provas/trabalhos e lança notas | 1 |
-| 3 — Analytics reconciliado | Nota-por-matéria derivada das notas reais | 2 |
+| Fase                                          | Entrega                                                           | Depende de |
+| --------------------------------------------- | ----------------------------------------------------------------- | ---------- |
+| **1 — Estrutura & associações** _(este spec)_ | Admin cria turma/matéria/lecionamento; corrige scoping da chamada | —          |
+| 2 — Avaliações & notas                        | Professor cria provas/trabalhos e lança notas                     | 1          |
+| 3 — Analytics reconciliado                    | Nota-por-matéria derivada das notas reais                         | 2          |
