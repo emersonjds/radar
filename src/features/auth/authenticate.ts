@@ -1,17 +1,12 @@
-import { fetchProfileWithHash, toPublicProfile, type PublicProfile } from "@/entities/profile/api";
-import { verifyPassword } from "@/shared/lib/auth/password";
+import { fetchProfiles, type PublicProfile } from "@/entities/profile/api";
+import type { Role } from "@/entities/profile/model";
 
 /**
- * Demo auth over the local store: match by username (case-insensitive), require
- * an active profile, then verify the password hash. Returns the profile (without
- * the hash) on success, else null. Replace with Supabase Auth (server-side) later.
+ * Demo login: entra pelo cargo, sem senha (só para o PO testar cada papel).
+ * Devolve o primeiro perfil ativo do cargo, ou null se não houver.
+ * Trocar por Supabase Auth (server-side) depois.
  */
-export async function authenticate(
-  username: string,
-  password: string,
-): Promise<PublicProfile | null> {
-  const profile = await fetchProfileWithHash(username);
-  if (!profile || !profile.active) return null;
-  if (!(await verifyPassword(password, profile.passwordHash))) return null;
-  return toPublicProfile(profile);
+export async function loginAsRole(role: Role): Promise<PublicProfile | null> {
+  const profiles = await fetchProfiles();
+  return profiles.find((profile) => profile.role === role && profile.active) ?? null;
 }

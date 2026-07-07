@@ -1,20 +1,34 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { resetDb } from "@/shared/lib/storage/db";
 import { createProfile, fetchProfiles, setProfileActive } from "@/entities/profile/api";
-import { authenticate } from "./authenticate";
+import { loginAsRole } from "./authenticate";
 
 describe("profile management + auth (integration, over the store)", () => {
   beforeEach(async () => {
     await resetDb();
   });
 
-  it("logs in a seeded profile and rejects wrong credentials", async () => {
-    expect(await authenticate("ricardo", "prof123")).not.toBeNull();
-    expect(await authenticate("ricardo", "errada")).toBeNull();
-    expect(await authenticate("fantasma", "prof123")).toBeNull();
+  it("logs in by role and returns an active profile of that role", async () => {
+    const admin = await loginAsRole("admin");
+    expect(admin?.role).toBe("admin");
+    expect(admin?.active).toBe(true);
+
+    const teacher = await loginAsRole("teacher");
+    expect(teacher?.role).toBe("teacher");
+
+    const coordinator = await loginAsRole("coordinator");
+    expect(coordinator?.role).toBe("coordinator");
   });
 
-  it("creates a profile that can then log in", async () => {
+  it("returns null when the role has no active profile", async () => {
+    const coordinators = (await fetchProfiles()).filter((profile) => profile.role === "coordinator");
+    for (const coordinator of coordinators) {
+      await setProfileActive(coordinator.id, false);
+    }
+    expect(await loginAsRole("coordinator")).toBeNull();
+  });
+
+  it("creates a profile that then shows up for its role", async () => {
     const criado = await createProfile({
       name: "Novo Coordenador",
       username: "NovoCoord",
@@ -25,8 +39,8 @@ describe("profile management + auth (integration, over the store)", () => {
     expect(criado.role).toBe("coordinator");
     expect(criado.username).toBe("novocoord"); // normalized lowercase
 
-    const logado = await authenticate("novocoord", "segredo123");
-    expect(logado?.id).toBe(criado.id);
+    const roles = (await fetchProfiles()).map((profile) => profile.id);
+    expect(roles).toContain(criado.id);
   });
 
   it("rejects a duplicate username", async () => {
@@ -51,11 +65,5 @@ describe("profile management + auth (integration, over the store)", () => {
         password: "123",
       }),
     ).rejects.toThrow(/pelo menos 6/);
-  });
-
-  it("blocks login for a deactivated profile", async () => {
-    const [ricardo] = (await fetchProfiles()).filter((profile) => profile.username === "ricardo");
-    await setProfileActive(ricardo.id, false);
-    expect(await authenticate("ricardo", "prof123")).toBeNull();
   });
 });

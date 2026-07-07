@@ -3,17 +3,19 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { setSession } from "@/features/session/session-store";
+import { roleLabels, type Role } from "@/entities/profile/model";
 import Button from "@tailadmin/components/ui/button/Button";
 import Label from "@tailadmin/components/form/Label";
-import { authenticate } from "./authenticate";
+import { loginAsRole } from "./authenticate";
 
-const inputClasses =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+const ROLES: Role[] = ["admin", "teacher", "coordinator"];
+
+const selectClasses =
+  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
 
 export function LoginForm() {
   const router = useRouter();
-  const [usuario, setUsuario] = useState("");
-  const [senha, setSenha] = useState("");
+  const [role, setRole] = useState<Role>("admin");
   const [erro, setErro] = useState<string | null>(null);
   const [entrando, setEntrando] = useState(false);
 
@@ -23,9 +25,9 @@ export function LoginForm() {
     setErro(null);
     setEntrando(true);
     try {
-      const profile = await authenticate(usuario, senha);
+      const profile = await loginAsRole(role);
       if (!profile) {
-        setErro("Usuário ou senha inválidos.");
+        setErro("Nenhum perfil ativo para esse cargo.");
         return;
       }
       setSession(profile.id);
@@ -46,32 +48,19 @@ export function LoginForm() {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="usuario">Usuário</Label>
-        <input
-          id="usuario"
-          type="text"
-          autoComplete="username"
-          autoCapitalize="none"
-          placeholder="seu.usuario"
-          value={usuario}
-          onChange={(event) => setUsuario(event.target.value)}
-          required
-          className={inputClasses}
-        />
-      </div>
-
-      <div className="mb-5">
-        <Label htmlFor="senha">Senha</Label>
-        <input
-          id="senha"
-          type="password"
-          autoComplete="current-password"
-          placeholder="••••••••"
-          value={senha}
-          onChange={(event) => setSenha(event.target.value)}
-          required
-          className={inputClasses}
-        />
+        <Label htmlFor="perfil">Entrar como</Label>
+        <select
+          id="perfil"
+          value={role}
+          onChange={(event) => setRole(event.target.value as Role)}
+          className={selectClasses}
+        >
+          {ROLES.map((value) => (
+            <option key={value} value={value}>
+              {roleLabels[value]}
+            </option>
+          ))}
+        </select>
       </div>
 
       {erro && (
