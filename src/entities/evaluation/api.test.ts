@@ -1,12 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { mutateCollection, resetDb } from "@/shared/lib/storage/db";
-import {
-  createEvaluation,
-  deleteEvaluation,
-  fetchEvaluationsByAssignment,
-} from "./api";
+import { createEvaluation, deleteEvaluation, fetchEvaluationsByAssignment } from "./api";
 
-const base = { groupId: "turma-mat-b", subjectId: "materia-matematica", type: "exam", date: "2026-07-01", weight: 3 } as const;
+const base = {
+  groupId: "turma-mat-b",
+  subjectId: "materia-matematica",
+  type: "exam",
+  date: "2026-07-01",
+  weight: 3,
+} as const;
 
 describe("evaluation api (over the store)", () => {
   beforeEach(async () => {
@@ -32,6 +34,8 @@ describe("evaluation api (over the store)", () => {
     ]);
     await deleteEvaluation(created.id);
     const remaining = await mutateCollection("evaluationGrades", (rows) => rows);
-    expect(remaining.some((row) => (row as { evaluationId: string }).evaluationId === created.id)).toBe(false);
+    expect(
+      remaining.some((row) => (row as { evaluationId: string }).evaluationId === created.id),
+    ).toBe(false);
   });
 });

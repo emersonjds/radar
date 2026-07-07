@@ -7,6 +7,4 @@ import { http, HttpResponse } from "msw";
  * fetchers in entities/*\/api.ts swap to real requests. `onUnhandledRequest`
  * is set to "bypass" in vitest.setup.ts because nothing calls fetch yet.
  */
-export const handlers = [
-  http.get("*/rest/v1/turmas", () => HttpResponse.json([])),
-];
+export const handlers = [http.get("*/rest/v1/turmas", () => HttpResponse.json([]))];

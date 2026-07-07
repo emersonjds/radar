@@ -17,7 +17,9 @@ export interface StudentFormModalProps {
 export function StudentFormModal({ student, onClose }: StudentFormModalProps) {
   return (
     <Modal isOpen={student !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {student !== undefined && <StudentFormBody key={student?.id ?? "novo"} student={student} onClose={onClose} />}
+      {student !== undefined && (
+        <StudentFormBody key={student?.id ?? "novo"} student={student} onClose={onClose} />
+      )}
     </Modal>
   );
 }
@@ -61,11 +63,19 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
 
   return (
     <form onSubmit={salvar}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">{student ? "Editar aluno" : "Adicionar aluno"}</h4>
+      <h4 className="mb-6 text-lg font-semibold text-gray-800">
+        {student ? "Editar aluno" : "Adicionar aluno"}
+      </h4>
 
       <div className="mb-5">
         <Label htmlFor="aluno-nome">Nome</Label>
-        <Input id="aluno-nome" value={name} onChange={(event) => setName(event.target.value)} required autoFocus />
+        <Input
+          id="aluno-nome"
+          value={name}
+          onChange={(event) => setName(event.target.value)}
+          required
+          autoFocus
+        />
       </div>
 
       <div className="mb-5">

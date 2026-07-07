@@ -75,10 +75,7 @@ export function LoginForm() {
       </div>
 
       {erro && (
-        <p
-          role="alert"
-          className="mb-5 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600"
-        >
+        <p role="alert" className="mb-5 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600">
           {erro}
         </p>
       )}

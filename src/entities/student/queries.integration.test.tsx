@@ -19,7 +19,9 @@ describe("useStudentsByGroup (integration, over the store)", () => {
     expect(students.length).toBeGreaterThan(0);
 
     const enrollments = await fetchEnrollmentsByGroup("turma-mat-b");
-    const enrolledIds = new Set(enrollments.filter((row) => row.active).map((row) => row.studentId));
+    const enrolledIds = new Set(
+      enrollments.filter((row) => row.active).map((row) => row.studentId),
+    );
     expect(students.every((student) => enrolledIds.has(student.id))).toBe(true);
   });
 });

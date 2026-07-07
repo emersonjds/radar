@@ -11,7 +11,11 @@ import type { AttendanceRecord } from "@/entities/attendance-record/model";
 import type { Grade } from "@/entities/grade/model";
 import { areaLabels } from "@/entities/subject/model";
 import { attendanceRate, countAbsences } from "@/features/analytics/model";
-import { classAcademicSummary, overallAverage, studentAptitude } from "@/features/analytics/academic";
+import {
+  classAcademicSummary,
+  overallAverage,
+  studentAptitude,
+} from "@/features/analytics/academic";
 import { formatPercent, formatScore } from "@/shared/lib/format";
 import { downloadCsv, toCsv } from "@/shared/lib/csv";
 import Button from "@tailadmin/components/ui/button/Button";
@@ -45,7 +49,10 @@ export function ReportsCenter() {
 
     const presencasPorAluno = new Map<string, AttendanceRecord[]>();
     for (const presenca of presencas ?? []) {
-      presencasPorAluno.set(presenca.studentId, [...(presencasPorAluno.get(presenca.studentId) ?? []), presenca]);
+      presencasPorAluno.set(presenca.studentId, [
+        ...(presencasPorAluno.get(presenca.studentId) ?? []),
+        presenca,
+      ]);
     }
     const notasPorAluno = new Map<string, Grade[]>();
     for (const nota of notas ?? []) {
@@ -97,7 +104,9 @@ export function ReportsCenter() {
   }, [alunos, materias, turmas, presencas, notas, enrollments, turmaId]);
 
   const escopoLabel =
-    turmaId === TODAS ? "Todas as turmas" : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Turma");
+    turmaId === TODAS
+      ? "Todas as turmas"
+      : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Turma");
 
   function exportar() {
     const headers = ["Aluno", "Turma", "Nota média", "Frequência", "Faltas", "Aptidão", "Situação"];

@@ -2,8 +2,14 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { act, waitFor } from "@testing-library/react";
 import { resetDb } from "@/shared/lib/storage/db";
 import { renderHookWithQuery } from "@/test/react-query";
-import { useCreateAttendanceSession, useAttendanceSessionsByGroup } from "@/entities/attendance-session/queries";
-import { useSetAttendanceRecord, useAttendanceRecordsBySession } from "@/entities/attendance-record/queries";
+import {
+  useCreateAttendanceSession,
+  useAttendanceSessionsByGroup,
+} from "@/entities/attendance-session/queries";
+import {
+  useSetAttendanceRecord,
+  useAttendanceRecordsBySession,
+} from "@/entities/attendance-record/queries";
 
 describe("salvar chamada (integration, over the store)", () => {
   beforeEach(async () => {
@@ -46,9 +52,7 @@ describe("salvar chamada (integration, over the store)", () => {
       useAttendanceSessionsByGroup("turma-mat-b"),
     );
     await waitFor(() => expect(chamadas.current.isSuccess).toBe(true));
-    const doDia = (chamadas.current.data ?? []).filter(
-      (chamada) => chamada.date === "2026-07-02",
-    );
+    const doDia = (chamadas.current.data ?? []).filter((chamada) => chamada.date === "2026-07-02");
     expect(doDia).toHaveLength(1);
 
     const { result: presencas } = renderHookWithQuery(() =>

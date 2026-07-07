@@ -89,9 +89,13 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                   <TableCell className={td}>{linha.turmaNome}</TableCell>
                   <TableCell className={td}>{formatScore(linha.nota)}</TableCell>
                   <TableCell className={td}>{formatPercent(linha.freq)}</TableCell>
-                  <TableCell className={td}>{linha.aptidao ? areaLabels[linha.aptidao] : "—"}</TableCell>
                   <TableCell className={td}>
-                    <Badge color={linha.emRisco ? "error" : "success"}>{linha.emRisco ? "Em risco" : "Regular"}</Badge>
+                    {linha.aptidao ? areaLabels[linha.aptidao] : "—"}
+                  </TableCell>
+                  <TableCell className={td}>
+                    <Badge color={linha.emRisco ? "error" : "success"}>
+                      {linha.emRisco ? "Em risco" : "Regular"}
+                    </Badge>
                   </TableCell>
                   <TableCell className={td}>
                     <Link

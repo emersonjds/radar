@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { AttendanceRecord } from "@/entities/attendance-record/model";
-import {
-  studentsAtRisk,
-  countAbsences,
-  attendanceRate,
-  absenteeismTrend,
-} from "./model";
+import { studentsAtRisk, countAbsences, attendanceRate, absenteeismTrend } from "./model";
 
 function presenca(status: AttendanceRecord["status"], id = "x"): AttendanceRecord {
   return { id, sessionId: "c1", studentId: "a1", status };

@@ -59,7 +59,7 @@ export function AppSidebar({ role }: AppSidebarProps) {
             <Link
               key={item.href}
               href={item.href}
-              className={`menu-item group ${
+              className={`group menu-item ${
                 active ? "menu-item-active" : "menu-item-inactive"
               } ${showText ? "" : "justify-center"}`}
             >

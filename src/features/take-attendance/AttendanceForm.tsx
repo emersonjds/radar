@@ -5,7 +5,10 @@ import type { Student } from "@/entities/student/model";
 import { useStudentsByGroup } from "@/entities/student/queries";
 import { useCreateAttendanceSession } from "@/entities/attendance-session/queries";
 import type { AttendanceStatus } from "@/entities/attendance-record/model";
-import { useSetAttendanceRecord, useAttendanceRecordsBySession } from "@/entities/attendance-record/queries";
+import {
+  useSetAttendanceRecord,
+  useAttendanceRecordsBySession,
+} from "@/entities/attendance-record/queries";
 import { useGroups } from "@/entities/group/queries";
 import { useSession } from "@/features/session/use-session";
 import { formatDateLong } from "@/shared/lib/format";
@@ -90,7 +93,11 @@ export function AttendanceForm() {
     setSalvo(false);
     setSalvando(true);
     try {
-      const chamada = await createAttendanceSession.mutateAsync({ groupId, date: HOJE, teacherId: profileId ?? "" });
+      const chamada = await createAttendanceSession.mutateAsync({
+        groupId,
+        date: HOJE,
+        teacherId: profileId ?? "",
+      });
       const lancamentos = (alunos ?? []).filter((aluno) => statusPorAluno[aluno.id]);
       await Promise.all(
         lancamentos.map((aluno) =>
@@ -114,7 +121,7 @@ export function AttendanceForm() {
       <header className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 md:p-5">
         <div className="flex flex-col gap-2">
           <select
-            className="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2.5 text-lg font-semibold text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
+            className="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2.5 text-lg font-semibold text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
             value={groupId}
             disabled={carregandoTurmas}
             onChange={(event) => setTurmaSelecionada(event.target.value)}
@@ -137,13 +144,18 @@ export function AttendanceForm() {
           value={busca}
           onChange={(event) => setBusca(event.target.value)}
           placeholder="Buscar aluno por nome ou matrícula..."
-          className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
+          className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
         />
 
         <div className="grid grid-cols-4 gap-2">
           {STATUS_OPTIONS.map((opcao) => (
-            <div key={opcao.value} className="flex flex-col items-center rounded-lg bg-gray-50 py-2">
-              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>{opcao.label}</span>
+            <div
+              key={opcao.value}
+              className="flex flex-col items-center rounded-lg bg-gray-50 py-2"
+            >
+              <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>
+                {opcao.label}
+              </span>
               <span className="text-lg font-semibold text-gray-800">{contagem[opcao.value]}</span>
             </div>
           ))}
@@ -162,7 +174,9 @@ export function AttendanceForm() {
         </Button>
       </div>
 
-      {!groupId && <p className="text-sm text-gray-500">Selecione uma aula para iniciar a chamada.</p>}
+      {!groupId && (
+        <p className="text-sm text-gray-500">Selecione uma aula para iniciar a chamada.</p>
+      )}
 
       {turmas.length === 0 && !carregandoTurmas && (
         <p className="text-sm text-gray-500">Você não é regente de nenhuma aula.</p>
@@ -180,9 +194,12 @@ export function AttendanceForm() {
         <p className="text-sm text-gray-500">Aula sem alunos cadastrados.</p>
       )}
 
-      {groupId && !carregandoAlunos && (alunos?.length ?? 0) > 0 && alunosFiltrados.length === 0 && (
-        <p className="text-sm text-gray-500">Nenhum aluno encontrado para “{busca.trim()}”.</p>
-      )}
+      {groupId &&
+        !carregandoAlunos &&
+        (alunos?.length ?? 0) > 0 &&
+        alunosFiltrados.length === 0 && (
+          <p className="text-sm text-gray-500">Nenhum aluno encontrado para “{busca.trim()}”.</p>
+        )}
 
       {groupId && !carregandoAlunos && alunosFiltrados.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -200,7 +217,13 @@ export function AttendanceForm() {
       {erro && (
         <div className="flex items-center justify-between gap-3 rounded-xl bg-error-50 px-4 py-3 text-sm text-error-600">
           <span>{erro}</span>
-          <Button type="button" variant="outline" size="sm" onClick={salvarChamada} disabled={salvando}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={salvarChamada}
+            disabled={salvando}
+          >
             Tentar novamente
           </Button>
         </div>

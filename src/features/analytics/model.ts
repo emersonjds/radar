@@ -7,9 +7,7 @@ import {
 /** Attendance rate (0–100) — present + late count as present. */
 export function attendanceRate(records: AttendanceRecord[]): number {
   if (records.length === 0) return 0;
-  const present = records.filter((record) =>
-    PRESENT_STATUSES.includes(record.status),
-  ).length;
+  const present = records.filter((record) => PRESENT_STATUSES.includes(record.status)).length;
   return Math.round((present / records.length) * 100);
 }
 

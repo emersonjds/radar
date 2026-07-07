@@ -44,7 +44,9 @@ const TAREFA_COLOR: Record<TarefaAdmin["status"], "light" | "success" | "error">
 function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">{icon}</div>
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
+        {icon}
+      </div>
       <p className="mt-4 text-sm text-gray-500">{label}</p>
       <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
     </div>
@@ -71,7 +73,10 @@ export function AdminPanel() {
   const turmasDoAluno = new Map<string, string[]>();
   for (const enrollment of enrollments.data ?? []) {
     if (!enrollment.active) continue;
-    turmasDoAluno.set(enrollment.studentId, [...(turmasDoAluno.get(enrollment.studentId) ?? []), enrollment.groupId]);
+    turmasDoAluno.set(enrollment.studentId, [
+      ...(turmasDoAluno.get(enrollment.studentId) ?? []),
+      enrollment.groupId,
+    ]);
   }
 
   const presencasPorTurma = new Map<string, AttendanceRecord[]>();
@@ -79,9 +84,15 @@ export function AdminPanel() {
   for (const presenca of presencas.data ?? []) {
     const chamada = chamadaPorId.get(presenca.sessionId);
     if (chamada) {
-      presencasPorTurma.set(chamada.groupId, [...(presencasPorTurma.get(chamada.groupId) ?? []), presenca]);
+      presencasPorTurma.set(chamada.groupId, [
+        ...(presencasPorTurma.get(chamada.groupId) ?? []),
+        presenca,
+      ]);
     }
-    recordsByStudent.set(presenca.studentId, [...(recordsByStudent.get(presenca.studentId) ?? []), presenca]);
+    recordsByStudent.set(presenca.studentId, [
+      ...(recordsByStudent.get(presenca.studentId) ?? []),
+      presenca,
+    ]);
   }
 
   const frequenciaPorTurma = (turmas.data ?? []).map((turma) => ({
@@ -118,13 +129,21 @@ export function AdminPanel() {
   return (
     <div className="flex flex-col gap-6">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="Total de alunos" value={alunos.isLoading ? "…" : String(totalAlunos)} icon={<GroupIcon />} />
+        <StatCard
+          label="Total de alunos"
+          value={alunos.isLoading ? "…" : String(totalAlunos)}
+          icon={<GroupIcon />}
+        />
         <StatCard
           label="Total de professores"
           value={
             perfis.isLoading
               ? "…"
-              : String(totalProfessores < LIMIAR_MOCK_PROFESSORES ? MOCK_TOTAL_PROFESSORES : totalProfessores)
+              : String(
+                  totalProfessores < LIMIAR_MOCK_PROFESSORES
+                    ? MOCK_TOTAL_PROFESSORES
+                    : totalProfessores,
+                )
           }
           icon={<UserCircleIcon />}
         />

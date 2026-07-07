@@ -24,7 +24,8 @@ const LIMITE_FALTAS_RISCO = 3;
 
 const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500";
 const td = "px-5 py-4 text-sm text-gray-700";
-const acaoBtn = "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100";
+const acaoBtn =
+  "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100";
 
 export function StudentList() {
   const { role, profile, loading: carregandoSessao } = useSession();
@@ -40,23 +41,35 @@ export function StudentList() {
   const deleteStudent = useDeleteStudent();
 
   const carregando =
-    carregandoSessao || carregandoAlunos || carregandoTurmas || carregandoMatriculas || carregandoPresencas;
+    carregandoSessao ||
+    carregandoAlunos ||
+    carregandoTurmas ||
+    carregandoMatriculas ||
+    carregandoPresencas;
   const isProfessor = role === "teacher";
 
   const turmaPorId = new Map((turmas ?? []).map((turma) => [turma.id, turma]));
 
   const recordsByStudent = new Map<string, AttendanceRecord[]>();
   for (const presenca of presencas ?? []) {
-    recordsByStudent.set(presenca.studentId, [...(recordsByStudent.get(presenca.studentId) ?? []), presenca]);
+    recordsByStudent.set(presenca.studentId, [
+      ...(recordsByStudent.get(presenca.studentId) ?? []),
+      presenca,
+    ]);
   }
 
   const aulasDoAluno = new Map<string, string[]>();
   for (const enrollment of enrollments ?? []) {
     if (!enrollment.active) continue;
-    aulasDoAluno.set(enrollment.studentId, [...(aulasDoAluno.get(enrollment.studentId) ?? []), enrollment.groupId]);
+    aulasDoAluno.set(enrollment.studentId, [
+      ...(aulasDoAluno.get(enrollment.studentId) ?? []),
+      enrollment.groupId,
+    ]);
   }
 
-  const turmasDoProfessor = isProfessor ? (turmas ?? []).filter((turma) => turma.teacherId === profile?.id) : [];
+  const turmasDoProfessor = isProfessor
+    ? (turmas ?? []).filter((turma) => turma.teacherId === profile?.id)
+    : [];
   const turmaIdsDoProfessor = new Set(turmasDoProfessor.map((turma) => turma.id));
 
   const alunosDoEscopo = isProfessor
@@ -66,7 +79,9 @@ export function StudentList() {
     : (alunos ?? []);
 
   const alunosEscopo = filtroRisco
-    ? alunosDoEscopo.filter((aluno) => countAbsences(recordsByStudent.get(aluno.id) ?? []) >= LIMITE_FALTAS_RISCO)
+    ? alunosDoEscopo.filter(
+        (aluno) => countAbsences(recordsByStudent.get(aluno.id) ?? []) >= LIMITE_FALTAS_RISCO,
+      )
     : alunosDoEscopo;
 
   const termo = busca.trim().toLowerCase();
@@ -111,7 +126,7 @@ export function StudentList() {
             value={busca}
             onChange={(event) => setBusca(event.target.value)}
             placeholder="Buscar por nome"
-            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 sm:w-80"
+            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden sm:w-80"
           />
           {!isProfessor && (
             <Button className="h-11" startIcon={<PlusIcon />} onClick={() => setFormAluno(null)}>
@@ -204,7 +219,9 @@ export function StudentList() {
                       <TableCell className={td}>{formatPercent(attendance)}</TableCell>
                       <TableCell className={td}>{absences}</TableCell>
                       <TableCell className={td}>
-                        <Badge color={emRisco ? "error" : "success"}>{emRisco ? "Em risco" : "Regular"}</Badge>
+                        <Badge color={emRisco ? "error" : "success"}>
+                          {emRisco ? "Em risco" : "Regular"}
+                        </Badge>
                       </TableCell>
                       {!isProfessor && (
                         <TableCell className={td}>

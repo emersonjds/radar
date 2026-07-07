@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   setAttendanceRecord,
   fetchAttendanceRecords,
@@ -14,8 +10,7 @@ import {
 
 export const attendanceRecordKeys = {
   all: ["attendanceRecords"],
-  bySession: (sessionId: string) =>
-    ["attendanceRecords", "session", sessionId],
+  bySession: (sessionId: string) => ["attendanceRecords", "session", sessionId],
   byStudent: (studentId: string) => ["attendanceRecords", "student", studentId],
 };
 

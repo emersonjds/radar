@@ -46,7 +46,9 @@ export async function updateGroup(id: string, patch: GroupUpdate): Promise<Group
     ...(patch.teacherId !== undefined ? { teacherId: patch.teacherId } : {}),
   };
   groupSchema.parse(next);
-  await mutateCollection<Group>("groups", (groups) => groups.map((group) => (group.id === id ? next : group)));
+  await mutateCollection<Group>("groups", (groups) =>
+    groups.map((group) => (group.id === id ? next : group)),
+  );
   return next;
 }
 

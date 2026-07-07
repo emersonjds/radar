@@ -57,7 +57,11 @@ function deslocarMes(mes: string, delta: number): string {
 const navBtn =
   "flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100";
 
-export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: AttendanceCalendarProps) {
+export function AttendanceCalendar({
+  mes,
+  statusPorData,
+  eventosPorData,
+}: AttendanceCalendarProps) {
   const [mesVisivel, setMesVisivel] = useState(mes);
   const [ano, mesNumero] = mesVisivel.split("-").map(Number);
   const mesIndex = mesNumero - 1;
@@ -103,7 +107,11 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {DIAS_SEMANA.map((inicialDia, indice) => (
-          <span key={`${inicialDia}-${indice}`} className="text-xs font-medium text-gray-400" aria-hidden="true">
+          <span
+            key={`${inicialDia}-${indice}`}
+            className="text-xs font-medium text-gray-400"
+            aria-hidden="true"
+          >
             {inicialDia}
           </span>
         ))}

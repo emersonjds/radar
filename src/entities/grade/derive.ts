@@ -17,7 +17,10 @@ export function deriveSubjectGrades(
 ): Grade[] {
   const evaluationById = new Map(evaluations.map((evaluation) => [evaluation.id, evaluation]));
   const allow = studentIds ? new Set(studentIds) : null;
-  const acc = new Map<string, { studentId: string; subjectId: string; sum: number; weight: number }>();
+  const acc = new Map<
+    string,
+    { studentId: string; subjectId: string; sum: number; weight: number }
+  >();
 
   for (const grade of evaluationGrades) {
     if (grade.score === null) continue;

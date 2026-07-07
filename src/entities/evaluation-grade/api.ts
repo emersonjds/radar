@@ -26,9 +26,7 @@ export async function setEvaluationGrade(input: SetEvaluationGradeInput): Promis
       (row) => row.evaluationId === input.evaluationId && row.studentId === input.studentId,
     );
     if (existing) {
-      return rows.map((row) =>
-        row === existing ? { ...row, score: input.score } : row,
-      );
+      return rows.map((row) => (row === existing ? { ...row, score: input.score } : row));
     }
     const created: EvaluationGrade = {
       id: crypto.randomUUID(),

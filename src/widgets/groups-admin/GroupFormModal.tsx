@@ -19,7 +19,9 @@ export interface GroupFormModalProps {
 export function GroupFormModal({ group, onClose }: GroupFormModalProps) {
   return (
     <Modal isOpen={group !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {group !== undefined && <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />}
+      {group !== undefined && (
+        <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />
+      )}
     </Modal>
   );
 }
@@ -62,7 +64,9 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
 
   return (
     <form onSubmit={save}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">{group ? "Editar aula" : "Adicionar aula"}</h4>
+      <h4 className="mb-6 text-lg font-semibold text-gray-800">
+        {group ? "Editar aula" : "Adicionar aula"}
+      </h4>
 
       <div className="mb-5">
         <Label htmlFor="turma-nome">Nome</Label>

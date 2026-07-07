@@ -55,11 +55,15 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
       <ul className="mb-4 flex flex-col gap-2">
         {(assignments ?? []).map((assignment) => (
           <li key={assignment.id} className="flex flex-wrap items-center gap-2">
-            <span className="min-w-32 text-sm text-gray-800">{subjectName(assignment.subjectId)}</span>
+            <span className="min-w-32 text-sm text-gray-800">
+              {subjectName(assignment.subjectId)}
+            </span>
             <select
               aria-label={`Professor de ${subjectName(assignment.subjectId)}`}
               value={assignment.teacherId}
-              onChange={(e) => updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })}
+              onChange={(e) =>
+                updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })
+              }
               className={controlClasses}
             >
               {teachers.map((teacher) => (
@@ -68,7 +72,11 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
                 </option>
               ))}
             </select>
-            <Button size="sm" variant="outline" onClick={() => deleteAssignment.mutate(assignment.id)}>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => deleteAssignment.mutate(assignment.id)}
+            >
               Remover
             </Button>
           </li>

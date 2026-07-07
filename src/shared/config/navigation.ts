@@ -1,6 +1,7 @@
 import type { Role } from "@/entities/profile/model";
 
-export type NavIcon = "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma" | "grades";
+export type NavIcon =
+  "painel" | "session" | "relatorios" | "user" | "admin" | "materia" | "turma" | "grades";
 
 export interface NavItem {
   href: string;

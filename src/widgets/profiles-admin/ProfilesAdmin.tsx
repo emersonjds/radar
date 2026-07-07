@@ -26,7 +26,16 @@ const acaoBtn =
 
 function PowerIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="12" y1="3.5" x2="12" y2="12" />
       <path d="M7.5 7a6.5 6.5 0 1 0 9 0" />
     </svg>
@@ -96,7 +105,9 @@ export function ProfilesAdmin() {
               <select
                 id="perfil-papel"
                 value={form.role}
-                onChange={(event) => setForm((prev) => ({ ...prev, role: event.target.value as Role }))}
+                onChange={(event) =>
+                  setForm((prev) => ({ ...prev, role: event.target.value as Role }))
+                }
                 className={control}
               >
                 {ROLES.map((role) => (
@@ -173,7 +184,9 @@ export function ProfilesAdmin() {
                   <button
                     type="button"
                     className={acaoBtn}
-                    aria-label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
+                    aria-label={
+                      perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`
+                    }
                     title={perfil.active ? "Desativar" : "Ativar"}
                     disabled={perfil.id === profileId || setActive.isPending}
                     onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}

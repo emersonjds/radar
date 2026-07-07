@@ -52,5 +52,7 @@ export async function deleteSubject(id: string): Promise<void> {
   if (inUse) {
     throw new Error("Matéria em uso (lecionamento ou avaliação) não pode ser removida.");
   }
-  await mutateCollection<Subject>("subjects", (subjects) => subjects.filter((subject) => subject.id !== id));
+  await mutateCollection<Subject>("subjects", (subjects) =>
+    subjects.filter((subject) => subject.id !== id),
+  );
 }

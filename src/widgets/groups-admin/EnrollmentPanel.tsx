@@ -1,7 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useEnrollmentsByGroup, useEnrollStudent, useUnenrollStudent } from "@/entities/enrollment/queries";
+import {
+  useEnrollmentsByGroup,
+  useEnrollStudent,
+  useUnenrollStudent,
+} from "@/entities/enrollment/queries";
 import { useStudents } from "@/entities/student/queries";
 import Button from "@tailadmin/components/ui/button/Button";
 import Label from "@tailadmin/components/form/Label";
@@ -20,7 +24,9 @@ export function EnrollmentPanel({ groupId }: Props) {
 
   const activeEnrollments = (enrollments ?? []).filter((enrollment) => enrollment.active);
   const enrolledIds = new Set(activeEnrollments.map((enrollment) => enrollment.studentId));
-  const availableStudents = (allStudents ?? []).filter((student) => student.active && !enrolledIds.has(student.id));
+  const availableStudents = (allStudents ?? []).filter(
+    (student) => student.active && !enrolledIds.has(student.id),
+  );
 
   const studentMap = new Map((allStudents ?? []).map((student) => [student.id, student]));
 
@@ -87,7 +93,7 @@ export function EnrollmentPanel({ groupId }: Props) {
               id={`select-${groupId}`}
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10"
+              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
             >
               <option value="">Selecione um aluno</option>
               {availableStudents.map((student) => (
@@ -97,7 +103,11 @@ export function EnrollmentPanel({ groupId }: Props) {
               ))}
             </select>
           </div>
-          <Button size="sm" onClick={adicionar} disabled={!selectedStudentId || enrollStudent.isPending}>
+          <Button
+            size="sm"
+            onClick={adicionar}
+            disabled={!selectedStudentId || enrollStudent.isPending}
+          >
             Matricular
           </Button>
         </div>

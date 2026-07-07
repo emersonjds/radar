@@ -226,13 +226,48 @@ export function seedDb(): Db {
   const materias = MATERIAS.map((materia) => ({ ...materia }));
 
   const assignments = [
-    { id: "assign-matb-mat", groupId: "turma-mat-b", subjectId: "materia-matematica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-fis", groupId: "turma-mat-b", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-his", groupId: "turma-mat-b", subjectId: "materia-historia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-fisa-fis", groupId: "turma-fis-a", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-fisa-ing", groupId: "turma-fis-a", subjectId: "materia-ingles", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-bio", groupId: "turma-cie-c", subjectId: "materia-biologia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
+    {
+      id: "assign-matb-mat",
+      groupId: "turma-mat-b",
+      subjectId: "materia-matematica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-matb-fis",
+      groupId: "turma-mat-b",
+      subjectId: "materia-fisica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-matb-his",
+      groupId: "turma-mat-b",
+      subjectId: "materia-historia",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-fisa-fis",
+      groupId: "turma-fis-a",
+      subjectId: "materia-fisica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-fisa-ing",
+      groupId: "turma-fis-a",
+      subjectId: "materia-ingles",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-ciec-bio",
+      groupId: "turma-cie-c",
+      subjectId: "materia-biologia",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-ciec-por",
+      groupId: "turma-cie-c",
+      subjectId: "materia-portugues",
+      teacherId: PROFESSOR_ID,
+    },
   ];
 
   const evaluations: Db["evaluations"] = [];
@@ -268,8 +303,18 @@ export function seedDb(): Db {
       const examScore = scoreFor(alunoIdx, materiaIdx, area);
       const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
       evaluationGrades.push(
-        { id: `eg-${examId}-${aluno.id}`, evaluationId: examId, studentId: aluno.id, score: examScore },
-        { id: `eg-${homeworkId}-${aluno.id}`, evaluationId: homeworkId, studentId: aluno.id, score: homeworkScore },
+        {
+          id: `eg-${examId}-${aluno.id}`,
+          evaluationId: examId,
+          studentId: aluno.id,
+          score: examScore,
+        },
+        {
+          id: `eg-${homeworkId}-${aluno.id}`,
+          evaluationId: homeworkId,
+          studentId: aluno.id,
+          score: homeworkScore,
+        },
       );
     }
   }

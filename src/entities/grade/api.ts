@@ -16,11 +16,17 @@ async function readEvaluationGrades(): Promise<EvaluationGrade[]> {
 
 /** Per-subject aggregate, derived from evaluations + evaluation grades. */
 export async function fetchGrades(): Promise<Grade[]> {
-  const [evaluations, evaluationGrades] = await Promise.all([readEvaluations(), readEvaluationGrades()]);
+  const [evaluations, evaluationGrades] = await Promise.all([
+    readEvaluations(),
+    readEvaluationGrades(),
+  ]);
   return deriveSubjectGrades(evaluations, evaluationGrades);
 }
 
 export async function fetchGradesByStudent(studentId: string): Promise<Grade[]> {
-  const [evaluations, evaluationGrades] = await Promise.all([readEvaluations(), readEvaluationGrades()]);
+  const [evaluations, evaluationGrades] = await Promise.all([
+    readEvaluations(),
+    readEvaluationGrades(),
+  ]);
   return deriveSubjectGrades(evaluations, evaluationGrades, [studentId]);
 }

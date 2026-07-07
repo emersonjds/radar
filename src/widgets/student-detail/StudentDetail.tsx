@@ -43,7 +43,8 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   const { data: turmas } = useGroups();
   const { data: enrollments } = useEnrollmentsByStudent(studentId);
   const { data: chamadas } = useAttendanceSessions();
-  const { data: presencas, isLoading: carregandoPresencas } = useAttendanceRecordsByStudent(studentId);
+  const { data: presencas, isLoading: carregandoPresencas } =
+    useAttendanceRecordsByStudent(studentId);
   const { data: eventosEscolares } = useSchoolEvents();
   const { data: notas } = useGradesByStudent(studentId);
   const { data: materias } = useSubjects();
@@ -84,7 +85,9 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Desempenho &amp; Presença</h1>
-          <p className="mt-1 text-sm text-gray-500">Relatório acadêmico e de frequência do período atual</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Relatório acadêmico e de frequência do período atual
+          </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
           <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
@@ -111,14 +114,18 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <AvatarText name={aluno.name} />
             <div>
               <h2 className="text-lg font-semibold text-gray-800">{aluno.name}</h2>
-              <Badge color={aluno.active ? "success" : "error"}>{aluno.active ? "ATIVO" : "INATIVO"}</Badge>
+              <Badge color={aluno.active ? "success" : "error"}>
+                {aluno.active ? "ATIVO" : "INATIVO"}
+              </Badge>
             </div>
           </div>
 
           <dl className="mt-6 grid grid-cols-3 gap-3 text-sm">
             <div>
               <dt className="text-gray-500">Idade</dt>
-              <dd className="font-medium text-gray-800">{computeAgeAt(aluno.birthDate, todayIso())} anos</dd>
+              <dd className="font-medium text-gray-800">
+                {computeAgeAt(aluno.birthDate, todayIso())} anos
+              </dd>
             </div>
             <div>
               <dt className="text-gray-500">Responsável</dt>
@@ -131,7 +138,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           </dl>
 
           <div className="mt-6">
-            <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-500">Aulas</p>
+            <p className="mb-2 text-xs font-medium tracking-wide text-gray-500 uppercase">Aulas</p>
             {aulasDoAluno.length === 0 ? (
               <p className="text-sm text-gray-500">Sem aulas matriculadas.</p>
             ) : (
@@ -150,7 +157,9 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
           <div className="mt-6 grid grid-cols-2 gap-3">
             <div className="rounded-xl bg-gray-50 p-4 text-center">
-              <p className="text-2xl font-bold text-gray-800">{formatPercent(attendanceRate(presencas ?? []))}</p>
+              <p className="text-2xl font-bold text-gray-800">
+                {formatPercent(attendanceRate(presencas ?? []))}
+              </p>
               <p className="text-xs text-gray-500">Frequência</p>
             </div>
             <div className="rounded-xl bg-gray-50 p-4 text-center">
@@ -170,7 +179,9 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
               eventosPorData={eventosPorData}
             />
           )}
-          {!carregandoPresencas && !mes && <p className="text-sm text-gray-500">Sem registros de presença.</p>}
+          {!carregandoPresencas && !mes && (
+            <p className="text-sm text-gray-500">Sem registros de presença.</p>
+          )}
         </section>
       </div>
 

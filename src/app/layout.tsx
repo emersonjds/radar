@@ -10,13 +10,10 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: "Radar — presença escolar",
-  description:
-    "Chamada e acompanhamento de frequência escolar para professores e coordenação.",
+  description: "Chamada e acompanhamento de frequência escolar para professores e coordenação.",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
       <body className={outfit.className}>
