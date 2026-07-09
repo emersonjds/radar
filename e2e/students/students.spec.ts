@@ -1,17 +1,11 @@
 import { expect, test } from "@playwright/test";
+import { login } from "../helpers";
 
 test.use({ viewport: { width: 1280, height: 800 } });
 
-async function loginAdmin(page: import("@playwright/test").Page) {
-  await page.goto("/login");
-  await page.getByLabel("Usuário").fill("ana");
-  await page.getByLabel("Senha").fill("admin123");
-  await page.getByRole("button", { name: "Entrar" }).click();
-}
-
 test("admin adiciona, edita e exclui um aluno", async ({ page }) => {
   page.on("dialog", (dialog) => dialog.accept());
-  await loginAdmin(page);
+  await login(page, "Administrador");
   await page.goto("/students");
 
   // Adicionar

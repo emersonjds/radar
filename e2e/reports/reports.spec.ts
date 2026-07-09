@@ -1,16 +1,10 @@
-import { expect, test, type Page } from "@playwright/test";
-
-async function loginAdmin(page: Page) {
-  await page.goto("/login");
-  await page.getByLabel("Usuário").fill("ana");
-  await page.getByLabel("Senha").fill("admin123");
-  await page.getByRole("button", { name: "Entrar" }).click();
-}
+import { expect, test } from "@playwright/test";
+import { login } from "../helpers";
 
 test.use({ viewport: { width: 1280, height: 800 } });
 
 test("central de análise: panorama, recorte por turma e export CSV", async ({ page }) => {
-  await loginAdmin(page);
+  await login(page, "Administrador");
   await page.goto("/reports");
 
   await expect(page.getByRole("heading", { name: "Relatórios", exact: true })).toBeVisible({
@@ -43,7 +37,7 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
 });
 
 test("ficha do aluno traz frequência e bloco acadêmico com aptidão", async ({ page }) => {
-  await loginAdmin(page);
+  await login(page, "Administrador");
   await page.goto("/reports");
 
   const linhaMarcus = page.getByRole("row").filter({ hasText: "Marcus Thorne" });

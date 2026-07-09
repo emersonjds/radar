@@ -1,19 +1,9 @@
-import { expect, test, type Page } from "@playwright/test";
-
-async function login(page: Page, user: string, password: string) {
-  await page.goto("/login");
-  await page.getByLabel("Usuário").fill(user);
-  await page.getByLabel("Senha").fill(password);
-  await page.getByRole("button", { name: "Entrar" }).click();
-}
-
-function sidebar(page: Page) {
-  return page.getByRole("navigation", { name: "Navegação principal" });
-}
+import { expect, test } from "@playwright/test";
+import { login, sidebar } from "../helpers";
 
 test.describe("teacher grades flow", () => {
   test("teacher creates an evaluation and enters a grade", async ({ page }) => {
-    await login(page, "ricardo", "prof123");
+    await login(page, "Professor");
     await sidebar(page).getByRole("link", { name: "Notas", exact: true }).click();
 
     await page.getByRole("button", { name: /—/ }).first().click();
