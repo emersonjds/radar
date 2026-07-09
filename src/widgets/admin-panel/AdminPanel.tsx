@@ -11,8 +11,8 @@ import { useGroups } from "@/entities/group/queries";
 import { useEnrollments } from "@/entities/enrollment/queries";
 import { studentsAtRisk, attendanceRate, absenteeismTrend } from "@/features/analytics/model";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
-import Badge from "@tailadmin/components/ui/badge/Badge";
+import { AvatarText } from "@/shared/ui/avatar-text";
+import { Badge } from "@/shared/ui/badge";
 import { GroupIcon, UserCircleIcon, CheckCircleIcon } from "@tailadmin/icons";
 import { AttendanceBarChart } from "./AttendanceBarChart";
 import { TrendLineChart } from "./TrendLineChart";
@@ -35,10 +35,10 @@ const TAREFAS_ADMIN: TarefaAdmin[] = [
   { title: "Recepção de novos alunos", status: "Pendente" },
 ];
 
-const TAREFA_COLOR: Record<TarefaAdmin["status"], "light" | "success" | "error"> = {
-  Pendente: "light",
+const TAREFA_VARIANT: Record<TarefaAdmin["status"], "secondary" | "success" | "danger"> = {
+  Pendente: "secondary",
   Concluída: "success",
-  Urgente: "error",
+  Urgente: "danger",
 };
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
@@ -175,7 +175,7 @@ export function AdminPanel() {
                     <p className="truncate text-xs text-gray-500">{alerta.turma}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
-                    <Badge color="error">{formatPercent(alerta.attendance)}</Badge>
+                    <Badge variant="danger">{formatPercent(alerta.attendance)}</Badge>
                     <span className="text-xs text-gray-500">{alerta.absences} faltas</span>
                   </div>
                 </li>
@@ -203,7 +203,7 @@ export function AdminPanel() {
             {TAREFAS_ADMIN.map((tarefa) => (
               <li key={tarefa.title} className="flex items-center justify-between gap-3 text-sm">
                 <span className="text-gray-700">{tarefa.title}</span>
-                <Badge color={TAREFA_COLOR[tarefa.status]}>{tarefa.status}</Badge>
+                <Badge variant={TAREFA_VARIANT[tarefa.status]}>{tarefa.status}</Badge>
               </li>
             ))}
           </ul>

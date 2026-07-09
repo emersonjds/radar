@@ -11,9 +11,9 @@ import {
 import { useSession } from "@/features/session/use-session";
 import type { PublicProfile } from "@/entities/profile/api";
 import { ProfileFormModal } from "./ProfileFormModal";
-import Badge from "@tailadmin/components/ui/badge/Badge";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 import { PencilIcon, TrashBinIcon } from "@tailadmin/icons";
 
 const ROLES = roleSchema.options;
@@ -80,7 +80,9 @@ export function ProfilesAdmin() {
         <form onSubmit={criar} className="flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
-              <Label htmlFor="perfil-nome">Nome</Label>
+              <Label className="mb-1.5" htmlFor="perfil-nome">
+                Nome
+              </Label>
               <input
                 id="perfil-nome"
                 value={form.name}
@@ -90,7 +92,9 @@ export function ProfilesAdmin() {
               />
             </div>
             <div>
-              <Label htmlFor="perfil-usuario">Login de usuário</Label>
+              <Label className="mb-1.5" htmlFor="perfil-usuario">
+                Login de usuário
+              </Label>
               <input
                 id="perfil-usuario"
                 autoCapitalize="none"
@@ -101,7 +105,9 @@ export function ProfilesAdmin() {
               />
             </div>
             <div>
-              <Label htmlFor="perfil-papel">Papel</Label>
+              <Label className="mb-1.5" htmlFor="perfil-papel">
+                Papel
+              </Label>
               <select
                 id="perfil-papel"
                 value={form.role}
@@ -118,7 +124,9 @@ export function ProfilesAdmin() {
               </select>
             </div>
             <div>
-              <Label htmlFor="perfil-senha">Senha</Label>
+              <Label className="mb-1.5" htmlFor="perfil-senha">
+                Senha
+              </Label>
               <input
                 id="perfil-senha"
                 type="password"
@@ -168,7 +176,7 @@ export function ProfilesAdmin() {
                     @{perfil.username} · {roleLabels[perfil.role]}
                   </p>
                 </div>
-                <Badge color={perfil.active ? "success" : "light"}>
+                <Badge variant={perfil.active ? "success" : "secondary"}>
                   {perfil.active ? "Ativo" : "Inativo"}
                 </Badge>
                 <div className="flex items-center gap-1">

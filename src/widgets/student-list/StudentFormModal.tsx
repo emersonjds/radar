@@ -3,11 +3,11 @@
 import { useState, type FormEvent } from "react";
 import type { Student } from "@/entities/student/model";
 import { useCreateStudent, useUpdateStudent } from "@/entities/student/queries";
-import { Modal } from "@tailadmin/components/ui/modal";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
-import Input from "@tailadmin/components/form/input/InputField";
-import Checkbox from "@tailadmin/components/form/input/Checkbox";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
+import { Input } from "@/shared/ui/input";
+import { Checkbox } from "@/shared/ui/checkbox";
 
 export interface StudentFormModalProps {
   student: Student | null | undefined;
@@ -16,11 +16,18 @@ export interface StudentFormModalProps {
 
 export function StudentFormModal({ student, onClose }: StudentFormModalProps) {
   return (
-    <Modal isOpen={student !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {student !== undefined && (
-        <StudentFormBody key={student?.id ?? "novo"} student={student} onClose={onClose} />
-      )}
-    </Modal>
+    <Dialog
+      open={student !== undefined}
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+    >
+      <DialogContent className="max-w-lg">
+        {student !== undefined && (
+          <StudentFormBody key={student?.id ?? "novo"} student={student} onClose={onClose} />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -63,12 +70,14 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
 
   return (
     <form onSubmit={salvar}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">
+      <DialogTitle className="mb-6 text-gray-800">
         {student ? "Editar aluno" : "Adicionar aluno"}
-      </h4>
+      </DialogTitle>
 
       <div className="mb-5">
-        <Label htmlFor="aluno-nome">Nome</Label>
+        <Label className="mb-1.5" htmlFor="aluno-nome">
+          Nome
+        </Label>
         <Input
           id="aluno-nome"
           value={name}
@@ -79,7 +88,9 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="aluno-nascimento">Data de nascimento</Label>
+        <Label className="mb-1.5" htmlFor="aluno-nascimento">
+          Data de nascimento
+        </Label>
         <Input
           id="aluno-nascimento"
           type="date"
@@ -90,7 +101,9 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="aluno-responsavel">Nome do responsável</Label>
+        <Label className="mb-1.5" htmlFor="aluno-responsavel">
+          Nome do responsável
+        </Label>
         <Input
           id="aluno-responsavel"
           value={guardianName}
@@ -100,7 +113,9 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="aluno-telefone">Telefone do responsável</Label>
+        <Label className="mb-1.5" htmlFor="aluno-telefone">
+          Telefone do responsável
+        </Label>
         <Input
           id="aluno-telefone"
           type="tel"
@@ -114,7 +129,12 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
 
       {student && (
         <div className="mb-5 flex items-center gap-2">
-          <Checkbox id="aluno-ativo" checked={active} onChange={setActive} label="Ativo" />
+          <Checkbox
+            id="aluno-ativo"
+            checked={active}
+            onCheckedChange={(checked) => setActive(checked === true)}
+          />
+          <Label htmlFor="aluno-ativo">Ativo</Label>
         </div>
       )}
 

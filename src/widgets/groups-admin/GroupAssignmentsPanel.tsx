@@ -9,7 +9,7 @@ import {
   useUpdateAssignmentTeacher,
   useDeleteAssignment,
 } from "@/entities/assignment/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 
 const controlClasses =
   "h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden";

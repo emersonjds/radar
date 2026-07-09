@@ -4,7 +4,7 @@ import { useState } from "react";
 import { shiftLabels, type Group } from "@/entities/group/model";
 import { useGroups, useDeleteGroup } from "@/entities/group/queries";
 import { useProfiles } from "@/entities/profile/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 import { GroupFormModal } from "./GroupFormModal";
 import { GroupAssignmentsPanel } from "./GroupAssignmentsPanel";
 import { EnrollmentPanel } from "./EnrollmentPanel";

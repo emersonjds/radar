@@ -3,9 +3,9 @@
 import { useState, type FormEvent } from "react";
 import { evaluationTypeLabels, type EvaluationType } from "@/entities/evaluation/model";
 import { useCreateEvaluation } from "@/entities/evaluation/queries";
-import { Modal } from "@tailadmin/components/ui/modal";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 
 const controlClasses =
   "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
@@ -47,76 +47,91 @@ export function EvaluationFormModal({
   }
 
   return (
-    <Modal isOpen={open} onClose={onClose} className="m-4 max-w-lg p-6">
-      <form onSubmit={save}>
-        <h4 className="mb-6 text-lg font-semibold text-gray-800">Nova avaliação</h4>
+    <Dialog
+      open={open}
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+    >
+      <DialogContent className="max-w-lg">
+        <form onSubmit={save}>
+          <DialogTitle className="mb-6 text-gray-800">Nova avaliação</DialogTitle>
 
-        <div className="mb-5">
-          <Label htmlFor="aval-nome">Nome</Label>
-          <input
-            id="aval-nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            autoFocus
-            className={controlClasses}
-          />
-        </div>
+          <div className="mb-5">
+            <Label className="mb-1.5" htmlFor="aval-nome">
+              Nome
+            </Label>
+            <input
+              id="aval-nome"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              autoFocus
+              className={controlClasses}
+            />
+          </div>
 
-        <div className="mb-5">
-          <Label htmlFor="aval-tipo">Tipo</Label>
-          <select
-            id="aval-tipo"
-            value={type}
-            onChange={(e) => setType(e.target.value as EvaluationType)}
-            className={controlClasses}
-          >
-            <option value="exam">{evaluationTypeLabels.exam}</option>
-            <option value="homework">{evaluationTypeLabels.homework}</option>
-          </select>
-        </div>
+          <div className="mb-5">
+            <Label className="mb-1.5" htmlFor="aval-tipo">
+              Tipo
+            </Label>
+            <select
+              id="aval-tipo"
+              value={type}
+              onChange={(e) => setType(e.target.value as EvaluationType)}
+              className={controlClasses}
+            >
+              <option value="exam">{evaluationTypeLabels.exam}</option>
+              <option value="homework">{evaluationTypeLabels.homework}</option>
+            </select>
+          </div>
 
-        <div className="mb-5">
-          <Label htmlFor="aval-data">Data</Label>
-          <input
-            id="aval-data"
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            required
-            className={controlClasses}
-          />
-        </div>
+          <div className="mb-5">
+            <Label className="mb-1.5" htmlFor="aval-data">
+              Data
+            </Label>
+            <input
+              id="aval-data"
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              required
+              className={controlClasses}
+            />
+          </div>
 
-        <div className="mb-5">
-          <Label htmlFor="aval-peso">Peso</Label>
-          <select
-            id="aval-peso"
-            value={weight}
-            onChange={(e) => setWeight(Number(e.target.value))}
-            className={controlClasses}
-          >
-            <option value={1}>1</option>
-            <option value={2}>2</option>
-            <option value={3}>3</option>
-          </select>
-        </div>
+          <div className="mb-5">
+            <Label className="mb-1.5" htmlFor="aval-peso">
+              Peso
+            </Label>
+            <select
+              id="aval-peso"
+              value={weight}
+              onChange={(e) => setWeight(Number(e.target.value))}
+              className={controlClasses}
+            >
+              <option value={1}>1</option>
+              <option value={2}>2</option>
+              <option value={3}>3</option>
+            </select>
+          </div>
 
-        {erro && (
-          <p role="alert" className="mb-5 text-sm text-error-600">
-            {erro}
-          </p>
-        )}
+          {erro && (
+            <p role="alert" className="mb-5 text-sm text-error-600">
+              {erro}
+            </p>
+          )}
 
-        <div className="flex justify-end gap-3">
-          <Button type="button" variant="outline" onClick={onClose}>
-            Cancelar
-          </Button>
-          <Button disabled={createEvaluation.isPending}>
-            {createEvaluation.isPending ? "Salvando…" : "Salvar"}
-          </Button>
-        </div>
-      </form>
-    </Modal>
+          <div className="flex justify-end gap-3">
+            <Button type="button" variant="outline" onClick={onClose}>
+              Cancelar
+            </Button>
+            <Button disabled={createEvaluation.isPending}>
+              {createEvaluation.isPending ? "Salvando…" : "Salvar"}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

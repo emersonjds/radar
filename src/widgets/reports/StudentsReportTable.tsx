@@ -4,9 +4,9 @@ import Link from "next/link";
 import { areaLabels } from "@/entities/subject/model";
 import type { Area } from "@/entities/subject/model";
 import { formatPercent, formatScore } from "@/shared/lib/format";
-import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
-import Badge from "@tailadmin/components/ui/badge/Badge";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@tailadmin/components/ui/table";
+import { AvatarText } from "@/shared/ui/avatar-text";
+import { Badge } from "@/shared/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { EyeIcon } from "@tailadmin/icons";
 
 export interface ReportRow {
@@ -35,27 +35,13 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
         <Table>
           <TableHeader className="border-b border-gray-100 bg-gray-50">
             <TableRow>
-              <TableCell isHeader className={th}>
-                Aluno
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Aula
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Nota média
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Frequência
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Aptidão
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Situação
-              </TableCell>
-              <TableCell isHeader className={th}>
-                Relatório
-              </TableCell>
+              <TableHead className={th}>Aluno</TableHead>
+              <TableHead className={th}>Aula</TableHead>
+              <TableHead className={th}>Nota média</TableHead>
+              <TableHead className={th}>Frequência</TableHead>
+              <TableHead className={th}>Aptidão</TableHead>
+              <TableHead className={th}>Situação</TableHead>
+              <TableHead className={th}>Relatório</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -93,7 +79,7 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                     {linha.aptidao ? areaLabels[linha.aptidao] : "—"}
                   </TableCell>
                   <TableCell className={td}>
-                    <Badge color={linha.emRisco ? "error" : "success"}>
+                    <Badge variant={linha.emRisco ? "danger" : "success"}>
                       {linha.emRisco ? "Em risco" : "Regular"}
                     </Badge>
                   </TableCell>

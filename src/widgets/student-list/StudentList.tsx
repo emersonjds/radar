@@ -13,10 +13,10 @@ import { useSession } from "@/features/session/use-session";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { computeAgeAt, todayIso } from "@/entities/student/age";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
-import Badge from "@tailadmin/components/ui/badge/Badge";
-import Button from "@tailadmin/components/ui/button/Button";
-import { Table, TableBody, TableCell, TableHeader, TableRow } from "@tailadmin/components/ui/table";
+import { AvatarText } from "@/shared/ui/avatar-text";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { EyeIcon, PencilIcon, PlusIcon, TrashBinIcon } from "@tailadmin/icons";
 import { StudentFormModal } from "./StudentFormModal";
 
@@ -129,7 +129,8 @@ export function StudentList() {
             className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden sm:w-80"
           />
           {!isProfessor && (
-            <Button className="h-11" startIcon={<PlusIcon />} onClick={() => setFormAluno(null)}>
+            <Button className="h-11" onClick={() => setFormAluno(null)}>
+              <PlusIcon />
               Adicionar aluno
             </Button>
           )}
@@ -141,36 +142,14 @@ export function StudentList() {
           <Table>
             <TableHeader className="border-b border-gray-100 bg-gray-50">
               <TableRow>
-                <TableCell isHeader className={th}>
-                  Aluno
-                </TableCell>
-                {!isProfessor && (
-                  <TableCell isHeader className={th}>
-                    Idade
-                  </TableCell>
-                )}
-                {!isProfessor && (
-                  <TableCell isHeader className={th}>
-                    Responsável
-                  </TableCell>
-                )}
-                <TableCell isHeader className={th}>
-                  Aulas
-                </TableCell>
-                <TableCell isHeader className={th}>
-                  Frequência
-                </TableCell>
-                <TableCell isHeader className={th}>
-                  Faltas
-                </TableCell>
-                <TableCell isHeader className={th}>
-                  Situação
-                </TableCell>
-                {!isProfessor && (
-                  <TableCell isHeader className={th}>
-                    Ação
-                  </TableCell>
-                )}
+                <TableHead className={th}>Aluno</TableHead>
+                {!isProfessor && <TableHead className={th}>Idade</TableHead>}
+                {!isProfessor && <TableHead className={th}>Responsável</TableHead>}
+                <TableHead className={th}>Aulas</TableHead>
+                <TableHead className={th}>Frequência</TableHead>
+                <TableHead className={th}>Faltas</TableHead>
+                <TableHead className={th}>Situação</TableHead>
+                {!isProfessor && <TableHead className={th}>Ação</TableHead>}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -219,7 +198,7 @@ export function StudentList() {
                       <TableCell className={td}>{formatPercent(attendance)}</TableCell>
                       <TableCell className={td}>{absences}</TableCell>
                       <TableCell className={td}>
-                        <Badge color={emRisco ? "error" : "success"}>
+                        <Badge variant={emRisco ? "danger" : "success"}>
                           {emRisco ? "Em risco" : "Regular"}
                         </Badge>
                       </TableCell>

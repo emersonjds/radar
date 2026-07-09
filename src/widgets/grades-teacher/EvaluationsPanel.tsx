@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { evaluationTypeLabels, type Evaluation } from "@/entities/evaluation/model";
 import { useEvaluationsByAssignment, useDeleteEvaluation } from "@/entities/evaluation/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 import { EvaluationFormModal } from "./EvaluationFormModal";
 import { GradeEntryPanel } from "./GradeEntryPanel";
 

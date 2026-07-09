@@ -4,9 +4,9 @@ import { useState, type FormEvent } from "react";
 import { AREAS, areaLabels, type Area } from "@/entities/subject/model";
 import type { Subject } from "@/entities/subject/model";
 import { useCreateSubject, useUpdateSubject } from "@/entities/subject/queries";
-import { Modal } from "@tailadmin/components/ui/modal";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 
 const controlClasses =
   "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
@@ -18,11 +18,18 @@ export interface SubjectFormModalProps {
 
 export function SubjectFormModal({ subject, onClose }: SubjectFormModalProps) {
   return (
-    <Modal isOpen={subject !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {subject !== undefined && (
-        <SubjectFormBody key={subject?.id ?? "new"} subject={subject} onClose={onClose} />
-      )}
-    </Modal>
+    <Dialog
+      open={subject !== undefined}
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+    >
+      <DialogContent className="max-w-lg">
+        {subject !== undefined && (
+          <SubjectFormBody key={subject?.id ?? "new"} subject={subject} onClose={onClose} />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -53,12 +60,14 @@ function SubjectFormBody({ subject, onClose }: { subject: Subject | null; onClos
 
   return (
     <form onSubmit={save}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">
+      <DialogTitle className="mb-6 text-gray-800">
         {subject ? "Editar matéria" : "Adicionar matéria"}
-      </h4>
+      </DialogTitle>
 
       <div className="mb-5">
-        <Label htmlFor="materia-nome">Nome</Label>
+        <Label className="mb-1.5" htmlFor="materia-nome">
+          Nome
+        </Label>
         <input
           id="materia-nome"
           value={name}
@@ -70,7 +79,9 @@ function SubjectFormBody({ subject, onClose }: { subject: Subject | null; onClos
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="materia-area">Área</Label>
+        <Label className="mb-1.5" htmlFor="materia-area">
+          Área
+        </Label>
         <select
           id="materia-area"
           value={area}

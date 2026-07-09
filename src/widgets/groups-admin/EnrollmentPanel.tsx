@@ -7,8 +7,8 @@ import {
   useUnenrollStudent,
 } from "@/entities/enrollment/queries";
 import { useStudents } from "@/entities/student/queries";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 
 interface Props {
   groupId: string;
@@ -88,7 +88,9 @@ export function EnrollmentPanel({ groupId }: Props) {
       {availableStudents.length > 0 && (
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
           <div className="flex-1">
-            <Label htmlFor={`select-${groupId}`}>Adicionar aluno</Label>
+            <Label className="mb-1.5" htmlFor={`select-${groupId}`}>
+              Adicionar aluno
+            </Label>
             <select
               id={`select-${groupId}`}
               value={selectedStudentId}

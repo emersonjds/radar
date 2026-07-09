@@ -4,9 +4,9 @@ import { useState, type FormEvent } from "react";
 import { roleLabels, roleSchema, type Role } from "@/entities/profile/model";
 import { useUpdateProfile } from "@/entities/profile/queries";
 import type { PublicProfile } from "@/entities/profile/api";
-import { Modal } from "@tailadmin/components/ui/modal";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 
 const ROLES = roleSchema.options;
 const control =
@@ -19,9 +19,16 @@ export interface ProfileFormModalProps {
 
 export function ProfileFormModal({ profile, onClose }: ProfileFormModalProps) {
   return (
-    <Modal isOpen={profile !== null} onClose={onClose} className="m-4 max-w-lg p-6">
-      {profile && <ProfileFormBody key={profile.id} profile={profile} onClose={onClose} />}
-    </Modal>
+    <Dialog
+      open={profile !== null}
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+    >
+      <DialogContent className="max-w-lg">
+        {profile && <ProfileFormBody key={profile.id} profile={profile} onClose={onClose} />}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -56,10 +63,12 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
 
   return (
     <form onSubmit={salvar}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">Editar perfil</h4>
+      <DialogTitle className="mb-6 text-gray-800">Editar perfil</DialogTitle>
 
       <div className="mb-5">
-        <Label htmlFor="editar-nome">Nome</Label>
+        <Label className="mb-1.5" htmlFor="editar-nome">
+          Nome
+        </Label>
         <input
           id="editar-nome"
           value={name}
@@ -71,7 +80,9 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="editar-usuario">Login de usuário</Label>
+        <Label className="mb-1.5" htmlFor="editar-usuario">
+          Login de usuário
+        </Label>
         <input
           id="editar-usuario"
           autoCapitalize="none"
@@ -83,7 +94,9 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="editar-papel">Papel</Label>
+        <Label className="mb-1.5" htmlFor="editar-papel">
+          Papel
+        </Label>
         <select
           id="editar-papel"
           value={role}
@@ -99,7 +112,9 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="editar-senha">Nova senha</Label>
+        <Label className="mb-1.5" htmlFor="editar-senha">
+          Nova senha
+        </Label>
         <input
           id="editar-senha"
           type="password"

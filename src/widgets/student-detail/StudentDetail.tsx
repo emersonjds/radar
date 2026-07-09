@@ -13,9 +13,9 @@ import { useSubjects } from "@/entities/subject/queries";
 import { countAbsences, attendanceRate } from "@/features/analytics/model";
 import { computeAgeAt, todayIso } from "@/entities/student/age";
 import { formatPercent } from "@/shared/lib/format";
-import AvatarText from "@tailadmin/components/ui/avatar/AvatarText";
-import Badge from "@tailadmin/components/ui/badge/Badge";
-import Button from "@tailadmin/components/ui/button/Button";
+import { AvatarText } from "@/shared/ui/avatar-text";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
 import { DownloadIcon } from "@tailadmin/icons";
 import { AttendanceCalendar, type DayEvent } from "./AttendanceCalendar";
 import { AcademicPanel } from "./AcademicPanel";
@@ -99,10 +99,10 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           </label>
           <Button
             type="button"
-            startIcon={<DownloadIcon />}
             // ponytail: geração real do PDF depende de um endpoint de relatório
             onClick={() => {}}
           >
+            <DownloadIcon />
             Baixar relatório PDF
           </Button>
         </div>
@@ -114,7 +114,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             <AvatarText name={aluno.name} />
             <div>
               <h2 className="text-lg font-semibold text-gray-800">{aluno.name}</h2>
-              <Badge color={aluno.active ? "success" : "error"}>
+              <Badge variant={aluno.active ? "success" : "danger"}>
                 {aluno.active ? "ATIVO" : "INATIVO"}
               </Badge>
             </div>

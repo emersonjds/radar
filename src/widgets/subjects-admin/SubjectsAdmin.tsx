@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { areaLabels, type Subject } from "@/entities/subject/model";
 import { useSubjects, useDeleteSubject } from "@/entities/subject/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 import { SubjectFormModal } from "./SubjectFormModal";
 
 export function SubjectsAdmin() {

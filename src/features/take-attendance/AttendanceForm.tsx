@@ -12,8 +12,8 @@ import {
 import { useGroups } from "@/entities/group/queries";
 import { useSession } from "@/features/session/use-session";
 import { formatDateLong } from "@/shared/lib/format";
-import Badge from "@tailadmin/components/ui/badge/Badge";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
 import { CalenderIcon } from "@tailadmin/icons";
 import { StudentRow, STATUS_OPTIONS } from "./StudentRow";
 import { groupsForRegente } from "./scope";
@@ -230,7 +230,7 @@ export function AttendanceForm() {
       )}
 
       <div className="flex flex-col items-center gap-3">
-        {salvo && <Badge color="success">Chamada salva</Badge>}
+        {salvo && <Badge variant="success">Chamada salva</Badge>}
         <Button
           type="button"
           className="w-full"

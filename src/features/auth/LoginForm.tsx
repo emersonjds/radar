@@ -4,8 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { setSession } from "@/features/session/session-store";
 import { roleLabels, type Role } from "@/entities/profile/model";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 import { loginAsRole } from "./authenticate";
 
 const ROLES: Role[] = ["admin", "teacher", "coordinator"];
@@ -48,7 +48,9 @@ export function LoginForm() {
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="perfil">Entrar como</Label>
+        <Label className="mb-1.5" htmlFor="perfil">
+          Entrar como
+        </Label>
         <select
           id="perfil"
           value={role}

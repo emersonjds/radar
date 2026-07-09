@@ -3,7 +3,7 @@
 import { areaLabels } from "@/entities/subject/model";
 import type { ClassAcademicSummary } from "@/features/analytics/academic";
 import { formatPercent, formatScore } from "@/shared/lib/format";
-import Badge from "@tailadmin/components/ui/badge/Badge";
+import { Badge } from "@/shared/ui/badge";
 
 export interface ClassOverviewProps {
   escopo: string;
@@ -49,7 +49,7 @@ export function ClassOverview({ escopo, totalAlunos, avgAttendance, summary }: C
               <span className="text-sm text-gray-400">—</span>
             ) : (
               summary.topSubjects.map((item) => (
-                <Badge key={item.subject.id} color="success">
+                <Badge key={item.subject.id} variant="success">
                   {item.subject.name}
                 </Badge>
               ))

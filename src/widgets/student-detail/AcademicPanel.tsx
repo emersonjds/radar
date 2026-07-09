@@ -10,7 +10,7 @@ import {
   studentAptitude,
 } from "@/features/analytics/academic";
 import { formatScore } from "@/shared/lib/format";
-import Badge from "@tailadmin/components/ui/badge/Badge";
+import { Badge } from "@/shared/ui/badge";
 
 export interface AcademicPanelProps {
   grades: Grade[];
@@ -60,7 +60,7 @@ export function AcademicPanel({ grades, subjects }: AcademicPanelProps) {
             <p className="text-xs text-gray-500">Nota geral</p>
             <p className="text-xl font-bold text-gray-800">{formatScore(nota)}</p>
           </div>
-          {aptidao && <Badge color="success">Aptidão: {areaLabels[aptidao]}</Badge>}
+          {aptidao && <Badge variant="success">Aptidão: {areaLabels[aptidao]}</Badge>}
         </div>
       </div>
 

@@ -4,9 +4,9 @@ import { useState, type FormEvent } from "react";
 import { shiftSchema, shiftLabels, type Group, type Shift } from "@/entities/group/model";
 import { useCreateGroup, useUpdateGroup } from "@/entities/group/queries";
 import { useProfiles } from "@/entities/profile/queries";
-import { Modal } from "@tailadmin/components/ui/modal";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
+import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
 
 const controlClasses =
   "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
@@ -18,11 +18,18 @@ export interface GroupFormModalProps {
 
 export function GroupFormModal({ group, onClose }: GroupFormModalProps) {
   return (
-    <Modal isOpen={group !== undefined} onClose={onClose} className="m-4 max-w-lg p-6">
-      {group !== undefined && (
-        <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />
-      )}
-    </Modal>
+    <Dialog
+      open={group !== undefined}
+      onOpenChange={(aberto) => {
+        if (!aberto) onClose();
+      }}
+    >
+      <DialogContent className="max-w-lg">
+        {group !== undefined && (
+          <GroupFormBody key={group?.id ?? "new"} group={group} onClose={onClose} />
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -64,12 +71,14 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
 
   return (
     <form onSubmit={save}>
-      <h4 className="mb-6 text-lg font-semibold text-gray-800">
+      <DialogTitle className="mb-6 text-gray-800">
         {group ? "Editar aula" : "Adicionar aula"}
-      </h4>
+      </DialogTitle>
 
       <div className="mb-5">
-        <Label htmlFor="turma-nome">Nome</Label>
+        <Label className="mb-1.5" htmlFor="turma-nome">
+          Nome
+        </Label>
         <input
           id="turma-nome"
           value={name}
@@ -81,7 +90,9 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="turma-turno">Turno</Label>
+        <Label className="mb-1.5" htmlFor="turma-turno">
+          Turno
+        </Label>
         <select
           id="turma-turno"
           value={shift}
@@ -97,7 +108,9 @@ function GroupFormBody({ group, onClose }: { group: Group | null; onClose: () =>
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="turma-regente">Professor regente</Label>
+        <Label className="mb-1.5" htmlFor="turma-regente">
+          Professor regente
+        </Label>
         <select
           id="turma-regente"
           value={teacherId}
