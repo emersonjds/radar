@@ -18,7 +18,7 @@ import {
 } from "@/features/analytics/academic";
 import { formatPercent, formatScore } from "@/shared/lib/format";
 import { downloadCsv, toCsv } from "@/shared/lib/csv";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 import { DownloadIcon } from "@tailadmin/icons";
 import { ClassOverview } from "./ClassOverview";
 import { StudentsReportTable, type ReportRow } from "./StudentsReportTable";
@@ -105,8 +105,8 @@ export function ReportsCenter() {
 
   const escopoLabel =
     turmaId === TODAS
-      ? "Todas as turmas"
-      : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Turma");
+      ? "Todas as aulas"
+      : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Aula");
 
   function exportar() {
     const headers = ["Aluno", "Turma", "Nota média", "Frequência", "Faltas", "Aptidão", "Situação"];
@@ -168,10 +168,10 @@ export function ReportsCenter() {
             type="button"
             variant="outline"
             className="h-11"
-            startIcon={<DownloadIcon />}
             disabled={dados.linhas.length === 0}
             onClick={exportar}
           >
+            <DownloadIcon />
             Exportar CSV
           </Button>
         </div>
