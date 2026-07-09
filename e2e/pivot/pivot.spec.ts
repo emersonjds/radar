@@ -14,22 +14,23 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
 
     // 3. Cria um novo aluno com ficha completa
     await page.getByRole("button", { name: "Adicionar aluno" }).click();
-    await page.getByLabel("Nome completo").fill("João Pedro Silva");
-    await page.getByLabel("Data de nascimento").fill("2010-03-15");
-    await page.getByLabel("Nome do responsável").fill("Maria Silva");
-    await page.getByLabel("Telefone do responsável").fill("(11) 98765-4321");
+    await page.locator("#aluno-nome").fill("João Pedro Silva");
+    await page.locator("#aluno-nascimento").fill("2010-03-15");
+    await page.locator("#aluno-responsavel").fill("Maria Silva");
+    await page.locator("#aluno-telefone").fill("(11) 98765-4321");
     await page.getByRole("button", { name: "Salvar" }).click();
 
     // Aguarda e verifica se o aluno foi criado
     await expect(page.getByText("João Pedro Silva")).toBeVisible({ timeout: 5000 });
+    await expect(page.getByRole("dialog")).toHaveCount(0);
     await page.screenshot({ path: "e2e/pivot/evidencias/aluno-criado.png", fullPage: true });
 
     // 4. Navega para aulas e matricula o aluno
     await sidebar(page).getByRole("link", { name: "Aulas", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Aulas" })).toBeVisible();
 
-    // Encontra a card da aula "Matemática Avançada II" e clica em "Ver detalhes"
-    const aulaCard = page.locator("li", { hasText: "Matemática Avançada II" });
+    // Encontra a card da aula "Reforço de Matemática — Segunda" e clica em "Ver detalhes"
+    const aulaCard = page.locator("li", { hasText: "Reforço de Matemática — Segunda" });
     await aulaCard.getByRole("button", { name: "Ver detalhes" }).click();
 
     // Verifica se o painel de alunos matriculados apareceu
@@ -50,8 +51,10 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await login(page, "Professor");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
-    // Seleciona a aula "Matemática Avançada II"
-    await page.getByLabel("Selecionar aula").selectOption({ label: "Matemática Avançada II" });
+    // Seleciona a aula "Reforço de Matemática — Segunda"
+    await page
+      .getByLabel("Selecionar aula")
+      .selectOption({ label: "Reforço de Matemática — Segunda" });
 
     // Verifica que João Pedro aparece na lista de alunos
     await expect(page.getByText("João Pedro Silva")).toBeVisible({ timeout: 5000 });

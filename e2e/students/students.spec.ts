@@ -12,8 +12,12 @@ test("admin adiciona, edita e exclui um aluno", async ({ page }) => {
   await page.getByRole("button", { name: "Adicionar aluno" }).click();
   await expect(page.getByRole("heading", { name: "Adicionar aluno" })).toBeVisible();
   await page.locator("#aluno-nome").fill("Aluno Teste E2E");
+  await page.locator("#aluno-nascimento").fill("2011-05-20");
+  await page.locator("#aluno-responsavel").fill("Responsável Teste");
+  await page.locator("#aluno-telefone").fill("(11) 91234-5678");
   await page.getByRole("button", { name: "Salvar" }).click();
   await expect(page.getByText("Aluno Teste E2E")).toBeVisible();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
   await page.screenshot({ path: "e2e/students/evidencias/aluno-criado.png", fullPage: true });
 
   // Editar

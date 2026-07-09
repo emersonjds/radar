@@ -9,7 +9,7 @@ test.describe("painel admin", () => {
     await expect(page.getByText("Total de alunos")).toBeVisible();
     await expect(page.getByText("Total de professores")).toBeVisible();
     await expect(page.getByText("Frequência geral")).toBeVisible();
-    await expect(page.getByText("Frequência por turma")).toBeVisible();
+    await expect(page.getByText("Frequência por aula")).toBeVisible();
     await expect(page.getByText("Tendência de frequência")).toBeVisible();
     await expect(page.locator(".apexcharts-canvas")).toHaveCount(2, { timeout: 15000 });
     await page.screenshot({ path: "e2e/dashboard/evidencias/painel-admin.png", fullPage: true });

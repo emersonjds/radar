@@ -10,8 +10,8 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
   await expect(page.getByRole("heading", { name: "Relatórios", exact: true })).toBeVisible({
     timeout: 15000,
   });
-  await expect(page.getByRole("heading", { name: "Panorama — Todas as turmas" })).toBeVisible();
-  const panorama = page.locator("section").filter({ hasText: "Panorama — Todas as turmas" });
+  await expect(page.getByRole("heading", { name: "Panorama — Todas as aulas" })).toBeVisible();
+  const panorama = page.locator("section").filter({ hasText: "Panorama — Todas as aulas" });
   await expect(panorama.getByText("Nota média")).toBeVisible();
   await expect(panorama.getByText("Área forte")).toBeVisible();
   await expect(panorama.getByText("Média por área")).toBeVisible();
@@ -23,9 +23,11 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
   await page.screenshot({ path: "e2e/reports/evidencias/central-relatorios.png", fullPage: true });
 
   // Recorte por turma atualiza o panorama.
-  await page.getByLabel("Selecionar turma").selectOption({ label: "Matemática Avançada II" });
+  await page
+    .getByLabel("Selecionar aula")
+    .selectOption({ label: "Reforço de Matemática — Segunda" });
   await expect(
-    page.getByRole("heading", { name: "Panorama — Matemática Avançada II" }),
+    page.getByRole("heading", { name: "Panorama — Reforço de Matemática — Segunda" }),
   ).toBeVisible();
 
   // Export CSV baixa de verdade.
@@ -51,10 +53,9 @@ test("ficha do aluno traz frequência e bloco acadêmico com aptidão", async ({
   await expect(page.getByText("Aptidão: Exatas")).toBeVisible();
   await expect(page.getByText("Notas por matéria")).toBeVisible();
 
-  // Breadcrumb reflete o caminho.
+  // A ficha abre dentro de /reports (query studentId), então a trilha para em "Relatórios".
   const trilha = page.getByRole("navigation", { name: "Trilha de navegação" });
-  await expect(trilha.getByRole("link", { name: "Relatórios" })).toBeVisible();
-  await expect(trilha.getByText("Marcus Thorne")).toBeVisible();
+  await expect(trilha.getByText("Relatórios")).toBeVisible();
 
   await page.screenshot({ path: "e2e/reports/evidencias/ficha-aluno.png", fullPage: true });
 });

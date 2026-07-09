@@ -17,18 +17,17 @@ test.describe("academic structure admin", () => {
 
   test("admin creates a turma and assigns a matéria to a teacher", async ({ page }) => {
     await login(page, "Administrador");
-    await sidebar(page).getByRole("link", { name: "Turmas", exact: true }).click();
+    await sidebar(page).getByRole("link", { name: "Aulas", exact: true }).click();
 
-    await page.getByRole("button", { name: "Adicionar turma" }).click();
+    await page.getByRole("button", { name: "Adicionar aula" }).click();
     await page.getByLabel("Nome").fill("Redação I");
-    await page.getByLabel("Série").fill("1ª série");
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("Redação I")).toBeVisible();
 
     // Open the turma's matérias panel and add one.
     const card = page.locator("li", { hasText: "Redação I" });
-    await card.getByRole("button", { name: "Matérias", exact: true }).click();
-    await card.getByRole("button", { name: "Adicionar matéria à turma" }).click();
+    await card.getByRole("button", { name: "Ver detalhes" }).click();
+    await card.getByRole("button", { name: "Adicionar matéria à aula" }).click();
     await expect(card.getByText("Nenhuma matéria atribuída ainda.")).toHaveCount(0);
 
     await page.screenshot({
@@ -43,12 +42,12 @@ test.describe("roll-call scoping", () => {
     await login(page, "Professor");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
-    const select = page.getByLabel("Selecionar turma");
+    const select = page.getByLabel("Selecionar aula");
     await expect(select).toBeEnabled();
     const options = await select.locator("option").allTextContents();
-    expect(options.join(" ")).toContain("Matemática Avançada II");
-    expect(options.join(" ")).toContain("Física I");
-    expect(options.join(" ")).not.toContain("Ciências Gerais");
+    expect(options.join(" ")).toContain("Reforço de Matemática — Segunda");
+    expect(options.join(" ")).toContain("Reforço de Física — Terça");
+    expect(options.join(" ")).not.toContain("Reforço de Ciências — Quarta");
 
     await page.screenshot({
       path: "e2e/academic-structure/evidencias/chamada-ricardo.png",
@@ -56,7 +55,7 @@ test.describe("roll-call scoping", () => {
     });
   });
 
-  test("bruno sees only Ciências Gerais in the roll-call select", async ({ page }) => {
+  test("bruno sees only Reforço de Ciências — Quarta in the roll-call select", async ({ page }) => {
     // loginAsRole devolve o primeiro professor ativo (Ricardo); pra logar como
     // Bruno via cargo, desativa o Ricardo antes (mesma tática do auth.spec.ts).
     await login(page, "Administrador");
@@ -69,11 +68,11 @@ test.describe("roll-call scoping", () => {
     await login(page, "Professor");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
-    const select = page.getByLabel("Selecionar turma");
+    const select = page.getByLabel("Selecionar aula");
     await expect(select).toBeEnabled();
     const options = await select.locator("option").allTextContents();
-    expect(options.join(" ")).toContain("Ciências Gerais");
-    expect(options.join(" ")).not.toContain("Matemática Avançada II");
+    expect(options.join(" ")).toContain("Reforço de Ciências — Quarta");
+    expect(options.join(" ")).not.toContain("Reforço de Matemática — Segunda");
 
     await page.screenshot({
       path: "e2e/academic-structure/evidencias/chamada-bruno.png",

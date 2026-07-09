@@ -39,7 +39,7 @@ test.describe("visão por papel", () => {
     await expect(page.getByText("Meus alunos")).toBeVisible();
 
     const nav = sidebar(page);
-    await expect(nav.getByRole("link")).toHaveCount(2);
+    await expect(nav.getByRole("link")).toHaveCount(3);
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Painel" })).toHaveCount(0);
@@ -53,7 +53,7 @@ test.describe("visão por papel", () => {
     await login(page, "Administrador");
 
     const nav = sidebar(page);
-    await expect(nav.getByRole("link")).toHaveCount(4);
+    await expect(nav.getByRole("link")).toHaveCount(6);
     await expect(nav.getByRole("link", { name: "Painel" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Relatórios" })).toBeVisible();
