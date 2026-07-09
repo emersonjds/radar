@@ -8,20 +8,20 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 
 - **Nome**: Radar
 - **Domínio**: sistema de presença e acompanhamento para **ONG de reforço escolar no contra-turno**. Professores marcam presença nas **aulas** (mobile); admins acompanham frequência, absenteísmo e desempenho em dashboards (mobile + desktop).
-- **Modelo**: alunos têm uma **ficha** independente (nome, data de nascimento, responsável, telefone) e podem estar matriculados em **múltiplas aulas** simultaneamente (relação N:N). Não há conceito de série/ano escolar — cada aula é uma oficina temática (ex: Matemática Avançada II, Física I, Ciências Gerais).
-- **Stack**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, pnpm. Supabase (Postgres + RLS + RPCs) via `@supabase/ssr`. recharts, TanStack Query/Table, zustand, zod, react-hook-form.
-- **Tipo**: SPA com static export (`output: "export"`) — sem servidor próprio; dados direto do Supabase (MSW só nos testes).
+- **Modelo**: alunos têm uma **ficha** independente (nome, data de nascimento, responsável, telefone) e podem estar matriculados em **múltiplas aulas** simultaneamente (relação N:N). Não há conceito de série/ano escolar — cada aula é uma oficina temática (ex: Reforço de Matemática — Segunda).
+- **Stack**: Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, pnpm. shadcn/ui (Radix + cva) em `src/shared/ui`. TanStack Query, zod, ApexCharts.
+- **Tipo**: SPA com static export (`output: "export"`) — sem servidor próprio.
 - **Idioma da UI**: português brasileiro em 100% dos textos visíveis.
 
 ## 2. Identidade Visual
 
-- Paleta em CSS custom properties (`var(--color-*)` em `src/app/globals.css`), estilo Material, com variantes `-hover`/`-active`/`-soft` por cor:
-  - `--color-primary` = `#1a73e8` (azul — sinal de "radar" — cor principal)
-  - `--color-secondary` = `#34a853` (verde — sucesso, presença)
-  - `--color-tertiary` = `#fbbc04` (âmbar — alertas, destaque de "aluno em risco")
-  - `--color-danger` = `#ea4335` (vermelho — falta, erro)
-  - `--color-neutral` = `#5f6368` (cinza — texto/UI secundária)
-- Tipografia: **Inter** (via `next/font`, exposta como `--font-inter`)
+- Tokens em CSS custom properties no `@theme` de `src/app/globals.css` (Tailwind 4, CSS-first — **não há `tailwind.config`**):
+  - `--color-brand-*` (azul `brand-500` = `#465fff`) — cor principal
+  - `--color-success-*` (verde — presença), `--color-error-*` (vermelho — falta), `--color-warning-*` (âmbar — alerta)
+  - `--color-gray-*` — texto e UI secundária
+- Os tokens do shadcn (`--primary`, `--border`, `--ring`…) são **aliases** dessa paleta, num bloco `:root` + `@theme inline`. Nunca hex cru: use o token.
+- `--radius` = `0.5rem`. Densidade compacta (botão `h-9`, `text-sm`); em alvo de toque mobile, `h-11`.
+- Tipografia: **Outfit** (via `next/font`, exposta como `--font-outfit`)
 - Light mode como padrão (único modo do v1)
 - Clima: escolar, profissional, direto ao ponto — o professor usa entre uma aula e outra
 
@@ -46,7 +46,8 @@ Regras de ouro para todo desenvolvimento assistido por IA neste projeto. Leia e 
 - Prefira editar arquivos existentes a criar novos.
 - TypeScript: tipos explícitos em interfaces públicas; **sem `any`** (use `unknown` + narrowing); props sempre com interface nomeada.
 - Nomes semânticos — proibido identificadores de uma letra.
-- Estilo: CSS Modules por componente + tokens do design system em CSS custom properties (`var(--color-*)`, `var(--font-sans)`, `var(--text-*)`). Mobile-first. Nunca hex cru — sempre o token.
+- Estilo: **Tailwind utility classes** + componentes shadcn/ui em `src/shared/ui`. Combine classes com `cn()` (`src/shared/lib/utils.ts`), nunca com template literal. Variantes com `cva`, não com `if`. Mobile-first. Nunca hex cru — sempre o token do `@theme`.
+- Componente novo de UI genérica: rode `pnpm dlx shadcn@latest add <nome>` (cai em `src/shared/ui` pelo `components.json`). Só escreva do zero se o registro não tiver.
 
 ## 5. Arquitetura — Feature-Sliced Design
 
@@ -56,19 +57,25 @@ src/
 ├── widgets/      ← UI composta (header, sidebar, painéis de gráfico).
 ├── features/     ← Casos de uso (fazer-chamada, ver-dashboard, gerir-aulas, gerir-alunos, matricular, auth).
 ├── entities/     ← Modelos de domínio (perfil, aula/group, aluno, matrícula/enrollment, chamada, presença).
-└── shared/       ← Infra reutilizável (ui, lib/supabase, hooks, providers).
+└── shared/       ← Infra reutilizável.
+    ├── ui/         ← shadcn/ui + componentes próprios (avatar-text).
+    ├── lib/        ← storage (localStorage), utils (cn), format, csv.
+    ├── config/     ← navegação por papel.
+    ├── providers/  ← TanStack Query.
+    └── tailadmin/  ← resíduo do template: só ícones SVG e SidebarContext. Não crescer.
 ```
 
 **Regra de import**: só importar de **layers abaixo** (`app → widgets → features → entities → shared`). Nunca o contrário, nunca lateral entre slices da mesma layer.
 
 ## 6. Dados / API
 
-> **Estado atual (experimento front-only):** os dados vivem em **localStorage** (`src/shared/lib/storage/`, chave `radar.db.v2`), com seed de demonstração. Os fetchers de `entities/*/api.ts` são assíncronos e têm assinatura estável, então o Supabase abaixo entra depois como adapter sem mexer nas features. Analytics é calculado em JS sobre o store (temporário). O client Supabase (`src/shared/lib/supabase/`) já existe como encaixe do backend futuro.
+> **Estado atual: front-only, sem backend.** Não existe cliente Supabase no repo — `@supabase/ssr` não está instalado e não há `supabase/migrations/`. Tudo abaixo de "backend-alvo" é plano, não código.
 
-- Backend-alvo é **Supabase** (Postgres + RLS + RPCs). O app é SPA static export e fala **direto** com o Supabase via `@supabase/ssr` (`getSupabaseBrowserClient`, `src/shared/lib/supabase/`). **Não há MSW** em produção — todos os dados (turmas, alunos, chamadas, presenças) vêm do banco real; MSW só mocka nos testes.
-- Usa a **publishable key** (pública por design; a proteção é a RLS no Postgres). A `service_role` NUNCA vai para o frontend.
-- Config em `.env.local`: `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`. Schema/migrations em `supabase/migrations/` (aplicar com `supabase db push`).
-- **Analytics é responsabilidade do servidor**: frequência por aluno/turma, tendência de absenteísmo e alunos em risco vêm de views/RPCs do Postgres — nunca recalculadas no cliente.
+- Os dados vivem em **localStorage** (`src/shared/lib/storage/`, chave `radar.db.v2`), com seed de demonstração em `seed.ts`.
+- Os fetchers de `entities/*/api.ts` são **assíncronos** e têm assinatura estável — é isso que deixa o Supabase entrar depois como adapter, sem mexer nas features. Mantenha-os assim.
+- Login é **por cargo, sem senha** (`features/auth/authenticate.ts` → primeiro perfil ativo do cargo). É demo; trocar por Supabase Auth.
+- Analytics hoje é calculado em JS sobre o store (`features/analytics/model.ts`) — temporário.
+- **Backend-alvo (ainda não implementado)**: Supabase (Postgres + RLS + RPCs), acessado direto pelo browser com a **publishable key** (a proteção real é a RLS). A `service_role` NUNCA vai para o frontend. Ao migrar: analytics vira view/RPC no Postgres, não recálculo no cliente.
 
 ## 7. Segurança
 
@@ -103,8 +110,8 @@ Regra: **um agent por função, sem duplicação**.
 
 ## 10. Domínio: Radar (ONG de Reforço Escolar)
 
-- **Perfil**: usuário do sistema, com papel `professor` ou `admin`.
-- **Aula** (entidade `Group`): oficina temática com um professor regente (ex: Matemática Avançada II, Física I). Atributos: nome, turno (manhã/tarde/noite). **Não há série/ano** — cada aula é independente.
+- **Perfil**: usuário do sistema, com papel `teacher` (Professor), `coordinator` (Coordenador) ou `admin` (Administrador). A navegação por papel vive em `shared/config/navigation.ts`.
+- **Aula** (entidade `Group`): oficina temática com um professor regente (ex: Reforço de Matemática — Segunda). Atributos: nome, turno (manhã/tarde/noite). **Não há série/ano** — cada aula é independente.
 - **Aluno**: ficha cadastral do estudante. Atributos: nome, data de nascimento, responsável, telefone do responsável, ativo/inativo. **Não tem matrícula (enrollment number) nem vínculo fixo a uma aula** — a relação é N:N via `Enrollment`.
 - **Matrícula** (entidade `Enrollment`): vínculo entre um aluno e uma aula. Um aluno pode estar matriculado em várias aulas; uma aula tem vários alunos. Atributos: `studentId`, `groupId`, `joinedAt`, `active` (soft delete).
 - **Chamada** (entidade `AttendanceSession`): registro de uma sessão de aula realizada — única por `(aula, data)`.
