@@ -1,11 +1,11 @@
-import React from "react";
+import { cn } from "@/shared/lib/utils";
 
 interface AvatarTextProps {
   name: string;
   className?: string;
 }
 
-const AvatarText: React.FC<AvatarTextProps> = ({ name, className = "" }) => {
+export function AvatarText({ name, className }: AvatarTextProps) {
   // Generate initials from name
   const initials = name
     .split(" ")
@@ -27,21 +27,19 @@ const AvatarText: React.FC<AvatarTextProps> = ({ name, className = "" }) => {
       "bg-error-100 text-error-600",
     ];
 
-    const index = name
-      .split("")
-      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = name.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return colors[index % colors.length];
   };
 
   return (
     <div
-      className={`flex h-10 w-10 ${className} items-center justify-center rounded-full ${getColorClass(
-        name
-      )}`}
+      className={cn(
+        "flex h-10 w-10 items-center justify-center rounded-full",
+        getColorClass(name),
+        className,
+      )}
     >
       <span className="text-sm font-medium">{initials}</span>
     </div>
   );
-};
-
-export default AvatarText;
+}
