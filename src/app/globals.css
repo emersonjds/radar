@@ -161,7 +161,6 @@
   --z-index-999999: 999999;
 }
 
-/* shadcn/ui tokens mapeados para a paleta brand/gray acima — sem cor nova. */
 :root {
   --radius: 0.625rem;
 
