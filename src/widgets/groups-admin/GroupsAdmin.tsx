@@ -24,6 +24,7 @@ export function GroupsAdmin() {
   }
 
   async function remover(group: Group) {
+    if (!window.confirm(`Excluir a aula ${group.name}?`)) return;
     setErro(null);
     try {
       await deleteGroup.mutateAsync(group.id);

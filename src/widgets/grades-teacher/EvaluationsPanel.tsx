@@ -15,6 +15,11 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
   const [creating, setCreating] = useState(false);
   const [openId, setOpenId] = useState<string | null>(null);
 
+  function remover(evaluation: Evaluation) {
+    const aviso = `Excluir a avaliação ${evaluation.name}? As notas lançadas nela serão apagadas.`;
+    if (window.confirm(aviso)) deleteEvaluation.mutate(evaluation.id);
+  }
+
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -50,7 +55,7 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
                     icon={Trash2}
                     label={`Excluir ${evaluation.name}`}
                     tone="destructive"
-                    onClick={() => deleteEvaluation.mutate(evaluation.id)}
+                    onClick={() => remover(evaluation)}
                   />
                 </div>
               </div>

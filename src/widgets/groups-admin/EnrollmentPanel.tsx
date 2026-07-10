@@ -17,8 +17,8 @@ interface Props {
 }
 
 export function EnrollmentPanel({ groupId }: Props) {
-  const { data: enrollments, isLoading } = useEnrollmentsByGroup(groupId);
-  const { data: allStudents } = useStudents();
+  const { data: enrollments, isLoading: carregandoMatriculas } = useEnrollmentsByGroup(groupId);
+  const { data: allStudents, isLoading: carregandoAlunos } = useStudents();
   const enrollStudent = useEnrollStudent();
   const unenrollStudent = useUnenrollStudent();
   const [selectedStudentId, setSelectedStudentId] = useState("");
@@ -52,7 +52,7 @@ export function EnrollmentPanel({ groupId }: Props) {
     }
   }
 
-  if (isLoading) {
+  if (carregandoMatriculas || carregandoAlunos) {
     return <div className="mt-3 h-16 animate-pulse rounded-lg bg-muted" />;
   }
 
