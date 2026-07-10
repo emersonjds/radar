@@ -24,7 +24,6 @@ test.describe("academic structure admin", () => {
     await page.getByRole("button", { name: "Salvar" }).click();
     await expect(page.getByText("Redação I")).toBeVisible();
 
-    // Open the turma's matérias panel and add one.
     const card = page.locator("li", { hasText: "Redação I" });
     await card.getByRole("button", { name: "Ver detalhes" }).click();
     await card.getByRole("button", { name: "Adicionar matéria à aula" }).click();

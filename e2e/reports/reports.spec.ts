@@ -16,13 +16,11 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
   await expect(panorama.getByText("Área forte")).toBeVisible();
   await expect(panorama.getByText("Média por área")).toBeVisible();
 
-  // Linha de aluno traz nota e aptidão.
   const linhaMarcus = page.getByRole("row").filter({ hasText: "Marcus Thorne" });
   await expect(linhaMarcus).toContainText("Exatas");
 
   await page.screenshot({ path: "e2e/reports/evidencias/central-relatorios.png", fullPage: true });
 
-  // Recorte por turma atualiza o panorama.
   await page
     .getByLabel("Selecionar aula")
     .selectOption({ label: "Reforço de Matemática — Segunda" });
@@ -30,7 +28,6 @@ test("central de análise: panorama, recorte por turma e export CSV", async ({ p
     page.getByRole("heading", { name: "Panorama — Reforço de Matemática — Segunda" }),
   ).toBeVisible();
 
-  // Export CSV baixa de verdade.
   const [download] = await Promise.all([
     page.waitForEvent("download"),
     page.getByRole("button", { name: "Exportar CSV" }).click(),
@@ -48,7 +45,6 @@ test("ficha do aluno traz frequência e bloco acadêmico com aptidão", async ({
   await expect(page.getByRole("heading", { name: "Desempenho & Presença" })).toBeVisible();
   await expect(page.getByText("Resumo de presença")).toBeVisible();
 
-  // Bloco acadêmico novo.
   await expect(page.getByRole("heading", { name: "Desempenho acadêmico" })).toBeVisible();
   await expect(page.getByText("Aptidão: Exatas")).toBeVisible();
   await expect(page.getByText("Notas por matéria")).toBeVisible();
