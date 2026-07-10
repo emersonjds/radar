@@ -3,7 +3,7 @@ import Link from "next/link";
 import { cn } from "@/shared/lib/utils";
 
 const base =
-  "inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40 sm:size-9";
+  "inline-flex size-11 shrink-0 items-center justify-center rounded-full outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40 sm:size-9";
 
 const tones = {
   neutral: "text-muted-foreground hover:bg-muted hover:text-foreground",
