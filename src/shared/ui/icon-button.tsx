@@ -11,34 +11,33 @@ const tones = {
     "text-muted-foreground hover:bg-destructive/10 hover:text-destructive focus-visible:bg-destructive/10 focus-visible:text-destructive",
 } as const;
 
-export interface IconButtonProps extends Omit<ComponentProps<"button">, "children"> {
+interface IconButtonBase {
   icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
   label: string;
   tone?: keyof typeof tones;
-  href?: string;
 }
 
-export function IconButton({
-  icon: Icon,
-  label,
-  tone = "neutral",
-  href,
-  className,
-  ...props
-}: IconButtonProps) {
-  const classes = cn(base, tones[tone], className);
+export type IconButtonProps = IconButtonBase &
+  (
+    | { href: string; className?: string }
+    | ({ href?: undefined } & Omit<ComponentProps<"button">, "children">)
+  );
+
+export function IconButton({ icon: Icon, label, tone = "neutral", ...rest }: IconButtonProps) {
+  const classes = cn(base, tones[tone], rest.className);
   const glyph = <Icon className="size-[18px]" aria-hidden />;
 
-  if (href) {
+  if (rest.href !== undefined) {
     return (
-      <Link href={href} aria-label={label} title={label} className={classes}>
+      <Link href={rest.href} aria-label={label} title={label} className={classes}>
         {glyph}
       </Link>
     );
   }
 
+  const buttonProps: Omit<ComponentProps<"button">, "children"> = rest;
   return (
-    <button type="button" aria-label={label} title={label} className={classes} {...props}>
+    <button type="button" aria-label={label} title={label} {...buttonProps} className={classes}>
       {glyph}
     </button>
   );
