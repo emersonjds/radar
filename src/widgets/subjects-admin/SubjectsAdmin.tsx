@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { areaLabels, type Subject } from "@/entities/subject/model";
 import { useSubjects, useDeleteSubject } from "@/entities/subject/queries";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { SubjectFormModal } from "./SubjectFormModal";
 
 export function SubjectsAdmin() {
@@ -50,13 +52,18 @@ export function SubjectsAdmin() {
                 <p className="font-medium text-foreground">{subject.name}</p>
                 <p className="text-xs text-muted-foreground">{areaLabels[subject.area]}</p>
               </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing(subject)}>
-                  Editar
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => remover(subject)}>
-                  Excluir
-                </Button>
+              <div className="flex items-center gap-1">
+                <IconButton
+                  icon={Pencil}
+                  label={`Editar ${subject.name}`}
+                  onClick={() => setEditing(subject)}
+                />
+                <IconButton
+                  icon={Trash2}
+                  label={`Excluir ${subject.name}`}
+                  tone="destructive"
+                  onClick={() => remover(subject)}
+                />
               </div>
             </li>
           ))}
