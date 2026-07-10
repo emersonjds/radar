@@ -27,7 +27,6 @@ export function useSetEvaluationGrade() {
     mutationFn: (input: SetEvaluationGradeInput) => setEvaluationGrade(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: evaluationGradeKeys.all });
-      // Per-subject analytics is derived from these grades (Task 4).
       queryClient.invalidateQueries({ queryKey: gradeKeys.all });
     },
   });

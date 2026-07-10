@@ -1,6 +1,5 @@
 import { z } from "zod";
 
-/** ISO date (YYYY-MM-DD) of the class session. */
 export const attendanceSessionSchema = z.object({
   id: z.string(),
   groupId: z.string(),

@@ -18,7 +18,6 @@ const TURMAS = [
   { id: "turma-cie-c", name: "Reforço de Ciências — Quarta", shift: "afternoon" },
 ];
 
-// Weekday ISO dates leading up to 2026-07-01, oldest first.
 const DATAS = ["2026-06-16", "2026-06-18", "2026-06-23", "2026-06-25", "2026-06-30", "2026-07-01"];
 
 const NOMES = [
@@ -42,7 +41,6 @@ const NOMES = [
   "Nina Barros",
 ];
 
-// 8 matérias, 2 por área — base para notas, matérias de destaque e aptidão.
 const MATERIAS = [
   { id: "materia-matematica", name: "Matemática", area: "exatas" },
   { id: "materia-fisica", name: "Física", area: "exatas" },
@@ -56,8 +54,6 @@ const MATERIAS = [
 
 const AREAS_SEED = ["exatas", "biologicas", "linguagens", "humanas"] as const;
 
-// Nota determinística: cada aluno tem uma área preferida (ciclando pelo índice),
-// onde tira notas altas; nas demais, mais baixas — gera aptidões variadas.
 function scoreFor(alunoIdx: number, materiaIdx: number, area: string): number {
   const areaPreferida = AREAS_SEED[alunoIdx % AREAS_SEED.length];
   const base = area === areaPreferida ? 8.6 : 5.8;
@@ -68,7 +64,6 @@ function scoreFor(alunoIdx: number, materiaIdx: number, area: string): number {
 
 type SeedStatus = "present" | "absent" | "late" | "excused";
 
-// Students carrying more absences — drives the "aluno em risco" panels.
 const EM_RISCO = new Set([0, 1, 2]);
 
 function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
@@ -150,13 +145,11 @@ export function seedDb(): Db {
 
   const SEED_DATE = "2026-07-05";
 
-  // Alocacao original (aluno -> aula). Antes vivia em student.groupId; agora vira enrollment.
   const alunoGroupById: Record<string, string> = {};
 
   const alunos = NOMES.map((name, index) => {
     const id = `aluno-${index + 1}`;
     alunoGroupById[id] = TURMAS[index % TURMAS.length].id;
-    // Idade determinística entre 11 e 17 anos, com mês/dia variando pelo índice.
     const age = 11 + (index % 7);
     const birthYear = 2026 - age;
     const birthMonth = String(((index * 3) % 12) + 1).padStart(2, "0");
@@ -205,7 +198,6 @@ export function seedDb(): Db {
     });
   }
 
-  // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
   const eventosEscolares = [
     {
       id: "evento-ferias-julho",

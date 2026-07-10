@@ -1,4 +1,3 @@
-/** ISO date (YYYY-MM-DD) → dd/mm/yyyy. */
 export function formatDate(iso: string): string {
   const [year, month, day] = iso.split("-");
   return `${day}/${month}/${year}`;
@@ -18,7 +17,6 @@ export function formatPercent(value: number): string {
   return `${value}%`;
 }
 
-/** Nota 0–10 com uma casa e vírgula decimal (pt-BR). */
 export function formatScore(value: number): string {
   return value.toFixed(1).replace(".", ",");
 }

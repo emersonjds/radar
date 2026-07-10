@@ -29,7 +29,6 @@ export async function createAssignment(input: NewAssignmentInput): Promise<Assig
       assignment.groupId === input.groupId && assignment.subjectId === input.subjectId,
   );
   if (duplicate) {
-    // Surfaces to the admin in the turma panel → PT-BR copy.
     throw new Error("Esta matéria já está atribuída a esta turma.");
   }
   const assignment: Assignment = {

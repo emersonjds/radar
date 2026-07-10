@@ -33,7 +33,6 @@ describe("storage db", () => {
   });
 
   it("tolerates a collection missing from a persisted blob", async () => {
-    // blob antigo sem as coleções novas não pode quebrar a leitura
     await mutateCollection("groups", (rows) => rows);
     await expect(readCollection("schoolEvents")).resolves.toBeInstanceOf(Array);
   });

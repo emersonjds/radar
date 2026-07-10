@@ -3,7 +3,6 @@ import type { Area, Subject } from "@/entities/subject/model";
 
 const round1 = (value: number): number => Math.round(value * 10) / 10;
 
-/** Média geral do conjunto de notas (0–10, uma casa). Vazio → 0. */
 export function overallAverage(grades: Grade[]): number {
   if (grades.length === 0) return 0;
   return round1(grades.reduce((sum, grade) => sum + grade.score, 0) / grades.length);
@@ -14,7 +13,6 @@ export interface SubjectScore {
   score: number;
 }
 
-/** Média por matéria (média entre alunos, quando o escopo é uma turma), desc. */
 export function averageBySubject(grades: Grade[], subjects: Subject[]): SubjectScore[] {
   const subjectById = new Map(subjects.map((subject) => [subject.id, subject]));
   const acc = new Map<string, { sum: number; count: number }>();
@@ -38,7 +36,6 @@ export interface AreaScore {
   average: number;
 }
 
-/** Média por área, desc. O primeiro elemento é a aptidão. */
 export function areaAffinity(grades: Grade[], subjects: Subject[]): AreaScore[] {
   const areaBySubject = new Map(subjects.map((subject) => [subject.id, subject.area]));
   const acc = new Map<Area, { sum: number; count: number }>();
@@ -55,7 +52,6 @@ export function areaAffinity(grades: Grade[], subjects: Subject[]): AreaScore[] 
     .sort((first, second) => second.average - first.average);
 }
 
-/** Aptidão = área de maior média. Vazio → null. */
 export function studentAptitude(grades: Grade[], subjects: Subject[]): Area | null {
   return areaAffinity(grades, subjects)[0]?.area ?? null;
 }
@@ -64,7 +60,6 @@ export function topSubjects(grades: Grade[], subjects: Subject[], count = 2): Su
   return averageBySubject(grades, subjects).slice(0, count);
 }
 
-/** Matérias de menor média, da pior para a menos pior. */
 export function attentionSubjects(grades: Grade[], subjects: Subject[], count = 2): SubjectScore[] {
   const all = averageBySubject(grades, subjects);
   return all.slice(Math.max(0, all.length - count)).reverse();
@@ -77,7 +72,6 @@ export interface ClassAcademicSummary {
   topSubjects: SubjectScore[];
 }
 
-/** Panorama acadêmico de um escopo (turma ou escola). */
 export function classAcademicSummary(grades: Grade[], subjects: Subject[]): ClassAcademicSummary {
   const affinity = areaAffinity(grades, subjects);
   return {

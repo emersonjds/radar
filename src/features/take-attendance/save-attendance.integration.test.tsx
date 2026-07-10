@@ -26,7 +26,6 @@ describe("salvar chamada (integration, over the store)", () => {
         date: "2026-07-02",
         teacherId: "perfil-ricardo",
       });
-      // Creating the same session twice must not duplicate it.
       await criar.current.mutateAsync({
         groupId: "turma-mat-b",
         date: "2026-07-02",

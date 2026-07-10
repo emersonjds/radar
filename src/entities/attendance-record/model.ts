@@ -12,5 +12,4 @@ export const attendanceRecordSchema = z.object({
 
 export type AttendanceRecord = z.infer<typeof attendanceRecordSchema>;
 
-/** Statuses that count as attendance for frequency math. */
 export const PRESENT_STATUSES: readonly AttendanceStatus[] = ["present", "late"];

@@ -3,7 +3,6 @@ import { z } from "zod";
 export const areaSchema = z.enum(["exatas", "biologicas", "linguagens", "humanas"]);
 export type Area = z.infer<typeof areaSchema>;
 
-/** Ordem estável para exibição das barras por área. */
 export const AREAS: Area[] = ["exatas", "biologicas", "linguagens", "humanas"];
 
 export const areaLabels: Record<Area, string> = {

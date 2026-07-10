@@ -39,7 +39,7 @@ describe("profile management + auth (integration, over the store)", () => {
       password: "segredo123",
     });
     expect(criado.role).toBe("coordinator");
-    expect(criado.username).toBe("novocoord"); // normalized lowercase
+    expect(criado.username).toBe("novocoord");
 
     const roles = (await fetchProfiles()).map((profile) => profile.id);
     expect(roles).toContain(criado.id);

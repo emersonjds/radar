@@ -4,7 +4,6 @@ import {
   type AttendanceStatus,
 } from "@/entities/attendance-record/model";
 
-/** Attendance rate (0–100) — present + late count as present. */
 export function attendanceRate(records: AttendanceRecord[]): number {
   if (records.length === 0) return 0;
   const present = records.filter((record) => PRESENT_STATUSES.includes(record.status)).length;
@@ -21,7 +20,6 @@ export interface StudentAtRisk {
   attendance: number;
 }
 
-/** Students with absences at or above `absenceThreshold`, worst first. */
 export function studentsAtRisk(
   recordsByStudent: Map<string, AttendanceRecord[]>,
   absenceThreshold: number,
@@ -41,7 +39,6 @@ export interface AbsenteeismPoint {
   absenceRate: number;
 }
 
-/** Absence rate per session date, chronological — feeds the trend chart. */
 export function absenteeismTrend(
   records: { date: string; status: AttendanceStatus }[],
 ): AbsenteeismPoint[] {
