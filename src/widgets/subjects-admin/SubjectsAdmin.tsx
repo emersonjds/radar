@@ -16,6 +16,7 @@ export function SubjectsAdmin() {
   const [erro, setErro] = useState<string | null>(null);
 
   async function remover(subject: Subject) {
+    if (!window.confirm(`Excluir a matéria ${subject.name}?`)) return;
     setErro(null);
     try {
       await deleteSubject.mutateAsync(subject.id);
