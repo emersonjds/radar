@@ -69,7 +69,6 @@ export function AdminPanel() {
   const turmaPorId = new Map((turmas.data ?? []).map((turma) => [turma.id, turma]));
   const chamadaPorId = new Map((chamadas.data ?? []).map((chamada) => [chamada.id, chamada]));
 
-  // Aula(s) por aluno vem do enrollment ativo (N:N).
   const turmasDoAluno = new Map<string, string[]>();
   for (const enrollment of enrollments.data ?? []) {
     if (!enrollment.active) continue;

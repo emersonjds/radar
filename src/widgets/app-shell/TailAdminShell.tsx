@@ -16,7 +16,6 @@ export interface TailAdminShellProps {
 
 const noopSubscribe = () => () => {};
 
-/** false during SSR/hydration, true once running on the client. */
 function useHydrated(): boolean {
   return useSyncExternalStore(
     noopSubscribe,

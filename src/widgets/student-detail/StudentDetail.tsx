@@ -23,7 +23,6 @@ import { AcademicPanel } from "./AcademicPanel";
 const control =
   "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
-/** "YYYY-MM" com mais registros de presença — mês exibido no calendário. */
 function mesComMaisRegistros(datas: string[]): string | null {
   if (datas.length === 0) return null;
   const contagem = new Map<string, number>();

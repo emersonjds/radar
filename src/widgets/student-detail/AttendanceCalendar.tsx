@@ -10,15 +10,11 @@ export interface DayEvent {
 }
 
 export interface AttendanceCalendarProps {
-  /** Month to render, "YYYY-MM". */
   mes: string;
-  /** Session date (ISO) → status, for this student. */
   statusPorData: Map<string, AttendanceStatus>;
-  /** Date (ISO) → important events (férias, recuperação). */
   eventosPorData?: Map<string, DayEvent[]>;
 }
 
-// Domingo-primeiro, iniciais como no Google Calendar pt-BR.
 const DIAS_SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
 
 const LABEL_STATUS: Record<AttendanceStatus, string> = {
@@ -47,7 +43,6 @@ const EVENTO_DOT: Record<DayEvent["type"], string> = {
   event: "bg-muted-foreground",
 };
 
-/** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
 function deslocarMes(mes: string, delta: number): string {
   const [ano, mesNumero] = mes.split("-").map(Number);
   const data = new Date(Date.UTC(ano, mesNumero - 1 + delta, 1));
