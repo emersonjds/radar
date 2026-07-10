@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { evaluationTypeLabels, type Evaluation } from "@/entities/evaluation/model";
 import { useEvaluationsByAssignment, useDeleteEvaluation } from "@/entities/evaluation/queries";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { EvaluationFormModal } from "./EvaluationFormModal";
 import { GradeEntryPanel } from "./GradeEntryPanel";
 
@@ -36,7 +38,7 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
                     {evaluation.date}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   <Button
                     size="sm"
                     variant="outline"
@@ -44,13 +46,12 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
                   >
                     {openId === evaluation.id ? "Fechar notas" : "Lançar notas"}
                   </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
+                  <IconButton
+                    icon={Trash2}
+                    label={`Excluir ${evaluation.name}`}
+                    tone="destructive"
                     onClick={() => deleteEvaluation.mutate(evaluation.id)}
-                  >
-                    Excluir
-                  </Button>
+                  />
                 </div>
               </div>
               {openId === evaluation.id && <GradeEntryPanel evaluation={evaluation} />}
