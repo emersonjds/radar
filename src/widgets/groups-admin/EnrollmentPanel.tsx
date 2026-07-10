@@ -7,7 +7,9 @@ import {
   useUnenrollStudent,
 } from "@/entities/enrollment/queries";
 import { useStudents } from "@/entities/student/queries";
+import { UserMinus } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { Label } from "@/shared/ui/label";
 
 interface Props {
@@ -76,9 +78,12 @@ export function EnrollmentPanel({ groupId }: Props) {
                 className="flex items-center justify-between rounded-md bg-card px-3 py-2 text-sm"
               >
                 <span className="text-foreground">{student?.name ?? "—"}</span>
-                <Button size="sm" variant="outline" onClick={() => remover(enrollment.studentId)}>
-                  Remover
-                </Button>
+                <IconButton
+                  icon={UserMinus}
+                  label={`Remover ${student?.name ?? "aluno"} da aula`}
+                  tone="destructive"
+                  onClick={() => remover(enrollment.studentId)}
+                />
               </li>
             );
           })}

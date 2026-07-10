@@ -9,7 +9,9 @@ import {
   useUpdateAssignmentTeacher,
   useDeleteAssignment,
 } from "@/entities/assignment/queries";
+import { X } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 
 const controlClasses =
   "h-10 rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden";
@@ -72,13 +74,12 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
                 </option>
               ))}
             </select>
-            <Button
-              size="sm"
-              variant="outline"
+            <IconButton
+              icon={X}
+              label={`Remover ${subjectName(assignment.subjectId)} desta aula`}
+              tone="destructive"
               onClick={() => deleteAssignment.mutate(assignment.id)}
-            >
-              Remover
-            </Button>
+            />
           </li>
         ))}
         {(assignments ?? []).length === 0 && (

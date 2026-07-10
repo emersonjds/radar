@@ -14,34 +14,14 @@ import { ProfileFormModal } from "./ProfileFormModal";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
-import { PencilIcon, TrashBinIcon } from "@tailadmin/icons";
+import { Pencil, Power, Trash2 } from "lucide-react";
+import { IconButton } from "@/shared/ui/icon-button";
 
 const ROLES = roleSchema.options;
 const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };
 
 const control =
   "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
-const acaoBtn =
-  "flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40";
-
-function PowerIcon() {
-  return (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <line x1="12" y1="3.5" x2="12" y2="12" />
-      <path d="M7.5 7a6.5 6.5 0 1 0 9 0" />
-    </svg>
-  );
-}
-
 export function ProfilesAdmin() {
   const { profileId } = useSession();
   const { data: perfis, isLoading } = useProfiles();
@@ -182,41 +162,28 @@ export function ProfilesAdmin() {
                   {perfil.active ? "Ativo" : "Inativo"}
                 </Badge>
                 <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    className={acaoBtn}
-                    aria-label={`Editar ${perfil.name}`}
-                    title="Editar"
+                  <IconButton
+                    icon={Pencil}
+                    label={`Editar ${perfil.name}`}
                     onClick={() => setEditando(perfil)}
-                  >
-                    <PencilIcon className="size-[18px]" />
-                  </button>
-                  <button
-                    type="button"
-                    className={acaoBtn}
-                    aria-label={
-                      perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`
-                    }
-                    title={perfil.active ? "Desativar" : "Ativar"}
+                  />
+                  <IconButton
+                    icon={Power}
+                    label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
                     disabled={perfil.id === profileId || setActive.isPending}
                     onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
-                  >
-                    <PowerIcon />
-                  </button>
-                  <button
-                    type="button"
-                    className={`${acaoBtn} hover:bg-destructive/10 hover:text-destructive`}
-                    aria-label={`Excluir ${perfil.name}`}
-                    title="Excluir"
+                  />
+                  <IconButton
+                    icon={Trash2}
+                    label={`Excluir ${perfil.name}`}
+                    tone="destructive"
                     disabled={perfil.id === profileId || deleteProfile.isPending}
                     onClick={() => {
                       if (window.confirm(`Excluir o perfil de ${perfil.name}?`)) {
                         deleteProfile.mutate(perfil.id);
                       }
                     }}
-                  >
-                    <TrashBinIcon />
-                  </button>
+                  />
                 </div>
               </li>
             ))}
