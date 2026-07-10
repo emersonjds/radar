@@ -4,7 +4,9 @@ import { useState } from "react";
 import { shiftLabels, type Group } from "@/entities/group/model";
 import { useGroups, useDeleteGroup } from "@/entities/group/queries";
 import { useProfiles } from "@/entities/profile/queries";
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { GroupFormModal } from "./GroupFormModal";
 import { GroupAssignmentsPanel } from "./GroupAssignmentsPanel";
 import { EnrollmentPanel } from "./EnrollmentPanel";
@@ -58,20 +60,29 @@ export function GroupsAdmin() {
                     {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
+                <div className="flex items-center gap-1">
+                  <IconButton
+                    icon={ChevronDown}
+                    label={
+                      expandedId === group.id
+                        ? `Fechar detalhes de ${group.name}`
+                        : `Ver detalhes de ${group.name}`
+                    }
+                    aria-expanded={expandedId === group.id}
+                    className={expandedId === group.id ? "rotate-180" : undefined}
                     onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}
-                  >
-                    {expandedId === group.id ? "Fechar" : "Ver detalhes"}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>
-                    Editar
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => remover(group)}>
-                    Excluir
-                  </Button>
+                  />
+                  <IconButton
+                    icon={Pencil}
+                    label={`Editar ${group.name}`}
+                    onClick={() => setEditing(group)}
+                  />
+                  <IconButton
+                    icon={Trash2}
+                    label={`Excluir ${group.name}`}
+                    tone="destructive"
+                    onClick={() => remover(group)}
+                  />
                 </div>
               </div>
               {expandedId === group.id && (
