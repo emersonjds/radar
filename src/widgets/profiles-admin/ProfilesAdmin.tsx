@@ -8,13 +8,15 @@ import {
   useProfiles,
   useSetProfileActive,
 } from "@/entities/profile/queries";
+import { useGroups } from "@/entities/group/queries";
 import { useSession } from "@/features/session/use-session";
 import type { PublicProfile } from "@/entities/profile/api";
 import { ProfileFormModal } from "./ProfileFormModal";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
-import { Pencil, Power, Trash2 } from "lucide-react";
+import { cn } from "@/shared/lib/utils";
+import { Pencil, Power, PowerOff, Trash2 } from "lucide-react";
 import { IconButton } from "@/shared/ui/icon-button";
 
 const ROLES = roleSchema.options;
@@ -25,9 +27,19 @@ const control =
 export function ProfilesAdmin() {
   const { profileId } = useSession();
   const { data: perfis, isLoading } = useProfiles();
+  const { data: aulas } = useGroups();
   const createProfile = useCreateProfile();
   const setActive = useSetProfileActive();
   const deleteProfile = useDeleteProfile();
+
+  function confirmarExclusao(perfil: PublicProfile) {
+    const regencias = (aulas ?? []).filter((aula) => aula.teacherId === perfil.id).length;
+    const aviso =
+      regencias > 0
+        ? `${perfil.name} é regente de ${regencias} ${regencias === 1 ? "aula" : "aulas"}, que ficarão sem professor. Excluir o perfil mesmo assim?`
+        : `Excluir o perfil de ${perfil.name}?`;
+    if (window.confirm(aviso)) deleteProfile.mutate(perfil.id);
+  }
 
   const [form, setForm] = useState(EMPTY_FORM);
   const [erro, setErro] = useState<string | null>(null);
@@ -147,46 +159,61 @@ export function ProfilesAdmin() {
           <p className="text-sm text-muted-foreground">Carregando…</p>
         ) : (
           <ul className="flex flex-col gap-3">
-            {(perfis ?? []).map((perfil) => (
-              <li
-                key={perfil.id}
-                className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-4 py-3"
-              >
-                <div className="mr-auto min-w-0">
-                  <p className="font-medium text-foreground">{perfil.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    @{perfil.username} · {roleLabels[perfil.role]}
-                  </p>
-                </div>
-                <Badge variant={perfil.active ? "success" : "secondary"}>
-                  {perfil.active ? "Ativo" : "Inativo"}
-                </Badge>
-                <div className="flex items-center gap-1">
-                  <IconButton
-                    icon={Pencil}
-                    label={`Editar ${perfil.name}`}
-                    onClick={() => setEditando(perfil)}
-                  />
-                  <IconButton
-                    icon={Power}
-                    label={perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`}
-                    disabled={perfil.id === profileId || setActive.isPending}
-                    onClick={() => setActive.mutate({ id: perfil.id, active: !perfil.active })}
-                  />
-                  <IconButton
-                    icon={Trash2}
-                    label={`Excluir ${perfil.name}`}
-                    tone="destructive"
-                    disabled={perfil.id === profileId || deleteProfile.isPending}
-                    onClick={() => {
-                      if (window.confirm(`Excluir o perfil de ${perfil.name}?`)) {
-                        deleteProfile.mutate(perfil.id);
-                      }
-                    }}
-                  />
-                </div>
-              </li>
-            ))}
+            {(perfis ?? []).map((perfil) => {
+              const souEu = perfil.id === profileId;
+              return (
+                <li
+                  key={perfil.id}
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-4 py-3"
+                >
+                  <div className="mr-auto min-w-0">
+                    <p
+                      className={cn(
+                        "flex items-center gap-2 font-medium",
+                        perfil.active ? "text-foreground" : "text-muted-foreground",
+                      )}
+                    >
+                      {perfil.name}
+                      {souEu && <Badge variant="outline">Você</Badge>}
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      @{perfil.username} · {roleLabels[perfil.role]}
+                    </p>
+                  </div>
+                  <Badge variant={perfil.active ? "success" : "secondary"}>
+                    {perfil.active ? "Ativo" : "Inativo"}
+                  </Badge>
+                  <div className="flex items-center gap-1">
+                    <IconButton
+                      icon={Pencil}
+                      label={`Editar ${perfil.name}`}
+                      onClick={() => setEditando(perfil)}
+                    />
+                    {!souEu && (
+                      <>
+                        <IconButton
+                          icon={perfil.active ? PowerOff : Power}
+                          label={
+                            perfil.active ? `Desativar ${perfil.name}` : `Ativar ${perfil.name}`
+                          }
+                          disabled={setActive.isPending}
+                          onClick={() =>
+                            setActive.mutate({ id: perfil.id, active: !perfil.active })
+                          }
+                        />
+                        <IconButton
+                          icon={Trash2}
+                          label={`Excluir ${perfil.name}`}
+                          tone="destructive"
+                          disabled={deleteProfile.isPending}
+                          onClick={() => confirmarExclusao(perfil)}
+                        />
+                      </>
+                    )}
+                  </div>
+                </li>
+              );
+            })}
           </ul>
         )}
       </section>

@@ -176,4 +176,49 @@ test.describe("gestão de perfis (admin)", () => {
       page.getByRole("alert").filter({ hasText: "Nenhum perfil ativo para esse cargo." }),
     ).toBeVisible();
   });
+
+  test("perfil desativado pode ser reativado e excluído", async ({ page }) => {
+    await login(page, "Administrador");
+    await page.goto("/users");
+
+    const item = page.getByRole("listitem").filter({ hasText: "Carla Dias" });
+
+    await item.getByRole("button", { name: "Desativar Carla Dias" }).click();
+    await expect(item.getByText("Inativo")).toBeVisible();
+
+    await item.getByRole("button", { name: "Ativar Carla Dias" }).click();
+    await expect(item.getByText("Ativo")).toBeVisible();
+
+    page.once("dialog", (dialog) => dialog.accept());
+    await item.getByRole("button", { name: "Excluir Carla Dias" }).click();
+    await expect(page.getByText("Carla Dias")).toHaveCount(0);
+  });
+
+  test("o próprio admin não expõe ativar nem excluir, e a linha é marcada", async ({ page }) => {
+    await login(page, "Administrador");
+    await page.goto("/users");
+
+    const eu = page.getByRole("listitem").filter({ hasText: "Ana Vance" });
+    await expect(eu.getByText("Você")).toBeVisible();
+    await expect(eu.getByRole("button", { name: "Editar Ana Vance" })).toBeVisible();
+    await expect(eu.getByRole("button", { name: /(Des)?[Aa]tivar Ana Vance/ })).toHaveCount(0);
+    await expect(eu.getByRole("button", { name: "Excluir Ana Vance" })).toHaveCount(0);
+  });
+
+  test("excluir professor regente avisa que as aulas ficam sem professor", async ({ page }) => {
+    await login(page, "Administrador");
+    await page.goto("/users");
+
+    let aviso = "";
+    page.once("dialog", (dialog) => {
+      aviso = dialog.message();
+      return dialog.dismiss();
+    });
+    const ricardo = page.getByRole("listitem").filter({ hasText: "Ricardo Alves" });
+    await ricardo.getByRole("button", { name: "Excluir Ricardo Alves" }).click();
+
+    expect(aviso).toContain("regente de 2 aulas");
+    expect(aviso).toContain("ficarão sem professor");
+    await expect(page.getByText("Ricardo Alves")).toBeVisible();
+  });
 });
