@@ -97,7 +97,7 @@ export function AdminPanel() {
 
   const frequenciaPorTurma = (turmas.data ?? []).map((turma) => ({
     groupId: turma.id,
-    label: turma.name.split(" ")[0],
+    label: turma.name.split("—")[0].trim(),
     attendance: attendanceRate(presencasPorTurma.get(turma.id) ?? []),
   }));
 
