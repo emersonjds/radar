@@ -53,7 +53,6 @@ test("ficha do aluno traz frequência e bloco acadêmico com aptidão", async ({
   await expect(page.getByText("Aptidão: Exatas")).toBeVisible();
   await expect(page.getByText("Notas por matéria")).toBeVisible();
 
-  // A ficha abre dentro de /reports (query studentId), então a trilha para em "Relatórios".
   const trilha = page.getByRole("navigation", { name: "Trilha de navegação" });
   await expect(trilha.getByText("Relatórios")).toBeVisible();
 
