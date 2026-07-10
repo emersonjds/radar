@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useStudents, useDeleteStudent } from "@/entities/student/queries";
 import { useEnrollments } from "@/entities/enrollment/queries";
@@ -17,16 +16,15 @@ import { AvatarText } from "@/shared/ui/avatar-text";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
-import { EyeIcon, PencilIcon, PlusIcon, TrashBinIcon } from "@tailadmin/icons";
+import { Eye, Pencil, Trash2 } from "lucide-react";
+import { PlusIcon } from "@tailadmin/icons";
+import { IconButton } from "@/shared/ui/icon-button";
 import { StudentFormModal } from "./StudentFormModal";
 
 const LIMITE_FALTAS_RISCO = 3;
 
 const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground";
 const td = "px-5 py-4 text-sm text-foreground";
-const acaoBtn =
-  "flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted";
-
 export function StudentList() {
   const { role, profile, loading: carregandoSessao } = useSession();
   const { data: alunos, isLoading: carregandoAlunos } = useStudents();
@@ -216,37 +214,27 @@ export function StudentList() {
                       {!isProfessor && (
                         <TableCell className={td}>
                           <div className="flex items-center gap-1">
-                            <Link
+                            <IconButton
+                              icon={Eye}
+                              label={`Ver relatório de ${aluno.name}`}
                               href={"/reports/" + aluno.id}
-                              className={acaoBtn}
-                              aria-label={`Ver relatório de ${aluno.name}`}
-                              title="Ver relatório"
-                            >
-                              <EyeIcon />
-                            </Link>
-                            <button
-                              type="button"
-                              className={acaoBtn}
-                              aria-label={`Editar ${aluno.name}`}
-                              title="Editar"
+                            />
+                            <IconButton
+                              icon={Pencil}
+                              label={`Editar ${aluno.name}`}
                               onClick={() => setFormAluno(aluno)}
-                            >
-                              <PencilIcon />
-                            </button>
-                            <button
-                              type="button"
-                              className={`${acaoBtn} hover:bg-destructive/10 hover:text-destructive`}
-                              aria-label={`Excluir ${aluno.name}`}
-                              title="Excluir"
+                            />
+                            <IconButton
+                              icon={Trash2}
+                              label={`Excluir ${aluno.name}`}
+                              tone="destructive"
                               disabled={deleteStudent.isPending}
                               onClick={() => {
                                 if (window.confirm(`Excluir o aluno ${aluno.name}?`)) {
                                   deleteStudent.mutate(aluno.id);
                                 }
                               }}
-                            >
-                              <TrashBinIcon />
-                            </button>
+                            />
                           </div>
                         </TableCell>
                       )}
