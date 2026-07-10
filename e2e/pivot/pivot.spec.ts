@@ -29,7 +29,6 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await sidebar(page).getByRole("link", { name: "Aulas", exact: true }).click();
     await expect(page.getByRole("heading", { name: "Aulas" })).toBeVisible();
 
-    // Encontra a card da aula "Reforço de Matemática — Segunda" e clica em "Ver detalhes"
     const aulaCard = page.locator("li", { hasText: "Reforço de Matemática — Segunda" });
     await aulaCard.getByRole("button", { name: "Ver detalhes" }).click();
 
@@ -51,7 +50,6 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await login(page, "Professor");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
-    // Seleciona a aula "Reforço de Matemática — Segunda"
     await page
       .getByLabel("Selecionar aula")
       .selectOption({ label: "Reforço de Matemática — Segunda" });
