@@ -130,6 +130,11 @@ test.describe("gestão de perfis (admin)", () => {
     await expect(item).toBeVisible();
     await expect(item.getByText("Ativo")).toBeVisible();
 
+    const editar = item.getByRole("button", { name: "Editar Perfil de Teste" });
+    const alvo = await editar.boundingBox();
+    expect(alvo?.width).toBeGreaterThanOrEqual(44);
+    expect(alvo?.height).toBeGreaterThanOrEqual(44);
+
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-criado.png", fullPage: true });
   });
 
