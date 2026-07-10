@@ -10,7 +10,7 @@ import { Label } from "@/shared/ui/label";
 
 const ROLES = roleSchema.options;
 const control =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export interface ProfileFormModalProps {
   profile: PublicProfile | null;
@@ -63,7 +63,7 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
 
   return (
     <form onSubmit={salvar}>
-      <DialogTitle className="mb-6 text-gray-800">Editar perfil</DialogTitle>
+      <DialogTitle className="mb-6 text-foreground">Editar perfil</DialogTitle>
 
       <div className="mb-5">
         <Label className="mb-1.5" htmlFor="editar-nome">
@@ -128,7 +128,7 @@ function ProfileFormBody({ profile, onClose }: ProfileFormBodyProps) {
       </div>
 
       {erro && (
-        <p role="alert" className="mb-5 text-sm text-error-600">
+        <p role="alert" className="mb-5 text-sm text-destructive">
           {erro}
         </p>
       )}

@@ -27,7 +27,7 @@ const LIMITE_FALTAS_RISCO = 3;
 const TODAS = "todas";
 
 const control =
-  "h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export function ReportsCenter() {
   const { data: alunos, isLoading: carregandoAlunos } = useStudents();
@@ -130,13 +130,13 @@ export function ReportsCenter() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Relatórios</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-foreground">Relatórios</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Panorama acadêmico e de frequência por aula — clique num aluno para a ficha completa
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Aula
             <select
               aria-label="Selecionar aula"
@@ -152,7 +152,7 @@ export function ReportsCenter() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Período
             <select
               aria-label="Selecionar período"

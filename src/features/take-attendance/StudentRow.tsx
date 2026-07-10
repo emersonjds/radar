@@ -12,7 +12,12 @@ export const STATUS_OPTIONS: Array<{
   { value: "present", label: "Presente", short: "P", active: "bg-success-500 text-white" },
   { value: "late", label: "Atrasado", short: "A", active: "bg-warning-500 text-white" },
   { value: "absent", label: "Ausente", short: "F", active: "bg-error-500 text-white" },
-  { value: "excused", label: "Justificado", short: "J", active: "bg-brand-500 text-white" },
+  {
+    value: "excused",
+    label: "Justificado",
+    short: "J",
+    active: "bg-primary text-primary-foreground",
+  },
 ];
 
 export interface StudentRowProps {
@@ -24,13 +29,13 @@ export interface StudentRowProps {
 export function StudentRow({ aluno, status, onSelectStatus }: StudentRowProps) {
   return (
     <div
-      className={`flex items-center justify-between gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 ${
+      className={`flex items-center justify-between gap-3 rounded-xl border bg-card px-4 py-3 shadow-sm ${
         status === "absent" ? "opacity-70" : ""
       }`}
     >
       <div className="flex min-w-0 items-center gap-3">
         <AvatarText name={aluno.name} />
-        <span className="truncate font-medium text-gray-800">{aluno.name}</span>
+        <span className="truncate font-medium text-foreground">{aluno.name}</span>
       </div>
 
       <div
@@ -48,7 +53,7 @@ export function StudentRow({ aluno, status, onSelectStatus }: StudentRowProps) {
               aria-label={opcao.label}
               title={opcao.label}
               className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-semibold transition ${
-                ativo ? opcao.active : "border border-gray-300 text-gray-600 hover:bg-gray-50"
+                ativo ? opcao.active : "border border-input text-muted-foreground hover:bg-muted"
               }`}
               onClick={() => onSelectStatus(opcao.value)}
             >

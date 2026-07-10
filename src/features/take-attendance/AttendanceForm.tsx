@@ -23,8 +23,8 @@ const HOJE = new Date().toISOString().slice(0, 10);
 const tileLabelColor: Record<AttendanceStatus, string> = {
   present: "text-success-600",
   late: "text-warning-600",
-  absent: "text-error-600",
-  excused: "text-brand-600",
+  absent: "text-destructive",
+  excused: "text-primary",
 };
 
 function contarPorStatus(alunos: Student[], statusPorAluno: Record<string, AttendanceStatus>) {
@@ -118,10 +118,10 @@ export function AttendanceForm() {
 
   return (
     <div className="flex flex-col gap-5">
-      <header className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 md:p-5">
+      <header className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 md:p-5">
         <div className="flex flex-col gap-2">
           <select
-            className="w-full rounded-lg border border-gray-300 bg-transparent px-3 py-2.5 text-lg font-semibold text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
+            className="w-full rounded-lg border border-input bg-transparent px-3 py-2.5 text-lg font-semibold text-foreground focus:border-ring focus:ring-3 focus:ring-ring/20 focus:outline-hidden"
             value={groupId}
             disabled={carregandoTurmas}
             onChange={(event) => setTurmaSelecionada(event.target.value)}
@@ -133,7 +133,7 @@ export function AttendanceForm() {
               </option>
             ))}
           </select>
-          <p className="flex items-center gap-1.5 text-sm text-gray-500">
+          <p className="flex items-center gap-1.5 text-sm text-muted-foreground">
             <CalenderIcon />
             {formatDateLong(HOJE)}
           </p>
@@ -144,19 +144,16 @@ export function AttendanceForm() {
           value={busca}
           onChange={(event) => setBusca(event.target.value)}
           placeholder="Buscar aluno por nome ou matrícula..."
-          className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
+          className="h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-3 focus:ring-ring/20 focus:outline-hidden"
         />
 
         <div className="grid grid-cols-4 gap-2">
           {STATUS_OPTIONS.map((opcao) => (
-            <div
-              key={opcao.value}
-              className="flex flex-col items-center rounded-lg bg-gray-50 py-2"
-            >
+            <div key={opcao.value} className="flex flex-col items-center rounded-lg bg-muted py-2">
               <span className={`text-xs font-medium ${tileLabelColor[opcao.value]}`}>
                 {opcao.label}
               </span>
-              <span className="text-lg font-semibold text-gray-800">{contagem[opcao.value]}</span>
+              <span className="text-lg font-semibold text-foreground">{contagem[opcao.value]}</span>
             </div>
           ))}
         </div>
@@ -175,30 +172,32 @@ export function AttendanceForm() {
       </div>
 
       {!groupId && (
-        <p className="text-sm text-gray-500">Selecione uma aula para iniciar a chamada.</p>
+        <p className="text-sm text-muted-foreground">Selecione uma aula para iniciar a chamada.</p>
       )}
 
       {turmas.length === 0 && !carregandoTurmas && (
-        <p className="text-sm text-gray-500">Você não é regente de nenhuma aula.</p>
+        <p className="text-sm text-muted-foreground">Você não é regente de nenhuma aula.</p>
       )}
 
       {groupId && carregandoAlunos && (
         <div className="flex flex-col gap-2">
-          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
-          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
-          <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+          <div className="h-16 animate-pulse rounded-xl bg-muted" />
+          <div className="h-16 animate-pulse rounded-xl bg-muted" />
+          <div className="h-16 animate-pulse rounded-xl bg-muted" />
         </div>
       )}
 
       {groupId && !carregandoAlunos && (alunos?.length ?? 0) === 0 && (
-        <p className="text-sm text-gray-500">Aula sem alunos cadastrados.</p>
+        <p className="text-sm text-muted-foreground">Aula sem alunos cadastrados.</p>
       )}
 
       {groupId &&
         !carregandoAlunos &&
         (alunos?.length ?? 0) > 0 &&
         alunosFiltrados.length === 0 && (
-          <p className="text-sm text-gray-500">Nenhum aluno encontrado para “{busca.trim()}”.</p>
+          <p className="text-sm text-muted-foreground">
+            Nenhum aluno encontrado para “{busca.trim()}”.
+          </p>
         )}
 
       {groupId && !carregandoAlunos && alunosFiltrados.length > 0 && (
@@ -215,7 +214,7 @@ export function AttendanceForm() {
       )}
 
       {erro && (
-        <div className="flex items-center justify-between gap-3 rounded-xl bg-error-50 px-4 py-3 text-sm text-error-600">
+        <div className="flex items-center justify-between gap-3 rounded-xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
           <span>{erro}</span>
           <Button
             type="button"

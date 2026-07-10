@@ -11,7 +11,7 @@ import { loginAsRole } from "./authenticate";
 const ROLES: Role[] = ["admin", "teacher", "coordinator"];
 
 const selectClasses =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground shadow-xs focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export function LoginForm() {
   const router = useRouter();
@@ -40,11 +40,11 @@ export function LoginForm() {
   return (
     <form
       onSubmit={entrar}
-      className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-sm"
+      className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm"
     >
       <div className="mb-8">
-        <span className="text-2xl font-bold text-brand-500">Radar</span>
-        <p className="mt-1 text-sm text-gray-500">Presença escolar</p>
+        <span className="text-2xl font-bold text-primary">Radar</span>
+        <p className="mt-1 text-sm text-muted-foreground">Presença escolar</p>
       </div>
 
       <div className="mb-5">
@@ -66,7 +66,10 @@ export function LoginForm() {
       </div>
 
       {erro && (
-        <p role="alert" className="mb-5 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600">
+        <p
+          role="alert"
+          className="mb-5 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive"
+        >
           {erro}
         </p>
       )}

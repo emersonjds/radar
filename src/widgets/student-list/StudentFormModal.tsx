@@ -70,7 +70,7 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
 
   return (
     <form onSubmit={salvar}>
-      <DialogTitle className="mb-6 text-gray-800">
+      <DialogTitle className="mb-6 text-foreground">
         {student ? "Editar aluno" : "Adicionar aluno"}
       </DialogTitle>
 
@@ -139,7 +139,7 @@ function StudentFormBody({ student, onClose }: StudentFormBodyProps) {
       )}
 
       {erro && (
-        <p role="alert" className="mb-5 text-sm text-error-600">
+        <p role="alert" className="mb-5 text-sm text-destructive">
           {erro}
         </p>
       )}

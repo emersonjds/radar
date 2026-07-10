@@ -21,7 +21,7 @@ import { AttendanceCalendar, type DayEvent } from "./AttendanceCalendar";
 import { AcademicPanel } from "./AcademicPanel";
 
 const control =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 /** "YYYY-MM" com mais registros de presença — mês exibido no calendário. */
 function mesComMaisRegistros(datas: string[]): string | null {
@@ -50,11 +50,11 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
   const { data: materias } = useSubjects();
 
   if (carregandoAluno) {
-    return <p className="text-sm text-gray-500">Carregando aluno…</p>;
+    return <p className="text-sm text-muted-foreground">Carregando aluno…</p>;
   }
 
   if (!aluno) {
-    return <p className="text-sm text-gray-500">Aluno não encontrado</p>;
+    return <p className="text-sm text-muted-foreground">Aluno não encontrado</p>;
   }
 
   const aulasDoAluno = (enrollments ?? [])
@@ -84,13 +84,13 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Desempenho &amp; Presença</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-foreground">Desempenho &amp; Presença</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Relatório acadêmico e de frequência do período atual
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Período
             <select className={control} defaultValue="2026-1">
               <option value="2026-1">Semestre 1 (2026)</option>
@@ -109,11 +109,11 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
       </header>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-1">
+        <section className="rounded-xl border bg-card p-4 shadow-sm lg:col-span-1">
           <div className="flex items-center gap-4">
             <AvatarText name={aluno.name} />
             <div>
-              <h2 className="text-lg font-semibold text-gray-800">{aluno.name}</h2>
+              <h2 className="text-lg font-semibold text-foreground">{aluno.name}</h2>
               <Badge variant={aluno.active ? "success" : "danger"}>
                 {aluno.active ? "ATIVO" : "INATIVO"}
               </Badge>
@@ -122,31 +122,33 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
 
           <dl className="mt-6 grid grid-cols-3 gap-3 text-sm">
             <div>
-              <dt className="text-gray-500">Idade</dt>
-              <dd className="font-medium text-gray-800">
+              <dt className="text-muted-foreground">Idade</dt>
+              <dd className="font-medium text-foreground">
                 {computeAgeAt(aluno.birthDate, todayIso())} anos
               </dd>
             </div>
             <div>
-              <dt className="text-gray-500">Responsável</dt>
-              <dd className="font-medium text-gray-800">{aluno.guardianName}</dd>
+              <dt className="text-muted-foreground">Responsável</dt>
+              <dd className="font-medium text-foreground">{aluno.guardianName}</dd>
             </div>
             <div>
-              <dt className="text-gray-500">Telefone</dt>
-              <dd className="font-medium text-gray-800">{aluno.guardianPhone}</dd>
+              <dt className="text-muted-foreground">Telefone</dt>
+              <dd className="font-medium text-foreground">{aluno.guardianPhone}</dd>
             </div>
           </dl>
 
           <div className="mt-6">
-            <p className="mb-2 text-xs font-medium tracking-wide text-gray-500 uppercase">Aulas</p>
+            <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+              Aulas
+            </p>
             {aulasDoAluno.length === 0 ? (
-              <p className="text-sm text-gray-500">Sem aulas matriculadas.</p>
+              <p className="text-sm text-muted-foreground">Sem aulas matriculadas.</p>
             ) : (
               <ul className="flex flex-wrap gap-2">
                 {aulasDoAluno.map((aula) => (
                   <li
                     key={aula.id}
-                    className="rounded-full border border-gray-200 bg-gray-50 px-3 py-1 text-xs text-gray-700"
+                    className="rounded-full border border-border bg-muted px-3 py-1 text-xs text-foreground"
                   >
                     {aula.name}
                   </li>
@@ -156,21 +158,23 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
           </div>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-xl bg-gray-50 p-4 text-center">
-              <p className="text-2xl font-bold text-gray-800">
+            <div className="rounded-xl bg-muted p-4 text-center">
+              <p className="text-2xl font-bold text-foreground">
                 {formatPercent(attendanceRate(presencas ?? []))}
               </p>
-              <p className="text-xs text-gray-500">Frequência</p>
+              <p className="text-xs text-muted-foreground">Frequência</p>
             </div>
-            <div className="rounded-xl bg-gray-50 p-4 text-center">
-              <p className="text-2xl font-bold text-gray-800">{countAbsences(presencas ?? [])}</p>
-              <p className="text-xs text-gray-500">Faltas</p>
+            <div className="rounded-xl bg-muted p-4 text-center">
+              <p className="text-2xl font-bold text-foreground">{countAbsences(presencas ?? [])}</p>
+              <p className="text-xs text-muted-foreground">Faltas</p>
             </div>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          {carregandoPresencas && <p className="text-sm text-gray-500">Carregando registros…</p>}
+        <section className="rounded-xl border bg-card p-4 shadow-sm lg:col-span-2">
+          {carregandoPresencas && (
+            <p className="text-sm text-muted-foreground">Carregando registros…</p>
+          )}
           {!carregandoPresencas && mes && (
             <AttendanceCalendar
               key={aluno.id}
@@ -180,7 +184,7 @@ export function StudentDetail({ studentId }: StudentDetailProps) {
             />
           )}
           {!carregandoPresencas && !mes && (
-            <p className="text-sm text-gray-500">Sem registros de presença.</p>
+            <p className="text-sm text-muted-foreground">Sem registros de presença.</p>
           )}
         </section>
       </div>

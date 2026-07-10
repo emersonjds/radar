@@ -40,11 +40,14 @@ export function AppBreadcrumb() {
         {crumbs.map((crumb, index) => (
           <li key={crumb.href ?? crumb.label} className="flex items-center gap-1.5">
             {crumb.href ? (
-              <Link href={crumb.href} className="text-gray-500 transition hover:text-gray-700">
+              <Link
+                href={crumb.href}
+                className="text-muted-foreground transition hover:text-foreground"
+              >
                 {crumb.label}
               </Link>
             ) : (
-              <span className="font-medium text-gray-800">{crumb.label}</span>
+              <span className="font-medium text-foreground">{crumb.label}</span>
             )}
             {index < crumbs.length - 1 && (
               <svg
@@ -56,7 +59,7 @@ export function AppBreadcrumb() {
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-gray-400"
+                className="text-muted-foreground"
               >
                 <path d="M9 6l6 6-6 6" />
               </svg>

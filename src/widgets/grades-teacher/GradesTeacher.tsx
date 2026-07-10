@@ -25,12 +25,12 @@ export function GradesTeacher() {
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="text-xl font-semibold text-gray-800">Notas</h1>
+      <h1 className="text-xl font-semibold text-foreground">Notas</h1>
 
       {isLoading ? (
-        <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-16 animate-pulse rounded-xl bg-muted" />
       ) : (assignments ?? []).length === 0 ? (
-        <p className="text-sm text-gray-500">Você não leciona nenhuma matéria ainda.</p>
+        <p className="text-sm text-muted-foreground">Você não leciona nenhuma matéria ainda.</p>
       ) : (
         <div className="flex flex-wrap gap-2">
           {(assignments ?? []).map((assignment) => (
@@ -40,8 +40,8 @@ export function GradesTeacher() {
               onClick={() => setSelected(assignment.id)}
               className={`rounded-xl border px-4 py-2 text-sm ${
                 selected === assignment.id
-                  ? "border-brand-500 bg-brand-50 text-brand-700"
-                  : "border-gray-200 bg-white text-gray-700"
+                  ? "border-primary bg-accent text-primary"
+                  : "border-border bg-card text-foreground"
               }`}
             >
               {subjectName(assignment.subjectId)} — {groupName(assignment.groupId)}

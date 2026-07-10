@@ -38,13 +38,13 @@ const STATUS_BG: Record<AttendanceStatus, string> = {
   present: "bg-success-500 text-white",
   late: "bg-warning-500 text-white",
   absent: "bg-error-500 text-white",
-  excused: "bg-brand-500 text-white",
+  excused: "bg-primary text-primary-foreground",
 };
 
 const EVENTO_DOT: Record<DayEvent["type"], string> = {
-  vacation: "bg-brand-500",
+  vacation: "bg-primary",
   makeup: "bg-warning-500",
-  event: "bg-gray-400",
+  event: "bg-muted-foreground",
 };
 
 /** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
@@ -55,7 +55,7 @@ function deslocarMes(mes: string, delta: number): string {
 }
 
 const navBtn =
-  "flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100";
+  "flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted";
 
 export function AttendanceCalendar({
   mes,
@@ -79,7 +79,7 @@ export function AttendanceCalendar({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-gray-800">Resumo de presença</h3>
+        <h3 className="text-base font-semibold text-foreground">Resumo de presença</h3>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -89,7 +89,7 @@ export function AttendanceCalendar({
           >
             <ChevronLeftIcon />
           </button>
-          <span className="min-w-32 text-center text-sm font-medium text-gray-700">
+          <span className="min-w-32 text-center text-sm font-medium text-foreground">
             {tituloMes.charAt(0).toUpperCase() + tituloMes.slice(1)}
           </span>
           <button
@@ -109,7 +109,7 @@ export function AttendanceCalendar({
         {DIAS_SEMANA.map((inicialDia, indice) => (
           <span
             key={`${inicialDia}-${indice}`}
-            className="text-xs font-medium text-gray-400"
+            className="text-xs font-medium text-muted-foreground"
             aria-hidden="true"
           >
             {inicialDia}
@@ -137,7 +137,7 @@ export function AttendanceCalendar({
             >
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm ${
-                  status ? STATUS_BG[status] : "text-gray-700"
+                  status ? STATUS_BG[status] : "text-foreground"
                 }`}
               >
                 {dia}
@@ -157,7 +157,7 @@ export function AttendanceCalendar({
         })}
       </div>
 
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <li className="flex items-center gap-1.5">
           <span className="h-3 w-3 rounded-full bg-success-500" aria-hidden="true" />
           Presente
@@ -171,7 +171,7 @@ export function AttendanceCalendar({
           Ausente
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
           Férias
         </li>
         <li className="flex items-center gap-1.5">

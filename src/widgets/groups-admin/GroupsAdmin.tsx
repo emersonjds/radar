@@ -33,28 +33,28 @@ export function GroupsAdmin() {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">Aulas</h1>
+        <h1 className="text-xl font-semibold text-foreground">Aulas</h1>
         <Button size="sm" onClick={() => setEditing(null)}>
           Adicionar aula
         </Button>
       </header>
 
       {erro && (
-        <p role="alert" className="text-sm text-error-600">
+        <p role="alert" className="text-sm text-destructive">
           {erro}
         </p>
       )}
 
       {isLoading ? (
-        <div className="h-24 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-24 animate-pulse rounded-xl bg-muted" />
       ) : (
         <ul className="flex flex-col gap-2">
           {(groups ?? []).map((group) => (
-            <li key={group.id} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <li key={group.id} className="rounded-xl border bg-card px-4 py-3 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-medium text-gray-800">{group.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-foreground">{group.name}</p>
+                  <p className="text-xs text-muted-foreground">
                     {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
                   </p>
                 </div>

@@ -9,7 +9,7 @@ import { Button } from "@/shared/ui/button";
 import { Label } from "@/shared/ui/label";
 
 const controlClasses =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export interface SubjectFormModalProps {
   subject: Subject | null | undefined;
@@ -60,7 +60,7 @@ function SubjectFormBody({ subject, onClose }: { subject: Subject | null; onClos
 
   return (
     <form onSubmit={save}>
-      <DialogTitle className="mb-6 text-gray-800">
+      <DialogTitle className="mb-6 text-foreground">
         {subject ? "Editar matéria" : "Adicionar matéria"}
       </DialogTitle>
 
@@ -97,7 +97,7 @@ function SubjectFormBody({ subject, onClose }: { subject: Subject | null; onClos
       </div>
 
       {erro && (
-        <p role="alert" className="mb-5 text-sm text-error-600">
+        <p role="alert" className="mb-5 text-sm text-destructive">
           {erro}
         </p>
       )}

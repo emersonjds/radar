@@ -51,21 +51,21 @@ export function EnrollmentPanel({ groupId }: Props) {
   }
 
   if (isLoading) {
-    return <div className="mt-3 h-16 animate-pulse rounded-lg bg-gray-50" />;
+    return <div className="mt-3 h-16 animate-pulse rounded-lg bg-muted" />;
   }
 
   return (
-    <section className="mt-3 rounded-lg border border-gray-100 bg-gray-50 p-4">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">Alunos matriculados</h3>
+    <section className="mt-3 rounded-lg border border-border bg-muted p-4">
+      <h3 className="mb-3 text-sm font-semibold text-foreground">Alunos matriculados</h3>
 
       {erro && (
-        <p role="alert" className="mb-3 text-sm text-error-600">
+        <p role="alert" className="mb-3 text-sm text-destructive">
           {erro}
         </p>
       )}
 
       {activeEnrollments.length === 0 ? (
-        <p className="mb-3 text-sm text-gray-500">Nenhum aluno matriculado.</p>
+        <p className="mb-3 text-sm text-muted-foreground">Nenhum aluno matriculado.</p>
       ) : (
         <ul className="mb-3 flex flex-col gap-1">
           {activeEnrollments.map((enrollment) => {
@@ -73,9 +73,9 @@ export function EnrollmentPanel({ groupId }: Props) {
             return (
               <li
                 key={enrollment.id}
-                className="flex items-center justify-between rounded-md bg-white px-3 py-2 text-sm"
+                className="flex items-center justify-between rounded-md bg-card px-3 py-2 text-sm"
               >
-                <span className="text-gray-800">{student?.name ?? "—"}</span>
+                <span className="text-foreground">{student?.name ?? "—"}</span>
                 <Button size="sm" variant="outline" onClick={() => remover(enrollment.studentId)}>
                   Remover
                 </Button>
@@ -95,7 +95,7 @@ export function EnrollmentPanel({ groupId }: Props) {
               id={`select-${groupId}`}
               value={selectedStudentId}
               onChange={(e) => setSelectedStudentId(e.target.value)}
-              className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden"
+              className="h-11 w-full rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:ring-3 focus:ring-ring/20 focus:outline-hidden"
             >
               <option value="">Selecione um aluno</option>
               {availableStudents.map((student) => (

@@ -41,15 +41,17 @@ export function AppSidebar({ role }: AppSidebarProps) {
 
   return (
     <aside
-      className={`fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-gray-200 bg-white px-5 transition-all duration-300 ease-in-out ${
+      className={`fixed top-0 left-0 z-50 flex h-screen flex-col border-r border-border bg-card px-5 transition-all duration-300 ease-in-out ${
         showText ? "w-72.5" : "w-22.5"
       } ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
       onMouseEnter={() => !isExpanded && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className={`flex flex-col py-8 ${showText ? "items-start" : "items-center"}`}>
-        <span className="text-2xl font-bold text-brand-500">{showText ? "Radar" : "R"}</span>
-        {showText && <span className="text-xs font-medium text-gray-500">Gestão Estudantil</span>}
+        <span className="text-2xl font-bold text-primary">{showText ? "Radar" : "R"}</span>
+        {showText && (
+          <span className="text-xs font-medium text-muted-foreground">Gestão Estudantil</span>
+        )}
       </div>
 
       <nav aria-label="Navegação principal" className="flex flex-col gap-1">

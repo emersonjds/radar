@@ -20,8 +20,8 @@ export interface ReportRow {
   emRisco: boolean;
 }
 
-const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500";
-const td = "px-5 py-4 text-sm text-gray-700";
+const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground";
+const td = "px-5 py-4 text-sm text-foreground";
 
 export interface StudentsReportTableProps {
   linhas: ReportRow[];
@@ -30,10 +30,10 @@ export interface StudentsReportTableProps {
 
 export function StudentsReportTable({ linhas, carregando }: StudentsReportTableProps) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+    <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
       <div className="overflow-x-auto">
         <Table>
-          <TableHeader className="border-b border-gray-100 bg-gray-50">
+          <TableHeader className="border-b border-border bg-muted">
             <TableRow>
               <TableHead className={th}>Aluno</TableHead>
               <TableHead className={th}>Aula</TableHead>
@@ -47,21 +47,21 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
           <TableBody>
             {carregando && (
               <TableRow>
-                <TableCell className={`${td} text-center text-gray-400`} colSpan={7}>
+                <TableCell className={`${td} text-center text-muted-foreground`} colSpan={7}>
                   Carregando alunos…
                 </TableCell>
               </TableRow>
             )}
             {!carregando && linhas.length === 0 && (
               <TableRow>
-                <TableCell className={`${td} text-center text-gray-400`} colSpan={7}>
+                <TableCell className={`${td} text-center text-muted-foreground`} colSpan={7}>
                   Nenhum aluno encontrado
                 </TableCell>
               </TableRow>
             )}
             {!carregando &&
               linhas.map((linha) => (
-                <TableRow key={linha.id} className="border-t border-gray-100 hover:bg-gray-50">
+                <TableRow key={linha.id} className="border-t border-border hover:bg-muted">
                   <TableCell className={td}>
                     <Link
                       href={"/reports?studentId=" + linha.id}
@@ -69,7 +69,7 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                       aria-label={`Abrir relatório de ${linha.name}`}
                     >
                       <AvatarText name={linha.name} />
-                      <span className="font-medium text-gray-800">{linha.name}</span>
+                      <span className="font-medium text-foreground">{linha.name}</span>
                     </Link>
                   </TableCell>
                   <TableCell className={td}>{linha.turmaNome}</TableCell>
@@ -86,7 +86,7 @@ export function StudentsReportTable({ linhas, carregando }: StudentsReportTableP
                   <TableCell className={td}>
                     <Link
                       href={"/reports/" + linha.id}
-                      className="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100"
+                      className="flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted"
                       aria-label={`Ver relatório de ${linha.name}`}
                       title="Ver relatório"
                     >

@@ -16,25 +16,22 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-base font-semibold text-gray-800">Avaliações</h4>
+        <h4 className="text-base font-semibold text-foreground">Avaliações</h4>
         <Button size="sm" onClick={() => setCreating(true)}>
           Nova avaliação
         </Button>
       </div>
 
       {isLoading ? (
-        <div className="h-16 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-16 animate-pulse rounded-xl bg-muted" />
       ) : (
         <ul className="flex flex-col gap-2">
           {(evaluations ?? []).map((evaluation: Evaluation) => (
-            <li
-              key={evaluation.id}
-              className="rounded-xl border border-gray-200 bg-white px-4 py-3"
-            >
+            <li key={evaluation.id} className="rounded-xl border bg-card px-4 py-3 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-medium text-gray-800">{evaluation.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-foreground">{evaluation.name}</p>
+                  <p className="text-xs text-muted-foreground">
                     {evaluationTypeLabels[evaluation.type]} · peso {evaluation.weight} ·{" "}
                     {evaluation.date}
                   </p>
@@ -60,7 +57,7 @@ export function EvaluationsPanel({ groupId, subjectId }: { groupId: string; subj
             </li>
           ))}
           {(evaluations ?? []).length === 0 && (
-            <li className="text-sm text-gray-500">Nenhuma avaliação ainda.</li>
+            <li className="text-sm text-muted-foreground">Nenhuma avaliação ainda.</li>
           )}
         </ul>
       )}

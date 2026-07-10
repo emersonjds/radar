@@ -14,9 +14,9 @@ export interface ClassOverviewProps {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl bg-gray-50 p-4">
-      <p className="text-xs text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
+    <div className="rounded-xl bg-muted p-4">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-foreground">{value}</p>
     </div>
   );
 }
@@ -25,10 +25,10 @@ export function ClassOverview({ escopo, totalAlunos, avgAttendance, summary }: C
   const maiorMedia = summary.areaAffinity[0]?.average ?? 0;
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
+    <section className="rounded-xl border bg-card p-4 shadow-sm md:p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold text-gray-800">Panorama — {escopo}</h2>
-        <span className="text-sm text-gray-500">
+        <h2 className="text-lg font-semibold text-foreground">Panorama — {escopo}</h2>
+        <span className="text-sm text-muted-foreground">
           {totalAlunos} aluno{totalAlunos === 1 ? "" : "s"}
         </span>
       </div>
@@ -36,17 +36,17 @@ export function ClassOverview({ escopo, totalAlunos, avgAttendance, summary }: C
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Frequência média" value={formatPercent(avgAttendance)} />
         <Stat label="Nota média" value={formatScore(summary.averageScore)} />
-        <div className="rounded-xl bg-gray-50 p-4">
-          <p className="text-xs text-gray-500">Área forte</p>
-          <p className="mt-1 text-lg font-bold text-gray-800">
+        <div className="rounded-xl bg-muted p-4">
+          <p className="text-xs text-muted-foreground">Área forte</p>
+          <p className="mt-1 text-lg font-bold text-foreground">
             {summary.topArea ? areaLabels[summary.topArea] : "—"}
           </p>
         </div>
-        <div className="rounded-xl bg-gray-50 p-4">
-          <p className="text-xs text-gray-500">Matérias de destaque</p>
+        <div className="rounded-xl bg-muted p-4">
+          <p className="text-xs text-muted-foreground">Matérias de destaque</p>
           <p className="mt-1 flex flex-wrap gap-1">
             {summary.topSubjects.length === 0 ? (
-              <span className="text-sm text-gray-400">—</span>
+              <span className="text-sm text-muted-foreground">—</span>
             ) : (
               summary.topSubjects.map((item) => (
                 <Badge key={item.subject.id} variant="success">
@@ -60,20 +60,22 @@ export function ClassOverview({ escopo, totalAlunos, avgAttendance, summary }: C
 
       {summary.areaAffinity.length > 0 && (
         <div className="mt-6">
-          <p className="mb-3 text-sm font-medium text-gray-700">Média por área</p>
+          <p className="mb-3 text-sm font-medium text-foreground">Média por área</p>
           <ul className="flex flex-col gap-2">
             {summary.areaAffinity.map((item) => (
               <li key={item.area} className="flex items-center gap-3">
-                <span className="w-24 shrink-0 text-sm text-gray-600">{areaLabels[item.area]}</span>
-                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+                <span className="w-24 shrink-0 text-sm text-muted-foreground">
+                  {areaLabels[item.area]}
+                </span>
+                <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
                   <div
                     className={`h-full rounded-full ${
-                      item.average === maiorMedia ? "bg-brand-500" : "bg-brand-300"
+                      item.average === maiorMedia ? "bg-primary" : "bg-primary/50"
                     }`}
                     style={{ width: `${item.average * 10}%` }}
                   />
                 </div>
-                <span className="w-10 shrink-0 text-right text-sm font-medium text-gray-800">
+                <span className="w-10 shrink-0 text-right text-sm font-medium text-foreground">
                   {formatScore(item.average)}
                 </span>
               </li>

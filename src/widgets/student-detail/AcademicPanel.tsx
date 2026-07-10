@@ -20,14 +20,14 @@ export interface AcademicPanelProps {
 function Bar({ label, value, forte }: { label: string; value: number; forte: boolean }) {
   return (
     <li className="flex items-center gap-3">
-      <span className="w-24 shrink-0 truncate text-sm text-gray-600">{label}</span>
-      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-100">
+      <span className="w-24 shrink-0 truncate text-sm text-muted-foreground">{label}</span>
+      <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-muted">
         <div
-          className={`h-full rounded-full ${forte ? "bg-brand-500" : "bg-brand-300"}`}
+          className={`h-full rounded-full ${forte ? "bg-primary" : "bg-primary/50"}`}
           style={{ width: `${value * 10}%` }}
         />
       </div>
-      <span className="w-10 shrink-0 text-right text-sm font-medium text-gray-800">
+      <span className="w-10 shrink-0 text-right text-sm font-medium text-foreground">
         {formatScore(value)}
       </span>
     </li>
@@ -37,9 +37,9 @@ function Bar({ label, value, forte }: { label: string; value: number; forte: boo
 export function AcademicPanel({ grades, subjects }: AcademicPanelProps) {
   if (grades.length === 0) {
     return (
-      <section className="rounded-2xl border border-gray-200 bg-white p-5">
-        <h2 className="text-lg font-semibold text-gray-800">Desempenho acadêmico</h2>
-        <p className="mt-2 text-sm text-gray-500">Sem notas lançadas.</p>
+      <section className="rounded-xl border bg-card p-4 shadow-sm">
+        <h2 className="text-lg font-semibold text-foreground">Desempenho acadêmico</h2>
+        <p className="mt-2 text-sm text-muted-foreground">Sem notas lançadas.</p>
       </section>
     );
   }
@@ -52,13 +52,13 @@ export function AcademicPanel({ grades, subjects }: AcademicPanelProps) {
   const maiorMateria = materias[0]?.score ?? 0;
 
   return (
-    <section className="rounded-2xl border border-gray-200 bg-white p-5">
+    <section className="rounded-xl border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-lg font-semibold text-gray-800">Desempenho acadêmico</h2>
+        <h2 className="text-lg font-semibold text-foreground">Desempenho acadêmico</h2>
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <p className="text-xs text-gray-500">Nota geral</p>
-            <p className="text-xl font-bold text-gray-800">{formatScore(nota)}</p>
+            <p className="text-xs text-muted-foreground">Nota geral</p>
+            <p className="text-xl font-bold text-foreground">{formatScore(nota)}</p>
           </div>
           {aptidao && <Badge variant="success">Aptidão: {areaLabels[aptidao]}</Badge>}
         </div>
@@ -66,7 +66,7 @@ export function AcademicPanel({ grades, subjects }: AcademicPanelProps) {
 
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div>
-          <p className="mb-3 text-sm font-medium text-gray-700">Notas por matéria</p>
+          <p className="mb-3 text-sm font-medium text-foreground">Notas por matéria</p>
           <ul className="flex flex-col gap-2">
             {materias.map((item) => (
               <Bar
@@ -79,7 +79,7 @@ export function AcademicPanel({ grades, subjects }: AcademicPanelProps) {
           </ul>
         </div>
         <div>
-          <p className="mb-3 text-sm font-medium text-gray-700">Aptidão por área</p>
+          <p className="mb-3 text-sm font-medium text-foreground">Aptidão por área</p>
           <ul className="flex flex-col gap-2">
             {areas.map((item) => (
               <Bar

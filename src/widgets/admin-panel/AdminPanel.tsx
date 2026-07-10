@@ -43,12 +43,12 @@ const TAREFA_VARIANT: Record<TarefaAdmin["status"], "secondary" | "success" | "d
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-5">
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-500">
+    <div className="rounded-xl border bg-card p-4 shadow-sm">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-accent text-primary">
         {icon}
       </div>
-      <p className="mt-4 text-sm text-gray-500">{label}</p>
-      <p className="mt-1 text-2xl font-bold text-gray-800">{value}</p>
+      <p className="mt-4 text-sm text-muted-foreground">{label}</p>
+      <p className="mt-1 text-2xl font-bold text-foreground">{value}</p>
     </div>
   );
 }
@@ -155,28 +155,30 @@ export function AdminPanel() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          <h2 className="text-lg font-semibold text-gray-800">Frequência por aula</h2>
-          <p className="mb-2 text-sm text-gray-500">Comparativo de presença por aula</p>
+        <div className="rounded-xl border bg-card p-4 shadow-sm lg:col-span-2">
+          <h2 className="text-lg font-semibold text-foreground">Frequência por aula</h2>
+          <p className="mb-2 text-sm text-muted-foreground">Comparativo de presença por aula</p>
           <AttendanceBarChart dados={frequenciaPorTurma} />
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Alertas de baixa frequência</h2>
+        <div className="rounded-xl border bg-card p-4 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">
+            Alertas de baixa frequência
+          </h2>
           {alertas.length === 0 ? (
-            <p className="text-sm text-gray-500">Sem dados ainda.</p>
+            <p className="text-sm text-muted-foreground">Sem dados ainda.</p>
           ) : (
             <ul className="flex flex-col gap-3">
               {alertas.map((alerta) => (
                 <li key={alerta.studentId} className="flex items-center gap-3">
                   <AvatarText name={alerta.name} />
                   <div className="mr-auto min-w-0">
-                    <p className="truncate font-medium text-gray-800">{alerta.name}</p>
-                    <p className="truncate text-xs text-gray-500">{alerta.turma}</p>
+                    <p className="truncate font-medium text-foreground">{alerta.name}</p>
+                    <p className="truncate text-xs text-muted-foreground">{alerta.turma}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1">
                     <Badge variant="danger">{formatPercent(alerta.attendance)}</Badge>
-                    <span className="text-xs text-gray-500">{alerta.absences} faltas</span>
+                    <span className="text-xs text-muted-foreground">{alerta.absences} faltas</span>
                   </div>
                 </li>
               ))}
@@ -184,7 +186,7 @@ export function AdminPanel() {
           )}
           <Link
             href="/students?filtro=risco"
-            className="mt-4 inline-block text-sm font-medium text-brand-500 hover:text-brand-600"
+            className="mt-4 inline-block text-sm font-medium text-primary hover:text-primary/90"
           >
             Ver todos os alunos em risco
           </Link>
@@ -192,17 +194,17 @@ export function AdminPanel() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="rounded-2xl border border-gray-200 bg-white p-5 lg:col-span-2">
-          <h2 className="mb-2 text-lg font-semibold text-gray-800">Tendência de frequência</h2>
+        <div className="rounded-xl border bg-card p-4 shadow-sm lg:col-span-2">
+          <h2 className="mb-2 text-lg font-semibold text-foreground">Tendência de frequência</h2>
           <TrendLineChart pontos={tendencia} />
         </div>
 
-        <div className="rounded-2xl border border-gray-200 bg-white p-5">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Tarefas administrativas</h2>
+        <div className="rounded-xl border bg-card p-4 shadow-sm">
+          <h2 className="mb-4 text-lg font-semibold text-foreground">Tarefas administrativas</h2>
           <ul className="flex flex-col gap-3">
             {TAREFAS_ADMIN.map((tarefa) => (
               <li key={tarefa.title} className="flex items-center justify-between gap-3 text-sm">
-                <span className="text-gray-700">{tarefa.title}</span>
+                <span className="text-foreground">{tarefa.title}</span>
                 <Badge variant={TAREFA_VARIANT[tarefa.status]}>{tarefa.status}</Badge>
               </li>
             ))}

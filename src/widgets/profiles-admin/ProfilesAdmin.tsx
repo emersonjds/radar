@@ -20,9 +20,9 @@ const ROLES = roleSchema.options;
 const EMPTY_FORM = { name: "", username: "", role: "teacher" as Role, password: "" };
 
 const control =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 const acaoBtn =
-  "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40";
+  "flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted disabled:cursor-not-allowed disabled:opacity-40";
 
 function PowerIcon() {
   return (
@@ -71,12 +71,14 @@ export function ProfilesAdmin() {
   return (
     <div className="flex flex-col gap-6">
       <header>
-        <h1 className="text-2xl font-bold text-gray-800">Perfis</h1>
-        <p className="mt-1 text-sm text-gray-500">Crie e gerencie os acessos abaixo de você.</p>
+        <h1 className="text-2xl font-bold text-foreground">Perfis</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Crie e gerencie os acessos abaixo de você.
+        </p>
       </header>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
-        <h2 className="mb-5 text-lg font-semibold text-gray-800">Novo perfil</h2>
+      <section className="rounded-xl border bg-card p-4 shadow-sm md:p-5">
+        <h2 className="mb-5 text-lg font-semibold text-foreground">Novo perfil</h2>
         <form onSubmit={criar} className="flex flex-col gap-5">
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <div>
@@ -141,7 +143,7 @@ export function ProfilesAdmin() {
           </div>
 
           {erro && (
-            <p role="alert" className="text-sm text-error-600">
+            <p role="alert" className="text-sm text-destructive">
               {erro}
             </p>
           )}
@@ -159,20 +161,20 @@ export function ProfilesAdmin() {
         </form>
       </section>
 
-      <section className="rounded-2xl border border-gray-200 bg-white p-5 md:p-6">
-        <h2 className="mb-5 text-lg font-semibold text-gray-800">Perfis existentes</h2>
+      <section className="rounded-xl border bg-card p-4 shadow-sm md:p-5">
+        <h2 className="mb-5 text-lg font-semibold text-foreground">Perfis existentes</h2>
         {isLoading ? (
-          <p className="text-sm text-gray-500">Carregando…</p>
+          <p className="text-sm text-muted-foreground">Carregando…</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {(perfis ?? []).map((perfil) => (
               <li
                 key={perfil.id}
-                className="flex flex-wrap items-center gap-3 rounded-xl border border-gray-100 px-4 py-3"
+                className="flex flex-wrap items-center gap-3 rounded-xl border border-border px-4 py-3"
               >
                 <div className="mr-auto min-w-0">
-                  <p className="font-medium text-gray-800">{perfil.name}</p>
-                  <p className="text-sm text-gray-500">
+                  <p className="font-medium text-foreground">{perfil.name}</p>
+                  <p className="text-sm text-muted-foreground">
                     @{perfil.username} · {roleLabels[perfil.role]}
                   </p>
                 </div>
@@ -203,7 +205,7 @@ export function ProfilesAdmin() {
                   </button>
                   <button
                     type="button"
-                    className={`${acaoBtn} hover:bg-error-50 hover:text-error-600`}
+                    className={`${acaoBtn} hover:bg-destructive/10 hover:text-destructive`}
                     aria-label={`Excluir ${perfil.name}`}
                     title="Excluir"
                     disabled={perfil.id === profileId || deleteProfile.isPending}

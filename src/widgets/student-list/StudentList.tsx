@@ -22,10 +22,10 @@ import { StudentFormModal } from "./StudentFormModal";
 
 const LIMITE_FALTAS_RISCO = 3;
 
-const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500";
-const td = "px-5 py-4 text-sm text-gray-700";
+const th = "px-5 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground";
+const td = "px-5 py-4 text-sm text-foreground";
 const acaoBtn =
-  "flex h-9 w-9 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100";
+  "flex h-9 w-9 items-center justify-center rounded-full text-muted-foreground transition hover:bg-muted";
 
 export function StudentList() {
   const { role, profile, loading: carregandoSessao } = useSession();
@@ -117,8 +117,8 @@ export function StudentList() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">{titulo}</h1>
-          <p className="mt-1 text-sm text-gray-500">{subtitulo}</p>
+          <h1 className="text-2xl font-bold text-foreground">{titulo}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{subtitulo}</p>
         </div>
         <div className="flex flex-wrap items-center justify-end gap-3">
           <input
@@ -126,7 +126,7 @@ export function StudentList() {
             value={busca}
             onChange={(event) => setBusca(event.target.value)}
             placeholder="Buscar por nome"
-            className="h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 text-sm text-gray-800 placeholder:text-gray-400 focus:border-brand-300 focus:ring-3 focus:ring-brand-500/10 focus:outline-hidden sm:w-80"
+            className="h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-3 focus:ring-ring/20 focus:outline-hidden sm:w-80"
           />
           {!isProfessor && (
             <Button className="h-11" onClick={() => setFormAluno(null)}>
@@ -137,10 +137,10 @@ export function StudentList() {
         </div>
       </header>
 
-      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+      <div className="overflow-hidden rounded-xl border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <Table>
-            <TableHeader className="border-b border-gray-100 bg-gray-50">
+            <TableHeader className="border-b border-border bg-muted">
               <TableRow>
                 <TableHead className={th}>Aluno</TableHead>
                 {!isProfessor && <TableHead className={th}>Idade</TableHead>}
@@ -155,21 +155,30 @@ export function StudentList() {
             <TableBody>
               {carregando && (
                 <TableRow>
-                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
+                  <TableCell
+                    className={`${td} text-center text-muted-foreground`}
+                    colSpan={colunas}
+                  >
                     Carregando alunos…
                   </TableCell>
                 </TableRow>
               )}
               {!carregando && semTurmas && (
                 <TableRow>
-                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
+                  <TableCell
+                    className={`${td} text-center text-muted-foreground`}
+                    colSpan={colunas}
+                  >
                     Você não tem aulas atribuídas
                   </TableCell>
                 </TableRow>
               )}
               {!carregando && !semTurmas && linhas.length === 0 && (
                 <TableRow>
-                  <TableCell className={`${td} text-center text-gray-400`} colSpan={colunas}>
+                  <TableCell
+                    className={`${td} text-center text-muted-foreground`}
+                    colSpan={colunas}
+                  >
                     Nenhum aluno encontrado
                   </TableCell>
                 </TableRow>
@@ -178,19 +187,21 @@ export function StudentList() {
                 linhas.map(({ aluno, idade, aulas, attendance, absences }) => {
                   const emRisco = absences >= LIMITE_FALTAS_RISCO;
                   return (
-                    <TableRow key={aluno.id} className="border-t border-gray-100">
+                    <TableRow key={aluno.id} className="border-t border-border">
                       <TableCell className={td}>
                         <div className="flex items-center gap-3">
                           <AvatarText name={aluno.name} />
-                          <span className="font-medium text-gray-800">{aluno.name}</span>
+                          <span className="font-medium text-foreground">{aluno.name}</span>
                         </div>
                       </TableCell>
                       {!isProfessor && <TableCell className={td}>{idade} anos</TableCell>}
                       {!isProfessor && (
                         <TableCell className={td}>
                           <div className="flex flex-col">
-                            <span className="text-gray-800">{aluno.guardianName}</span>
-                            <span className="text-xs text-gray-500">{aluno.guardianPhone}</span>
+                            <span className="text-foreground">{aluno.guardianName}</span>
+                            <span className="text-xs text-muted-foreground">
+                              {aluno.guardianPhone}
+                            </span>
                           </div>
                         </TableCell>
                       )}
@@ -224,7 +235,7 @@ export function StudentList() {
                             </button>
                             <button
                               type="button"
-                              className={`${acaoBtn} hover:bg-error-50 hover:text-error-600`}
+                              className={`${acaoBtn} hover:bg-destructive/10 hover:text-destructive`}
                               aria-label={`Excluir ${aluno.name}`}
                               title="Excluir"
                               disabled={deleteStudent.isPending}

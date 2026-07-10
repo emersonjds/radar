@@ -21,7 +21,9 @@ describe("profile management + auth (integration, over the store)", () => {
   });
 
   it("returns null when the role has no active profile", async () => {
-    const coordinators = (await fetchProfiles()).filter((profile) => profile.role === "coordinator");
+    const coordinators = (await fetchProfiles()).filter(
+      (profile) => profile.role === "coordinator",
+    );
     for (const coordinator of coordinators) {
       await setProfileActive(coordinator.id, false);
     }
