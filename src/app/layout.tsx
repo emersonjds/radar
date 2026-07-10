@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/shared/providers/query-provider";
 import { SidebarProvider } from "@tailadmin/context/SidebarContext";
 
-const outfit = Outfit({
+const inter = Inter({
   subsets: ["latin"],
 });
 
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body className={outfit.className}>
+      <body className={inter.className}>
         <QueryProvider>
           <SidebarProvider>{children}</SidebarProvider>
         </QueryProvider>
