@@ -13,7 +13,6 @@ export const schoolEventSchema = z.object({
 export type SchoolEventType = z.infer<typeof schoolEventTypeSchema>;
 export type SchoolEvent = z.infer<typeof schoolEventSchema>;
 
-/** Expands an inclusive "YYYY-MM-DD" range into each date it covers. */
 export function datesInRange(startDate: string, endDate: string): string[] {
   const dates: string[] = [];
   const cursor = new Date(`${startDate}T00:00:00Z`);

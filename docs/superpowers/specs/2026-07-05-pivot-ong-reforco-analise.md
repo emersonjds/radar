@@ -31,6 +31,7 @@ mecânica.
 **Hoje:** `{ id, name, enrollment, groupId, active }`
 
 **Proposto:**
+
 ```
 Student {
   id,
@@ -59,12 +60,14 @@ ONG, "turma" é mais próximo de **uma aula específica** — "Reforço de Matem
 prof. Ricardo". A gente tem duas opções, com trade-offs bem diferentes:
 
 **Opção A (mínima) — mantém `Group`, muda a semântica:**
+
 - `Group` continua sendo o "container" de alunos + chamada + avaliações.
 - Remove `gradeLevel`. Torna `shift` opcional (ou renomeia pra `schedule` livre: "terça 14h").
 - Mantém o `assignment` (turma × matéria × professor) como está.
 - Renomeia o rótulo "Turma" na UI para **"Aula"** (ou "Oficina" / "Grupo de reforço").
 
 **Opção B (radical) — colapsa `Group` em `Class`:**
+
 - Elimina `Group`; cria `Class { id, subjectId, teacherId, schedule }` (a matéria e o
   professor viram dado direto da classe).
 - `Assignment` some (o vínculo já mora na `Class`).
@@ -89,6 +92,7 @@ Enrollment {
 ```
 
 Impacto direto:
+
 - `fetchStudentsByGroup(groupId)` passa a ser um JOIN via `enrollments` (não `students.groupId`).
 - Fluxo de "adicionar aluno" não pede mais turma — é ficha limpa.
 - Novo fluxo "matricular aluno numa aula" (admin escolhe aluno + aula), e "gerir alunos da
@@ -116,25 +120,26 @@ Impacto direto:
 
 ## 4. Impacto por camada (alto nível, para dimensionar)
 
-| Camada | Arquivos-chave impactados | Tamanho |
-|---|---|---|
-| `entities/student` | model, api, api.test, queries | médio |
-| `entities/group` | model (remove gradeLevel), widgets admin | pequeno |
-| `entities/enrollment` (novo) | model, api, api.test, queries | médio |
-| `entities/student` fetchers | `fetchStudentsByGroup` migra pra JOIN | pequeno |
-| `widgets/student-list` + `StudentFormModal` | novo formulário; coluna "Turma" some ou vira "Aulas" | médio |
-| `widgets/groups-admin` | painel de "Alunos da aula" (add/remove) | médio |
-| `widgets/student-detail` / `reports` | passa a mostrar N aulas em vez de 1 turma | médio |
-| Chamada (`take-attendance`) | fonte de alunos passa a ser enrollment | pequeno |
-| Seed + bump `radar.db.v8` | nova coleção `enrollments`, novo shape de student, remove gradeLevel | pequeno |
-| Copy PT-BR + `CLAUDE.md` | reflete identidade ONG | pequeno |
-| E2E | ajustar specs que confiam em "turma X do aluno Y" | pequeno |
+| Camada                                      | Arquivos-chave impactados                                            | Tamanho |
+| ------------------------------------------- | -------------------------------------------------------------------- | ------- |
+| `entities/student`                          | model, api, api.test, queries                                        | médio   |
+| `entities/group`                            | model (remove gradeLevel), widgets admin                             | pequeno |
+| `entities/enrollment` (novo)                | model, api, api.test, queries                                        | médio   |
+| `entities/student` fetchers                 | `fetchStudentsByGroup` migra pra JOIN                                | pequeno |
+| `widgets/student-list` + `StudentFormModal` | novo formulário; coluna "Turma" some ou vira "Aulas"                 | médio   |
+| `widgets/groups-admin`                      | painel de "Alunos da aula" (add/remove)                              | médio   |
+| `widgets/student-detail` / `reports`        | passa a mostrar N aulas em vez de 1 turma                            | médio   |
+| Chamada (`take-attendance`)                 | fonte de alunos passa a ser enrollment                               | pequeno |
+| Seed + bump `radar.db.v8`                   | nova coleção `enrollments`, novo shape de student, remove gradeLevel | pequeno |
+| Copy PT-BR + `CLAUDE.md`                    | reflete identidade ONG                                               | pequeno |
+| E2E                                         | ajustar specs que confiam em "turma X do aluno Y"                    | pequeno |
 
 Nada disso é grande sozinho, mas o encadeamento é substancial. Vamos por fases.
 
 ## 5. Roadmap sugerido (3 fases)
 
 **Fase A — Ficha do aluno (independente da alocação).**
+
 - Novos campos no `Student` (birthDate, guardian). Remove `enrollment` e `groupId`
   (compatibilidade: durante a migração, o groupId antigo vira o primeiro `Enrollment`).
 - Novo `StudentFormModal` (sem "Turma"). Nova coluna "Idade" / "Responsável" na lista.
@@ -142,12 +147,14 @@ Nada disso é grande sozinho, mas o encadeamento é substancial. Vamos por fases
 - Cobertura: unit dos schemas + integração dos writers + E2E do fluxo "admin cadastra aluno".
 
 **Fase B — Matrícula N:N.**
+
 - Nova entity `enrollment`. `fetchStudentsByGroup` passa pelo enrollment.
 - Fluxo dentro da aula: "adicionar/remover alunos desta aula" (admin).
 - `student-detail` lista todas as aulas do aluno.
 - Cobertura: unit + integração da entity, E2E "admin matricula um aluno em duas aulas".
 
 **Fase C — Reidentificação: ONG de reforço.**
+
 - Copy PT-BR: "Turmas" → "Aulas" (ou "Oficinas", ver ❓2). Remove "série". Ajusta hero/subtítulos.
 - `CLAUDE.md` reescrito para refletir ONG.
 - Ajustes de área de matéria se aprovar ❓4.

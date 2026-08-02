@@ -3,41 +3,31 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { setSession } from "@/features/session/session-store";
-import { roleLabels } from "@/entities/profile/model";
-import { useProfiles } from "@/entities/profile/queries";
-import Button from "@tailadmin/components/ui/button/Button";
-import Label from "@tailadmin/components/form/Label";
-import { authenticate } from "./authenticate";
+import { roleLabels, type Role } from "@/entities/profile/model";
+import { Button } from "@/shared/ui/button";
+import { Label } from "@/shared/ui/label";
+import { loginAsRole } from "./authenticate";
 
-// ponytail: fase demo — todo perfil semeado compartilha a mesma senha, então a
-// tela só escolhe quem entra e preenche a credencial. Volta a ser usuário +
-// senha digitados quando o Supabase Auth entrar.
-const SENHA_DEMO = "123456";
+const ROLES: Role[] = ["admin", "teacher", "coordinator"];
 
-const fieldClasses =
-  "h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+const selectClasses =
+  "h-11 w-full rounded-lg border border-input bg-transparent px-4 text-sm text-foreground shadow-xs focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export function LoginForm() {
   const router = useRouter();
-  const { data: perfis, isLoading } = useProfiles();
-  const [escolhido, setEscolhido] = useState<string | null>(null);
+  const [role, setRole] = useState<Role>("admin");
   const [erro, setErro] = useState<string | null>(null);
   const [entrando, setEntrando] = useState(false);
 
-  // Perfis inativos continuam na lista: quem escolher um recebe o mesmo alerta
-  // de credencial inválida que o authenticate() já devolve.
-  const disponiveis = perfis ?? [];
-  const usuario = escolhido ?? disponiveis[0]?.username ?? "";
-
   async function entrar(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (entrando || !usuario) return;
+    if (entrando) return;
     setErro(null);
     setEntrando(true);
     try {
-      const profile = await authenticate(usuario, SENHA_DEMO);
+      const profile = await loginAsRole(role);
       if (!profile) {
-        setErro("Não foi possível entrar com este perfil.");
+        setErro("Nenhum perfil ativo para esse cargo.");
         return;
       }
       setSession(profile.id);
@@ -50,57 +40,41 @@ export function LoginForm() {
   return (
     <form
       onSubmit={entrar}
-      className="w-full max-w-md rounded-2xl border border-gray-200 bg-white p-8 shadow-theme-sm"
+      className="w-full max-w-md rounded-xl border border-border bg-card p-8 shadow-sm"
     >
       <div className="mb-8">
-        <span className="text-2xl font-bold text-brand-500">Radar</span>
-        <p className="mt-1 text-sm text-gray-500">Presença escolar</p>
+        <span className="text-2xl font-bold text-primary">Radar</span>
+        <p className="mt-1 text-sm text-muted-foreground">Presença escolar</p>
       </div>
 
       <div className="mb-5">
-        <Label htmlFor="perfil">Perfil</Label>
+        <Label className="mb-1.5" htmlFor="perfil">
+          Entrar como
+        </Label>
         <select
           id="perfil"
-          value={usuario}
-          onChange={(event) => setEscolhido(event.target.value)}
-          disabled={isLoading || disponiveis.length === 0}
-          className={fieldClasses}
+          value={role}
+          onChange={(event) => setRole(event.target.value as Role)}
+          className={selectClasses}
         >
-          {disponiveis.map((perfil) => (
-            <option key={perfil.id} value={perfil.username}>
-              {perfil.name} — {perfil.jobTitle ?? roleLabels[perfil.role]}
-              {perfil.active ? "" : " (inativo)"}
+          {ROLES.map((value) => (
+            <option key={value} value={value}>
+              {roleLabels[value]}
             </option>
           ))}
         </select>
       </div>
 
-      <div className="mb-5">
-        <Label htmlFor="senha">Senha</Label>
-        <input
-          id="senha"
-          type="password"
-          autoComplete="current-password"
-          value={SENHA_DEMO}
-          readOnly
-          disabled
-          className={`${fieldClasses} cursor-not-allowed bg-gray-50 text-gray-400`}
-        />
-        <p className="mt-1.5 text-xs text-gray-400">
-          Ambiente de demonstração: a senha já vem preenchida para o perfil escolhido.
-        </p>
-      </div>
-
       {erro && (
         <p
           role="alert"
-          className="mb-5 rounded-lg bg-error-50 px-4 py-3 text-sm text-error-600"
+          className="mb-5 rounded-lg bg-destructive/10 px-4 py-3 text-sm text-destructive"
         >
           {erro}
         </p>
       )}
 
-      <Button className="w-full" disabled={entrando || !usuario}>
+      <Button className="w-full" disabled={entrando}>
         {entrando ? "Entrando…" : "Entrar"}
       </Button>
     </form>

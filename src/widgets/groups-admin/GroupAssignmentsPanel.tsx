@@ -9,10 +9,12 @@ import {
   useUpdateAssignmentTeacher,
   useDeleteAssignment,
 } from "@/entities/assignment/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { X } from "lucide-react";
+import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 
 const controlClasses =
-  "h-10 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden";
+  "h-10 rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden";
 
 export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
   const { data: assignments } = useAssignmentsByGroup(groupId);
@@ -49,17 +51,21 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
   }
 
   return (
-    <div className="mt-3 rounded-xl bg-gray-50 p-4">
-      <h5 className="mb-3 text-sm font-semibold text-gray-700">Matérias desta aula</h5>
+    <div className="mt-3 rounded-xl bg-muted p-4">
+      <h5 className="mb-3 text-sm font-semibold text-foreground">Matérias desta aula</h5>
 
       <ul className="mb-4 flex flex-col gap-2">
         {(assignments ?? []).map((assignment) => (
           <li key={assignment.id} className="flex flex-wrap items-center gap-2">
-            <span className="min-w-32 text-sm text-gray-800">{subjectName(assignment.subjectId)}</span>
+            <span className="min-w-32 text-sm text-foreground">
+              {subjectName(assignment.subjectId)}
+            </span>
             <select
               aria-label={`Professor de ${subjectName(assignment.subjectId)}`}
               value={assignment.teacherId}
-              onChange={(e) => updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })}
+              onChange={(e) =>
+                updateTeacher.mutate({ id: assignment.id, teacherId: e.target.value })
+              }
               className={controlClasses}
             >
               {teachers.map((teacher) => (
@@ -68,18 +74,21 @@ export function GroupAssignmentsPanel({ groupId }: { groupId: string }) {
                 </option>
               ))}
             </select>
-            <Button size="sm" variant="outline" onClick={() => deleteAssignment.mutate(assignment.id)}>
-              Remover
-            </Button>
+            <IconButton
+              icon={X}
+              label={`Remover ${subjectName(assignment.subjectId)} desta aula`}
+              tone="destructive"
+              onClick={() => deleteAssignment.mutate(assignment.id)}
+            />
           </li>
         ))}
         {(assignments ?? []).length === 0 && (
-          <li className="text-sm text-gray-500">Nenhuma matéria atribuída ainda.</li>
+          <li className="text-sm text-muted-foreground">Nenhuma matéria atribuída ainda.</li>
         )}
       </ul>
 
       {erro && (
-        <p role="alert" className="mb-2 text-sm text-error-600">
+        <p role="alert" className="mb-2 text-sm text-destructive">
           {erro}
         </p>
       )}

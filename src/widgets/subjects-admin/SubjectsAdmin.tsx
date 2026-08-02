@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { areaLabels, type Subject } from "@/entities/subject/model";
 import { useSubjects, useDeleteSubject } from "@/entities/subject/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { SubjectFormModal } from "./SubjectFormModal";
 
 export function SubjectsAdmin() {
@@ -14,6 +16,7 @@ export function SubjectsAdmin() {
   const [erro, setErro] = useState<string | null>(null);
 
   async function remover(subject: Subject) {
+    if (!window.confirm(`Excluir a matéria ${subject.name}?`)) return;
     setErro(null);
     try {
       await deleteSubject.mutateAsync(subject.id);
@@ -25,38 +28,43 @@ export function SubjectsAdmin() {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">Matérias</h1>
+        <h1 className="text-xl font-semibold text-foreground">Matérias</h1>
         <Button size="sm" onClick={() => setEditing(null)}>
           Adicionar matéria
         </Button>
       </header>
 
       {erro && (
-        <p role="alert" className="text-sm text-error-600">
+        <p role="alert" className="text-sm text-destructive">
           {erro}
         </p>
       )}
 
       {isLoading ? (
-        <div className="h-24 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-24 animate-pulse rounded-xl bg-muted" />
       ) : (
         <ul className="flex flex-col gap-2">
           {(subjects ?? []).map((subject) => (
             <li
               key={subject.id}
-              className="flex items-center justify-between rounded-xl border border-gray-200 bg-white px-4 py-3"
+              className="flex items-center justify-between rounded-xl border bg-card px-4 py-3 shadow-sm"
             >
               <div>
-                <p className="font-medium text-gray-800">{subject.name}</p>
-                <p className="text-xs text-gray-500">{areaLabels[subject.area]}</p>
+                <p className="font-medium text-foreground">{subject.name}</p>
+                <p className="text-xs text-muted-foreground">{areaLabels[subject.area]}</p>
               </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing(subject)}>
-                  Editar
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => remover(subject)}>
-                  Excluir
-                </Button>
+              <div className="flex items-center gap-1">
+                <IconButton
+                  icon={Pencil}
+                  label={`Editar ${subject.name}`}
+                  onClick={() => setEditing(subject)}
+                />
+                <IconButton
+                  icon={Trash2}
+                  label={`Excluir ${subject.name}`}
+                  tone="destructive"
+                  onClick={() => remover(subject)}
+                />
               </div>
             </li>
           ))}

@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { login } from "../helpers";
 
 const MOBILE_VIEWPORT = { width: 375, height: 812 };
 const DESKTOP_VIEWPORT = { width: 1280, height: 800 };
@@ -12,17 +13,11 @@ async function semOverflowHorizontal(page: Page) {
   expect(overflow).toBeLessThanOrEqual(0);
 }
 
-async function loginProfessor(page: Page) {
-  await page.goto("/login");
-  await page.getByLabel("Perfil").selectOption("ricardo");
-  await page.getByRole("button", { name: "Entrar" }).click();
-}
-
 test.describe("chamada mobile (cards)", () => {
   test.use({ viewport: MOBILE_VIEWPORT });
 
   test("título, busca, tiles e marcação de status", async ({ page }) => {
-    await loginProfessor(page);
+    await login(page, "Professor");
     await page.goto("/attendance");
 
     await expect(page.getByLabel("Selecionar aula")).toBeVisible();
@@ -52,11 +47,14 @@ test.describe("chamada mobile (cards)", () => {
 
     await semOverflowHorizontal(page);
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-mobile.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/chamada-mobile.png",
+      fullPage: true,
+    });
   });
 
   test("toggle abre o drawer e o backdrop fecha a sidebar", async ({ page }) => {
-    await loginProfessor(page);
+    await login(page, "Professor");
     await page.goto("/attendance");
 
     const aside = page.locator("aside");
@@ -75,18 +73,21 @@ test.describe("chamada desktop", () => {
   test.use({ viewport: DESKTOP_VIEWPORT });
 
   test("sidebar com Chamada e tela renderiza", async ({ page }) => {
-    await loginProfessor(page);
+    await login(page, "Professor");
     await page.goto("/attendance");
 
     const nav = page.getByRole("navigation", { name: "Navegação principal" });
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(page.getByLabel("Selecionar aula")).toBeVisible();
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-desktop.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/chamada-desktop.png",
+      fullPage: true,
+    });
   });
 
   test("toggle colapsa a sidebar para os ícones e reexpande", async ({ page }) => {
-    await loginProfessor(page);
+    await login(page, "Professor");
     await page.goto("/attendance");
 
     const aside = page.locator("aside");
@@ -95,7 +96,10 @@ test.describe("chamada desktop", () => {
     await page.getByRole("button", { name: "Alternar menu" }).click();
     await expect.poll(async () => (await aside.boundingBox())?.width).toBe(90);
 
-    await page.screenshot({ path: "e2e/take-attendance/evidencias/sidebar-colapsada.png", fullPage: true });
+    await page.screenshot({
+      path: "e2e/take-attendance/evidencias/sidebar-colapsada.png",
+      fullPage: true,
+    });
 
     await page.getByRole("button", { name: "Alternar menu" }).click();
     await expect.poll(async () => (await aside.boundingBox())?.width).toBe(290);

@@ -11,10 +11,14 @@ import type { AttendanceRecord } from "@/entities/attendance-record/model";
 import type { Grade } from "@/entities/grade/model";
 import { areaLabels } from "@/entities/subject/model";
 import { attendanceRate, countAbsences } from "@/features/analytics/model";
-import { classAcademicSummary, overallAverage, studentAptitude } from "@/features/analytics/academic";
+import {
+  classAcademicSummary,
+  overallAverage,
+  studentAptitude,
+} from "@/features/analytics/academic";
 import { formatPercent, formatScore } from "@/shared/lib/format";
 import { downloadCsv, toCsv } from "@/shared/lib/csv";
-import Button from "@tailadmin/components/ui/button/Button";
+import { Button } from "@/shared/ui/button";
 import { DownloadIcon } from "@tailadmin/icons";
 import { ClassOverview } from "./ClassOverview";
 import { StudentsReportTable, type ReportRow } from "./StudentsReportTable";
@@ -23,7 +27,7 @@ const LIMITE_FALTAS_RISCO = 3;
 const TODAS = "todas";
 
 const control =
-  "h-11 rounded-lg border border-gray-300 bg-transparent px-3 text-sm text-gray-800 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10";
+  "h-11 rounded-lg border border-input bg-transparent px-3 text-sm text-foreground focus:border-ring focus:outline-hidden focus:ring-3 focus:ring-ring/20";
 
 export function ReportsCenter() {
   const { data: alunos, isLoading: carregandoAlunos } = useStudents();
@@ -45,7 +49,10 @@ export function ReportsCenter() {
 
     const presencasPorAluno = new Map<string, AttendanceRecord[]>();
     for (const presenca of presencas ?? []) {
-      presencasPorAluno.set(presenca.studentId, [...(presencasPorAluno.get(presenca.studentId) ?? []), presenca]);
+      presencasPorAluno.set(presenca.studentId, [
+        ...(presencasPorAluno.get(presenca.studentId) ?? []),
+        presenca,
+      ]);
     }
     const notasPorAluno = new Map<string, Grade[]>();
     for (const nota of notas ?? []) {
@@ -97,7 +104,9 @@ export function ReportsCenter() {
   }, [alunos, materias, turmas, presencas, notas, enrollments, turmaId]);
 
   const escopoLabel =
-    turmaId === TODAS ? "Todas as aulas" : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Aula");
+    turmaId === TODAS
+      ? "Todas as aulas"
+      : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Aula");
 
   function exportar() {
     const headers = ["Aluno", "Turma", "Nota média", "Frequência", "Faltas", "Aptidão", "Situação"];
@@ -121,13 +130,13 @@ export function ReportsCenter() {
     <div className="flex flex-col gap-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-800">Relatórios</h1>
-          <p className="mt-1 text-sm text-gray-500">
+          <h1 className="text-2xl font-bold text-foreground">Relatórios</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Panorama acadêmico e de frequência por aula — clique num aluno para a ficha completa
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Aula
             <select
               aria-label="Selecionar aula"
@@ -143,7 +152,7 @@ export function ReportsCenter() {
               ))}
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-500">
+          <label className="flex flex-col gap-1 text-xs font-medium text-muted-foreground">
             Período
             <select
               aria-label="Selecionar período"
@@ -159,10 +168,10 @@ export function ReportsCenter() {
             type="button"
             variant="outline"
             className="h-11"
-            startIcon={<DownloadIcon />}
             disabled={dados.linhas.length === 0}
             onClick={exportar}
           >
+            <DownloadIcon />
             Exportar CSV
           </Button>
         </div>

@@ -34,6 +34,7 @@ Premissa: auth real (Supabase) fica fora desta rodada — a persona é escolhida
 ## 4. Escopo
 
 ### Entra
+
 1. **Artefatos SDD**: este spec + plano de implementação.
 2. **Pirâmide de testes** (CLAUDE.md §8):
    - Unitário — já existe (analytics, storage, format, apis). Manter/expandir.
@@ -54,6 +55,7 @@ Premissa: auth real (Supabase) fica fora desta rodada — a persona é escolhida
    - Quick links do painel do professor apontando para rotas válidas do papel.
 
 ### Fica fora (YAGNI nesta rodada)
+
 - Auth real / Supabase (adapter e RLS ficam para a fase de backend).
 - CRUD de gestão (criar/editar turmas, alunos, professores).
 - Geração real de PDF; entidade de "atividades/notas" (segue mock).
@@ -61,11 +63,11 @@ Premissa: auth real (Supabase) fica fora desta rodada — a persona é escolhida
 
 ## 5. Estratégia de testes
 
-| Camada | Onde | O que cobre |
-|--------|------|-------------|
-| Unit | `src/**/*.test.ts` (Vitest) | lógica pura: analytics, storage, format, validação zod, unicidade/upsert |
+| Camada           | Onde                                      | O que cobre                                                                                        |
+| ---------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Unit             | `src/**/*.test.ts` (Vitest)               | lógica pura: analytics, storage, format, validação zod, unicidade/upsert                           |
 | Integração (MSW) | `src/test/msw/` + `*.integration.test.ts` | hooks TanStack + fetchers ponta a ponta sobre o store; handlers MSW prontos para o Supabase futuro |
-| E2E (Playwright) | `e2e/` + evidências PNG | fluxos reais no browser: personas, chamada, guardas |
+| E2E (Playwright) | `e2e/` + evidências PNG                   | fluxos reais no browser: personas, chamada, guardas                                                |
 
 Gate por implementação: `pnpm type-check`, `pnpm lint`, `pnpm test`,
 `pnpm build` e os E2E verdes antes de concluir.
@@ -78,6 +80,7 @@ chamada, presença — model zod + api + queries) → `shared` (ui, lib/storage,
 lib/query, config). Import só para camadas abaixo.
 
 ### Mudanças estruturais desta rodada
+
 - `src/app/(app)/relatorios/[alunoId]/page.tsx` (nova rota dinâmica) e
   `DetalheAluno` passa a receber `alunoId` como prop em vez de pegar o primeiro.
 - `src/test/msw/` (handlers + server) — infra de teste.

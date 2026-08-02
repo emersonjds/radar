@@ -34,7 +34,8 @@ export function useCreateEvaluation() {
 export function useUpdateEvaluation() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: ({ id, patch }: { id: string; patch: EvaluationUpdate }) => updateEvaluation(id, patch),
+    mutationFn: ({ id, patch }: { id: string; patch: EvaluationUpdate }) =>
+      updateEvaluation(id, patch),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: evaluationKeys.all }),
   });
 }

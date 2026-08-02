@@ -4,7 +4,9 @@ import { useState } from "react";
 import { shiftLabels, type Group } from "@/entities/group/model";
 import { useGroups, useDeleteGroup } from "@/entities/group/queries";
 import { useProfiles } from "@/entities/profile/queries";
-import Button from "@tailadmin/components/ui/button/Button";
+import { ChevronDown, Pencil, Trash2 } from "lucide-react";
+import { Button } from "@/shared/ui/button";
+import { IconButton } from "@/shared/ui/icon-button";
 import { GroupFormModal } from "./GroupFormModal";
 import { GroupAssignmentsPanel } from "./GroupAssignmentsPanel";
 import { EnrollmentPanel } from "./EnrollmentPanel";
@@ -22,6 +24,7 @@ export function GroupsAdmin() {
   }
 
   async function remover(group: Group) {
+    if (!window.confirm(`Excluir a aula ${group.name}?`)) return;
     setErro(null);
     try {
       await deleteGroup.mutateAsync(group.id);
@@ -33,45 +36,54 @@ export function GroupsAdmin() {
   return (
     <div className="flex flex-col gap-5">
       <header className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold text-gray-800">Aulas</h1>
+        <h1 className="text-xl font-semibold text-foreground">Aulas</h1>
         <Button size="sm" onClick={() => setEditing(null)}>
           Adicionar aula
         </Button>
       </header>
 
       {erro && (
-        <p role="alert" className="text-sm text-error-600">
+        <p role="alert" className="text-sm text-destructive">
           {erro}
         </p>
       )}
 
       {isLoading ? (
-        <div className="h-24 animate-pulse rounded-xl bg-gray-100" />
+        <div className="h-24 animate-pulse rounded-xl bg-muted" />
       ) : (
         <ul className="flex flex-col gap-2">
           {(groups ?? []).map((group) => (
-            <li key={group.id} className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+            <li key={group.id} className="rounded-xl border bg-card px-4 py-3 shadow-sm">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <div>
-                  <p className="font-medium text-gray-800">{group.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="font-medium text-foreground">{group.name}</p>
+                  <p className="text-xs text-muted-foreground">
                     {shiftLabels[group.shift]} · Regente: {regenteName(group.teacherId)}
                   </p>
                 </div>
-                <div className="flex gap-2">
-                  <Button
-                    size="sm"
-                    variant="outline"
+                <div className="flex items-center gap-1">
+                  <IconButton
+                    icon={ChevronDown}
+                    label={
+                      expandedId === group.id
+                        ? `Fechar detalhes de ${group.name}`
+                        : `Ver detalhes de ${group.name}`
+                    }
+                    aria-expanded={expandedId === group.id}
+                    className={expandedId === group.id ? "rotate-180" : undefined}
                     onClick={() => setExpandedId(expandedId === group.id ? null : group.id)}
-                  >
-                    {expandedId === group.id ? "Fechar" : "Ver detalhes"}
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => setEditing(group)}>
-                    Editar
-                  </Button>
-                  <Button size="sm" variant="outline" onClick={() => remover(group)}>
-                    Excluir
-                  </Button>
+                  />
+                  <IconButton
+                    icon={Pencil}
+                    label={`Editar ${group.name}`}
+                    onClick={() => setEditing(group)}
+                  />
+                  <IconButton
+                    icon={Trash2}
+                    label={`Excluir ${group.name}`}
+                    tone="destructive"
+                    onClick={() => remover(group)}
+                  />
                 </div>
               </div>
               {expandedId === group.id && (

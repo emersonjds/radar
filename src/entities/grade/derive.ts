@@ -4,12 +4,6 @@ import type { Grade } from "./model";
 
 const round1 = (value: number): number => Math.round(value * 10) / 10;
 
-/**
- * Aggregate per-evaluation grades into one weighted average per (student, subject).
- * Weight = the evaluation's `weight`. Pending (null) grades are ignored; a subject
- * with no scored evaluations for a student is omitted. Optional `studentIds` limits
- * the output (used by per-student fetches).
- */
 export function deriveSubjectGrades(
   evaluations: Evaluation[],
   evaluationGrades: EvaluationGrade[],
@@ -17,7 +11,10 @@ export function deriveSubjectGrades(
 ): Grade[] {
   const evaluationById = new Map(evaluations.map((evaluation) => [evaluation.id, evaluation]));
   const allow = studentIds ? new Set(studentIds) : null;
-  const acc = new Map<string, { studentId: string; subjectId: string; sum: number; weight: number }>();
+  const acc = new Map<
+    string,
+    { studentId: string; subjectId: string; sum: number; weight: number }
+  >();
 
   for (const grade of evaluationGrades) {
     if (grade.score === null) continue;

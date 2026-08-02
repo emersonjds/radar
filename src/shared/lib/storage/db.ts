@@ -6,9 +6,8 @@ import { seedDb } from "./seed";
  * won't change when the backend lands. Not for production PII.
  * Bump the key version whenever the seed shape changes — old blobs are stale.
  */
-const STORAGE_KEY = "radar.db.v9";
+const STORAGE_KEY = "radar.db.v8";
 const LEGACY_KEYS = [
-  "radar.db.v8",
   "radar.db.v1",
   "radar.db.v2",
   "radar.db.v3",
@@ -35,7 +34,6 @@ export type Collection =
 // and readCollection/mutateCollection already fall back to [] for missing keys.
 export type Db = Partial<Record<Collection, unknown[]>>;
 
-/** In-memory fallback for SSR and test environments without persistence. */
 let memory: Db | null = null;
 
 function hasLocalStorage(): boolean {
@@ -73,21 +71,20 @@ function persist(db: Db): void {
   }
 }
 
-/** Read a collection as detached copies, so callers can't mutate the store.
-    A blob persisted before a collection existed yields [] (light migration). */
 export async function readCollection<T>(name: Collection): Promise<T[]> {
   return ((load()[name] ?? []) as T[]).map((row) => ({ ...row }));
 }
 
-/** Apply a pure transform to a collection and persist the result. */
-export async function mutateCollection<T>(name: Collection, transform: (rows: T[]) => T[]): Promise<T[]> {
+export async function mutateCollection<T>(
+  name: Collection,
+  transform: (rows: T[]) => T[],
+): Promise<T[]> {
   const db = load();
   const next = transform((db[name] ?? []) as T[]);
   persist({ ...db, [name]: next });
   return next.map((row) => ({ ...row }));
 }
 
-/** Clear persisted data (tests, "reset demo"). */
 export async function resetDb(): Promise<void> {
   memory = null;
   if (hasLocalStorage()) window.localStorage.removeItem(STORAGE_KEY);

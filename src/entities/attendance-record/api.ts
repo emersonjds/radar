@@ -1,9 +1,5 @@
 import { mutateCollection, readCollection } from "@/shared/lib/storage/db";
-import {
-  attendanceRecordSchema,
-  type AttendanceRecord,
-  type AttendanceStatus,
-} from "./model";
+import { attendanceRecordSchema, type AttendanceRecord, type AttendanceStatus } from "./model";
 
 export async function fetchAttendanceRecords(): Promise<AttendanceRecord[]> {
   const rows = await readCollection("attendanceRecords");
@@ -39,8 +35,7 @@ export async function setAttendanceRecord(input: {
   });
   await mutateCollection<AttendanceRecord>("attendanceRecords", (rows) => {
     const index = rows.findIndex(
-      (row) =>
-        row.sessionId === record.sessionId && row.studentId === record.studentId,
+      (row) => row.sessionId === record.sessionId && row.studentId === record.studentId,
     );
     if (index === -1) return [...rows, record];
     const next = [...rows];

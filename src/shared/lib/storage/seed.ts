@@ -10,6 +10,7 @@ const PROFESSOR_ID = "perfil-ricardo";
 const TEACHER_TWO_ID = "perfil-bruno";
 const ADMIN_ID = "perfil-ana";
 const COORDINATOR_ID = "perfil-carla";
+const PO_ID = "perfil-vanessa";
 
 const TURMAS = [
   { id: "turma-mat-b", name: "Reforço de Matemática — Segunda", shift: "afternoon" },
@@ -17,7 +18,6 @@ const TURMAS = [
   { id: "turma-cie-c", name: "Reforço de Ciências — Quarta", shift: "afternoon" },
 ];
 
-// Weekday ISO dates leading up to 2026-07-01, oldest first.
 const DATAS = ["2026-06-16", "2026-06-18", "2026-06-23", "2026-06-25", "2026-06-30", "2026-07-01"];
 
 const NOMES = [
@@ -41,7 +41,6 @@ const NOMES = [
   "Nina Barros",
 ];
 
-// 8 matérias, 2 por área — base para notas, matérias de destaque e aptidão.
 const MATERIAS = [
   { id: "materia-matematica", name: "Matemática", area: "exatas" },
   { id: "materia-fisica", name: "Física", area: "exatas" },
@@ -55,8 +54,6 @@ const MATERIAS = [
 
 const AREAS_SEED = ["exatas", "biologicas", "linguagens", "humanas"] as const;
 
-// Nota determinística: cada aluno tem uma área preferida (ciclando pelo índice),
-// onde tira notas altas; nas demais, mais baixas — gera aptidões variadas.
 function scoreFor(alunoIdx: number, materiaIdx: number, area: string): number {
   const areaPreferida = AREAS_SEED[alunoIdx % AREAS_SEED.length];
   const base = area === areaPreferida ? 8.6 : 5.8;
@@ -67,7 +64,6 @@ function scoreFor(alunoIdx: number, materiaIdx: number, area: string): number {
 
 type SeedStatus = "present" | "absent" | "late" | "excused";
 
-// Students carrying more absences — drives the "aluno em risco" panels.
 const EM_RISCO = new Set([0, 1, 2]);
 
 function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
@@ -83,11 +79,10 @@ function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
   return "present";
 }
 
-/** Every demo profile shares the password 123456 — SHA-256 hex (shared/lib/auth/password).
-    Temporary until Supabase Auth; the login screen picks a profile and fills it in. */
-const DEMO_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
-
 export function seedDb(): Db {
+  // Demo credentials (username / password):
+  // ricardo / prof123, bruno / prof123, ana / admin123, carla / coord123, vanessa / 123456
+  // passwordHash is the SHA-256 hex of the password (shared/lib/auth/password) — temporary until Supabase Auth.
   const perfis = [
     {
       id: PROFESSOR_ID,
@@ -96,7 +91,7 @@ export function seedDb(): Db {
       role: "teacher",
       jobTitle: "Professor Titular",
       username: "ricardo",
-      passwordHash: DEMO_PASSWORD_HASH,
+      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
       active: true,
     },
     {
@@ -106,7 +101,7 @@ export function seedDb(): Db {
       role: "admin",
       jobTitle: "Administração",
       username: "ana",
-      passwordHash: DEMO_PASSWORD_HASH,
+      passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
       active: true,
     },
     {
@@ -116,7 +111,7 @@ export function seedDb(): Db {
       role: "coordinator",
       jobTitle: "Coordenação Pedagógica",
       username: "carla",
-      passwordHash: DEMO_PASSWORD_HASH,
+      passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65",
       active: true,
     },
     {
@@ -126,7 +121,17 @@ export function seedDb(): Db {
       role: "teacher",
       jobTitle: "Professor",
       username: "bruno",
-      passwordHash: DEMO_PASSWORD_HASH,
+      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
+      active: true,
+    },
+    {
+      id: PO_ID,
+      name: "Vanessa Moreira",
+      email: "vanessa@radar.escola",
+      role: "admin",
+      jobTitle: "Product Owner",
+      username: "vanessa",
+      passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
       active: true,
     },
   ];
@@ -140,13 +145,11 @@ export function seedDb(): Db {
 
   const SEED_DATE = "2026-07-05";
 
-  // Alocacao original (aluno -> aula). Antes vivia em student.groupId; agora vira enrollment.
   const alunoGroupById: Record<string, string> = {};
 
   const alunos = NOMES.map((name, index) => {
     const id = `aluno-${index + 1}`;
     alunoGroupById[id] = TURMAS[index % TURMAS.length].id;
-    // Idade determinística entre 11 e 17 anos, com mês/dia variando pelo índice.
     const age = 11 + (index % 7);
     const birthYear = 2026 - age;
     const birthMonth = String(((index * 3) % 12) + 1).padStart(2, "0");
@@ -195,7 +198,6 @@ export function seedDb(): Db {
     });
   }
 
-  // Calendário escolar de demonstração — recesso e recuperação de julho/2026.
   const eventosEscolares = [
     {
       id: "evento-ferias-julho",
@@ -216,13 +218,48 @@ export function seedDb(): Db {
   const materias = MATERIAS.map((materia) => ({ ...materia }));
 
   const assignments = [
-    { id: "assign-matb-mat", groupId: "turma-mat-b", subjectId: "materia-matematica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-fis", groupId: "turma-mat-b", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-matb-his", groupId: "turma-mat-b", subjectId: "materia-historia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-fisa-fis", groupId: "turma-fis-a", subjectId: "materia-fisica", teacherId: PROFESSOR_ID },
-    { id: "assign-fisa-ing", groupId: "turma-fis-a", subjectId: "materia-ingles", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-bio", groupId: "turma-cie-c", subjectId: "materia-biologia", teacherId: TEACHER_TWO_ID },
-    { id: "assign-ciec-por", groupId: "turma-cie-c", subjectId: "materia-portugues", teacherId: PROFESSOR_ID },
+    {
+      id: "assign-matb-mat",
+      groupId: "turma-mat-b",
+      subjectId: "materia-matematica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-matb-fis",
+      groupId: "turma-mat-b",
+      subjectId: "materia-fisica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-matb-his",
+      groupId: "turma-mat-b",
+      subjectId: "materia-historia",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-fisa-fis",
+      groupId: "turma-fis-a",
+      subjectId: "materia-fisica",
+      teacherId: PROFESSOR_ID,
+    },
+    {
+      id: "assign-fisa-ing",
+      groupId: "turma-fis-a",
+      subjectId: "materia-ingles",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-ciec-bio",
+      groupId: "turma-cie-c",
+      subjectId: "materia-biologia",
+      teacherId: TEACHER_TWO_ID,
+    },
+    {
+      id: "assign-ciec-por",
+      groupId: "turma-cie-c",
+      subjectId: "materia-portugues",
+      teacherId: PROFESSOR_ID,
+    },
   ];
 
   const evaluations: Db["evaluations"] = [];
@@ -258,8 +295,18 @@ export function seedDb(): Db {
       const examScore = scoreFor(alunoIdx, materiaIdx, area);
       const homeworkScore = Math.min(10, Math.round((examScore + 0.5) * 10) / 10);
       evaluationGrades.push(
-        { id: `eg-${examId}-${aluno.id}`, evaluationId: examId, studentId: aluno.id, score: examScore },
-        { id: `eg-${homeworkId}-${aluno.id}`, evaluationId: homeworkId, studentId: aluno.id, score: homeworkScore },
+        {
+          id: `eg-${examId}-${aluno.id}`,
+          evaluationId: examId,
+          studentId: aluno.id,
+          score: examScore,
+        },
+        {
+          id: `eg-${homeworkId}-${aluno.id}`,
+          evaluationId: homeworkId,
+          studentId: aluno.id,
+          score: homeworkScore,
+        },
       );
     }
   }

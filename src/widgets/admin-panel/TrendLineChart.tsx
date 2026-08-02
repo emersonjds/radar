@@ -28,7 +28,9 @@ export function TrendLineChart({ pontos }: TrendLineChartProps) {
     tooltip: { y: { formatter: (valor) => `${Math.round(valor)}%` } },
   };
 
-  const series = [{ name: "Frequência", data: pontos.map((ponto) => Math.round(ponto.attendance)) }];
+  const series = [
+    { name: "Frequência", data: pontos.map((ponto) => Math.round(ponto.attendance)) },
+  ];
 
   return <ReactApexChart options={options} series={series} type="area" height={230} />;
 }

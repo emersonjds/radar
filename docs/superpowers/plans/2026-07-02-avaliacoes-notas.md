@@ -23,11 +23,13 @@
 ### Task 1: Storage — coleções `avaliacoes`/`notas`, migração leve e seed
 
 **Files:**
+
 - Modify: `src/shared/lib/storage/db.ts`
 - Modify: `src/shared/lib/storage/seed.ts`
 - Test: `src/shared/lib/storage/db.test.ts` (adicionar casos)
 
 **Interfaces:**
+
 - Produces: `Collection` passa a incluir `"avaliacoes" | "notas"`; `readCollection("avaliacoes")` retorna `[]` para blob antigo sem a chave; seed contém 2 avaliações por turma (`avaliacao-<turmaId>-p1-<data>` / `...-p2-<data>`, pesos 1 e 2) e notas para a maioria dos alunos (determinístico; ~1 a cada 7 pendente = sem registro).
 
 - [ ] **Step 1: Teste falhando (migração leve)** — em `db.test.ts`:
@@ -52,6 +54,7 @@ E o caso real: montar um `Db` parcial sem `avaliacoes` via localStorage não est
 ### Task 2: Entities `avaliacao` e `nota` (model + api + queries)
 
 **Files:**
+
 - Create: `src/entities/avaliacao/model.ts`, `api.ts`, `queries.ts`, `api.test.ts`
 - Create: `src/entities/nota/model.ts`, `api.ts`, `queries.ts`, `api.test.ts`
 
@@ -60,43 +63,65 @@ E o caso real: montar um `Db` parcial sem `avaliacoes` via localStorage não est
 ```ts
 // avaliacao/model.ts
 export const avaliacaoSchema = z.object({
-  id: z.string(), turmaId: z.string(), nome: z.string().min(1),
-  data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), peso: z.number().int().min(1).max(3),
+  id: z.string(),
+  turmaId: z.string(),
+  nome: z.string().min(1),
+  data: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  peso: z.number().int().min(1).max(3),
   professorId: z.string(),
 });
 export type Avaliacao = z.infer<typeof avaliacaoSchema>;
 
 // avaliacao/api.ts
-export async function fetchAvaliacoesPorTurma(turmaId: string): Promise<Avaliacao[]> // ordenada por data desc
-export interface NovaAvaliacao { turmaId: string; nome: string; data: string; peso: number; professorId: string }
-export async function criarAvaliacao(input: NovaAvaliacao): Promise<Avaliacao>
+export async function fetchAvaliacoesPorTurma(turmaId: string): Promise<Avaliacao[]>; // ordenada por data desc
+export interface NovaAvaliacao {
+  turmaId: string;
+  nome: string;
+  data: string;
+  peso: number;
+  professorId: string;
+}
+export async function criarAvaliacao(input: NovaAvaliacao): Promise<Avaliacao>;
 // id determinístico: "avaliacao-" + turmaId + "-" + slug(nome) + "-" + data,
 // slug = nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-");
 // criar 2x a mesma (turmaId, slug(nome), data) retorna a existente sem duplicar (padrão criarChamada)
 
 // avaliacao/queries.ts
-export const avaliacaoKeys = { all: ["avaliacoes"] as const, porTurma: (id: string) => ["avaliacoes","turma",id] as const };
-export function useAvaliacoesPorTurma(turmaId: string) // enabled: Boolean(turmaId)
-export function useCriarAvaliacao() // invalida all + porTurma(result.turmaId)
+export const avaliacaoKeys = {
+  all: ["avaliacoes"] as const,
+  porTurma: (id: string) => ["avaliacoes", "turma", id] as const,
+};
+export function useAvaliacoesPorTurma(turmaId: string); // enabled: Boolean(turmaId)
+export function useCriarAvaliacao(); // invalida all + porTurma(result.turmaId)
 
 // nota/model.ts
 export const notaSchema = z.object({
-  id: z.string(), avaliacaoId: z.string(), alunoId: z.string(),
+  id: z.string(),
+  avaliacaoId: z.string(),
+  alunoId: z.string(),
   valor: z.number().min(0).max(10).multipleOf(0.1).nullable(),
 });
 export type Nota = z.infer<typeof notaSchema>;
 
 // nota/api.ts
-export async function fetchNotasPorAvaliacao(avaliacaoId: string): Promise<Nota[]>
-export async function fetchNotasPorAluno(alunoId: string): Promise<Nota[]>
-export async function definirNota(input: { avaliacaoId: string; alunoId: string; valor: number | null }): Promise<Nota>
+export async function fetchNotasPorAvaliacao(avaliacaoId: string): Promise<Nota[]>;
+export async function fetchNotasPorAluno(alunoId: string): Promise<Nota[]>;
+export async function definirNota(input: {
+  avaliacaoId: string;
+  alunoId: string;
+  valor: number | null;
+}): Promise<Nota>;
 // id "nota-" + avaliacaoId + "-" + alunoId; upsert por (avaliacaoId, alunoId) — padrão definirPresenca
 
 // nota/queries.ts
-export const notaKeys = { all: ["notas"] as const, porAvaliacao: (id: string) => ["notas","avaliacao",id] as const, porAluno: (id: string) => ["notas","aluno",id] as const };
-export function useNotasPorAvaliacao(avaliacaoId: string)
-export function useNotasPorAluno(alunoId: string)
-export function useDefinirNota() // invalida all + porAvaliacao + porAluno
+export const notaKeys = {
+  all: ["notas"] as const,
+  porAvaliacao: (id: string) => ["notas", "avaliacao", id] as const,
+  porAluno: (id: string) => ["notas", "aluno", id] as const,
+};
+export function useNotasPorAvaliacao(avaliacaoId: string);
+export function useNotasPorAluno(alunoId: string);
+export function useDefinirNota(); // invalida all + porAvaliacao + porAluno
 ```
 
 - Consumes: `readCollection`/`mutateCollection` de `@/shared/lib/storage/db`. Espelhar `src/entities/chamada/*` e `src/entities/presenca/*` (mesmo estilo).
@@ -110,10 +135,12 @@ export function useDefinirNota() // invalida all + porAvaliacao + porAluno
 ### Task 3: Analytics — `mediaPonderada`
 
 **Files:**
+
 - Modify: `src/features/analytics/model.ts`
 - Test: `src/features/analytics/model.test.ts` (adicionar casos)
 
 **Interfaces:**
+
 - Produces: `export function mediaPonderada(notas: Nota[], avaliacoes: Avaliacao[]): number | null` — soma(valor×peso)/soma(pesos) só das avaliações cuja nota existe e `valor !== null`; arredonda 1 casa; `null` se nenhuma nota lançada. Importa tipos de `@/entities/nota/model` e `@/entities/avaliacao/model` (features → entities, permitido).
 
 - [ ] **Step 1: Teste falhando**
@@ -139,6 +166,7 @@ describe("mediaPonderada", () => {
 ### Task 4: Ícone `nota` + item de menu do professor
 
 **Files:**
+
 - Modify: `src/shared/ui/Icon/Icon.tsx` (adicionar `"nota"` ao union `IconName` + SVG inline 1.5px stroke `currentColor` — ex.: prancheta com marca de conferido, mesma linguagem dos demais)
 - Modify: `src/shared/config/navigation.ts` (em `NavIcon` adicionar `"nota"`; em `navProfessor` inserir `{ href: "/avaliacoes", label: "Avaliações", icon: "nota" }` depois de "Chamada")
 
@@ -147,15 +175,18 @@ describe("mediaPonderada", () => {
 ### Task 5: Tela `/avaliacoes` (professor) — criar avaliação e lançar notas
 
 **Files:**
+
 - Create: `src/app/(app)/avaliacoes/page.tsx`
 - Create: `src/features/lancar-notas/AvaliacoesView.tsx` (+ `.module.css`)
 - Create: `src/features/lancar-notas/NotaRow.tsx` (se ajudar legibilidade)
 
 **Interfaces:**
+
 - Consumes: `useTurmas`, `useAlunosPorTurma`, `useAvaliacoesPorTurma`, `useCriarAvaliacao`, `useNotasPorAvaliacao`, `useDefinirNota`, `useSessao` (professorId = `perfil.id`), `useExigirPapel(["professor"])`, `formatarData`, design system (Card, Button, Badge, Avatar, Icon, cx, Table opcional).
 - Produces: rota `/avaliacoes` funcional.
 
 Comportamento (espelhar `features/fazer-chamada/ChamadaForm.tsx` — ler antes):
+
 1. Page: `"use client"`, guarda professor, `<Suspense>` não é preciso (sem useSearchParams), renderiza `<AvaliacoesView/>`.
 2. Seletor de turma (`<select>`, padrão primeira turma).
 3. Lista de avaliações da turma (nome, data via `formatarData`, `Badge` "Peso N", "X/Y notas"), clicável para selecionar; a selecionada destaca.
@@ -171,9 +202,11 @@ Comportamento (espelhar `features/fazer-chamada/ChamadaForm.tsx` — ler antes):
 ### Task 6: Relatório do aluno real (coordenação)
 
 **Files:**
+
 - Modify: `src/widgets/detalhe-aluno/DetalheAluno.tsx` (+ `.module.css` se preciso)
 
 **Interfaces:**
+
 - Consumes: `useNotasPorAluno(alunoId)`, `useAvaliacoesPorTurma(aluno.turmaId)`, `mediaPonderada`.
 
 - [ ] **Step 1:** Trocar a tabela mock "Desempenho por atividade" por dados reais: uma linha por avaliação da turma do aluno — colunas Avaliação · Data (`formatarData`) · Peso · Nota (1 casa; "—" se pendente) · Status (`Badge tone="success"` "Lançada" / `tone="warning"` "Pendente"). Remover o array mock e o `ponytail:` correspondente. Ordenar por data desc. Vazio: "Sem avaliações nesta turma".
@@ -184,6 +217,7 @@ Comportamento (espelhar `features/fazer-chamada/ChamadaForm.tsx` — ler antes):
 ### Task 7: Integração + E2E com evidências
 
 **Files:**
+
 - Create: `src/features/lancar-notas/lancar-notas.integration.test.tsx`
 - Create: `e2e/avaliacoes/avaliacoes.spec.ts` (+ `e2e/avaliacoes/evidencias/*.png`)
 

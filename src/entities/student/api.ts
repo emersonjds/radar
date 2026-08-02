@@ -8,7 +8,10 @@ export async function fetchStudents(): Promise<Student[]> {
 }
 
 export async function fetchStudentsByGroup(groupId: string): Promise<Student[]> {
-  const [students, enrollments] = await Promise.all([fetchStudents(), fetchEnrollmentsByGroup(groupId)]);
+  const [students, enrollments] = await Promise.all([
+    fetchStudents(),
+    fetchEnrollmentsByGroup(groupId),
+  ]);
   const studentIds = new Set(
     enrollments.filter((enrollment) => enrollment.active).map((enrollment) => enrollment.studentId),
   );
@@ -57,8 +60,12 @@ export async function updateStudent(id: string, patch: StudentUpdate): Promise<v
             ...student,
             ...(patch.name !== undefined ? { name: patch.name.trim() } : {}),
             ...(patch.birthDate !== undefined ? { birthDate: patch.birthDate } : {}),
-            ...(patch.guardianName !== undefined ? { guardianName: patch.guardianName.trim() } : {}),
-            ...(patch.guardianPhone !== undefined ? { guardianPhone: patch.guardianPhone.trim() } : {}),
+            ...(patch.guardianName !== undefined
+              ? { guardianName: patch.guardianName.trim() }
+              : {}),
+            ...(patch.guardianPhone !== undefined
+              ? { guardianPhone: patch.guardianPhone.trim() }
+              : {}),
             ...(patch.active !== undefined ? { active: patch.active } : {}),
           }
         : student,
@@ -67,5 +74,7 @@ export async function updateStudent(id: string, patch: StudentUpdate): Promise<v
 }
 
 export async function deleteStudent(id: string): Promise<void> {
-  await mutateCollection<Student>("students", (rows) => rows.filter((student) => student.id !== id));
+  await mutateCollection<Student>("students", (rows) =>
+    rows.filter((student) => student.id !== id),
+  );
 }

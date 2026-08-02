@@ -27,12 +27,14 @@
 ### Task A1: Rota `/relatorios/[alunoId]` e `DetalheAluno` por id
 
 **Files:**
+
 - Create: `src/app/(app)/relatorios/[alunoId]/page.tsx`
 - Modify: `src/app/(app)/relatorios/page.tsx` (redireciona ao primeiro aluno)
 - Modify: `src/widgets/detalhe-aluno/DetalheAluno.tsx` (recebe `alunoId: string`)
 - Modify: `src/widgets/lista-alunos/ListaAlunos.tsx` (link admin → `/relatorios/${aluno.id}`)
 
 **Interfaces:**
+
 - Produces: `DetalheAlunoProps { alunoId: string }` — `DetalheAluno` deixa de pegar o primeiro aluno e passa a carregar `useAluno(alunoId)`.
 - Consumes: `useAluno(id)`, `usePresencasPorAluno(id)` (já existem em `@/entities/aluno/queries` e `@/entities/presenca/queries`).
 
@@ -45,10 +47,12 @@
 ### Task A2: Busca do topbar navega para `/alunos?q=`
 
 **Files:**
+
 - Modify: `src/widgets/app-shell/Topbar.tsx` (SearchInput controlado + submit)
 - Modify: `src/widgets/lista-alunos/ListaAlunos.tsx` (lê `useSearchParams().get('q')` como termo inicial)
 
 **Interfaces:**
+
 - Consumes: `useRouter`, `useSearchParams` de `next/navigation`; `SearchInput { value, onChange }`.
 
 - [ ] **Step 1:** No `Topbar`, tornar a busca controlada (`useState`), e ao submeter (Enter) `router.push('/alunos?q=' + encodeURIComponent(termo))`. Envolver em `<form>` com `onSubmit` para acessibilidade (Enter).
@@ -58,6 +62,7 @@
 ### Task A3: "Ver todos em risco" filtra a lista de alunos
 
 **Files:**
+
 - Modify: `src/widgets/painel-admin/PainelAdmin.tsx` (link do card de alertas → `/alunos?filtro=risco`)
 - Modify: `src/widgets/lista-alunos/ListaAlunos.tsx` (honra `filtro=risco`)
 
@@ -68,6 +73,7 @@
 ### Task A4: Navegação de mês no calendário de presença
 
 **Files:**
+
 - Modify: `src/widgets/detalhe-aluno/CalendarioPresenca.tsx`
 
 - [ ] **Step 1:** Adicionar estado `mesVisivel` (YYYY-MM) inicial = mês com mais registros (lógica atual). Os IconButtons chevron-left/right mudam o mês (±1, atravessando ano). Remover o `ponytail:` de navegação visual-only.
@@ -77,6 +83,7 @@
 ### Task A5: Quick links do painel do professor
 
 **Files:**
+
 - Modify: `src/widgets/dashboard-professor/DashboardProfessor.tsx`
 
 - [ ] **Step 1:** Garantir que os tiles de "Acesso rápido" e ações apontem só para rotas do professor (`/chamada`, `/alunos`) via `next/link`; remover destinos inválidos/admin. "Iniciar chamada" já vai para `/chamada`.
@@ -89,6 +96,7 @@
 ### Task B1: Harness MSW + utilitário de render com QueryClient
 
 **Files:**
+
 - Add dep: `msw` (já instalada)
 - Create: `src/test/msw/handlers.ts` (handlers descrevendo a forma REST futura do Supabase; documentado como dormente até o adapter)
 - Create: `src/test/msw/server.ts` (`setupServer`)
@@ -96,6 +104,7 @@
 - Modify: `vitest.setup.ts` (opcional: `server.listen()/resetHandlers()/close()` — sem `onUnhandledRequest:error`, pois hoje não há HTTP)
 
 **Interfaces:**
+
 - Produces: `renderHookComQuery<T>(hook: () => T)` retornando `{ result, ... }` do Testing Library com um `QueryClient` isolado (`retry: false`).
 
 - [ ] **Step 1:** `src/test/react-query.tsx`: exporta `renderHookComQuery` que cria `new QueryClient({ defaultOptions: { queries: { retry: false } } })` e um wrapper `QueryClientProvider`. Usa `renderHook` de `@testing-library/react`.
@@ -105,10 +114,12 @@
 ### Task B2: Testes de integração dos hooks sobre o store
 
 **Files:**
+
 - Create: `src/entities/aluno/queries.integration.test.tsx`
 - Create: `src/features/fazer-chamada/salvar-chamada.integration.test.tsx`
 
 **Interfaces:**
+
 - Consumes: `renderHookComQuery`, `useAlunosPorTurma`, `useCriarChamada`, `useDefinirPresenca`, `usePresencasPorChamada`, `resetDb`.
 
 - [ ] **Step 1 (falha):** `queries.integration.test.tsx` — `beforeEach(resetDb)`; testa `useAlunosPorTurma('turma-mat-b')` via `renderHookComQuery`, `await waitFor(() => expect(result.current.isSuccess).toBe(true))`, e verifica que todos os alunos retornados têm `turmaId === 'turma-mat-b'`. Rodar e ver passar (o hook já existe) — este é teste de caracterização.
@@ -122,6 +133,7 @@
 ### Task C1: Infra Playwright
 
 **Files:**
+
 - Add dep (dev): `@playwright/test`
 - Create: `playwright.config.ts` (webServer = `pnpm dev`, baseURL, screenshot dir)
 - Modify: `package.json` (script `test:e2e`)
@@ -134,10 +146,12 @@
 ### Task C2: Specs E2E + evidências PNG
 
 **Files:**
+
 - Create: `e2e/personas/personas.spec.ts` (+ evidências em `e2e/personas/evidencias/*.png`)
 - Create: `e2e/chamada/chamada.spec.ts` (+ `e2e/chamada/evidencias/*.png`)
 
 **Cenários (cada um com `page.screenshot({ path: 'e2e/<f>/evidencias/<nome>.png' })`):**
+
 - [ ] **Step 1:** `personas.spec.ts`:
   - Login como Professor → home mostra "Bem-vindo" e nav tem "Chamada", não tem "Relatórios"; screenshot `professor-home.png`.
   - Trocar persona para Coordenação no topbar → home vira painel admin ("Total de alunos"), nav tem "Relatórios"; screenshot `admin-home.png`.
@@ -153,6 +167,7 @@
 ## Fase D — Fecho
 
 ### Task D1: Gate final + merge
+
 - [ ] `tsc`, `eslint`, `vitest run`, `pnpm build`, `pnpm test:e2e` verdes.
 - [ ] Atualizar README (seção Testes: unit/integração/E2E + como rodar).
 - [ ] Merge `feat/sdd-tests-hardening` → master (ff), sem push.

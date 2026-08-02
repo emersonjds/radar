@@ -10,15 +10,11 @@ export interface DayEvent {
 }
 
 export interface AttendanceCalendarProps {
-  /** Month to render, "YYYY-MM". */
   mes: string;
-  /** Session date (ISO) → status, for this student. */
   statusPorData: Map<string, AttendanceStatus>;
-  /** Date (ISO) → important events (férias, recuperação). */
   eventosPorData?: Map<string, DayEvent[]>;
 }
 
-// Domingo-primeiro, iniciais como no Google Calendar pt-BR.
 const DIAS_SEMANA = ["D", "S", "T", "Q", "Q", "S", "S"];
 
 const LABEL_STATUS: Record<AttendanceStatus, string> = {
@@ -38,16 +34,15 @@ const STATUS_BG: Record<AttendanceStatus, string> = {
   present: "bg-success-500 text-white",
   late: "bg-warning-500 text-white",
   absent: "bg-error-500 text-white",
-  excused: "bg-brand-500 text-white",
+  excused: "bg-primary text-primary-foreground",
 };
 
 const EVENTO_DOT: Record<DayEvent["type"], string> = {
-  vacation: "bg-brand-500",
+  vacation: "bg-primary",
   makeup: "bg-warning-500",
-  event: "bg-gray-400",
+  event: "bg-muted-foreground",
 };
 
-/** Shifts a "YYYY-MM" string by `delta` months, carrying over the year. */
 function deslocarMes(mes: string, delta: number): string {
   const [ano, mesNumero] = mes.split("-").map(Number);
   const data = new Date(Date.UTC(ano, mesNumero - 1 + delta, 1));
@@ -55,9 +50,13 @@ function deslocarMes(mes: string, delta: number): string {
 }
 
 const navBtn =
-  "flex h-8 w-8 items-center justify-center rounded-full text-gray-500 hover:bg-gray-100";
+  "flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted";
 
-export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: AttendanceCalendarProps) {
+export function AttendanceCalendar({
+  mes,
+  statusPorData,
+  eventosPorData,
+}: AttendanceCalendarProps) {
   const [mesVisivel, setMesVisivel] = useState(mes);
   const [ano, mesNumero] = mesVisivel.split("-").map(Number);
   const mesIndex = mesNumero - 1;
@@ -75,7 +74,7 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-base font-semibold text-gray-800">Resumo de presença</h3>
+        <h3 className="text-base font-semibold text-foreground">Resumo de presença</h3>
         <div className="flex items-center gap-1">
           <button
             type="button"
@@ -85,7 +84,7 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
           >
             <ChevronLeftIcon />
           </button>
-          <span className="min-w-32 text-center text-sm font-medium text-gray-700">
+          <span className="min-w-32 text-center text-sm font-medium text-foreground">
             {tituloMes.charAt(0).toUpperCase() + tituloMes.slice(1)}
           </span>
           <button
@@ -103,7 +102,11 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
 
       <div className="grid grid-cols-7 gap-1 text-center">
         {DIAS_SEMANA.map((inicialDia, indice) => (
-          <span key={`${inicialDia}-${indice}`} className="text-xs font-medium text-gray-400" aria-hidden="true">
+          <span
+            key={`${inicialDia}-${indice}`}
+            className="text-xs font-medium text-muted-foreground"
+            aria-hidden="true"
+          >
             {inicialDia}
           </span>
         ))}
@@ -129,7 +132,7 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
             >
               <span
                 className={`flex h-8 w-8 items-center justify-center rounded-full text-sm ${
-                  status ? STATUS_BG[status] : "text-gray-700"
+                  status ? STATUS_BG[status] : "text-foreground"
                 }`}
               >
                 {dia}
@@ -149,7 +152,7 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
         })}
       </div>
 
-      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500">
+      <ul className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
         <li className="flex items-center gap-1.5">
           <span className="h-3 w-3 rounded-full bg-success-500" aria-hidden="true" />
           Presente
@@ -163,7 +166,7 @@ export function AttendanceCalendar({ mes, statusPorData, eventosPorData }: Atten
           Ausente
         </li>
         <li className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-brand-500" aria-hidden="true" />
+          <span className="h-1.5 w-1.5 rounded-full bg-primary" aria-hidden="true" />
           Férias
         </li>
         <li className="flex items-center gap-1.5">

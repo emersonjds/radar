@@ -123,5 +123,7 @@ export async function setProfileActive(id: string, active: boolean): Promise<voi
 }
 
 export async function deleteProfile(id: string): Promise<void> {
-  await mutateCollection<Profile>("profiles", (rows) => rows.filter((profile) => profile.id !== id));
+  await mutateCollection<Profile>("profiles", (rows) =>
+    rows.filter((profile) => profile.id !== id),
+  );
 }

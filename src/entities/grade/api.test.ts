@@ -15,13 +15,11 @@ describe("grade api (derived)", () => {
       expect(grade.score).toBeGreaterThanOrEqual(0);
       expect(grade.score).toBeLessThanOrEqual(10);
     }
-    // Seed: 3 turmas × 6 alunos, cada turma com 3, 2 e 2 lecionamentos.
     expect(grades).toHaveLength(6 * 3 + 6 * 2 + 6 * 2);
   });
 
   it("filters derived grades by student", async () => {
     const grades = await fetchGradesByStudent("aluno-1");
-    // Aluno-1 pertence à turma-mat-b, que tem 3 lecionamentos no seed.
     expect(grades).toHaveLength(3);
     for (const grade of grades) {
       expect(grade.studentId).toBe("aluno-1");
