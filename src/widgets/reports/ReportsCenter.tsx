@@ -97,7 +97,7 @@ export function ReportsCenter() {
   }, [alunos, materias, turmas, presencas, notas, enrollments, turmaId]);
 
   const escopoLabel =
-    turmaId === TODAS ? "Todas as turmas" : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Turma");
+    turmaId === TODAS ? "Todas as aulas" : ((turmas ?? []).find((turma) => turma.id === turmaId)?.name ?? "Aula");
 
   function exportar() {
     const headers = ["Aluno", "Turma", "Nota média", "Frequência", "Faltas", "Aptidão", "Situação"];

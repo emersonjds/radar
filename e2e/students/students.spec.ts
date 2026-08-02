@@ -4,8 +4,7 @@ test.use({ viewport: { width: 1280, height: 800 } });
 
 async function loginAdmin(page: import("@playwright/test").Page) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill("ana");
-  await page.getByLabel("Senha").fill("admin123");
+  await page.getByLabel("Perfil").selectOption("ana");
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
@@ -18,6 +17,9 @@ test("admin adiciona, edita e exclui um aluno", async ({ page }) => {
   await page.getByRole("button", { name: "Adicionar aluno" }).click();
   await expect(page.getByRole("heading", { name: "Adicionar aluno" })).toBeVisible();
   await page.locator("#aluno-nome").fill("Aluno Teste E2E");
+  await page.locator("#aluno-nascimento").fill("2012-04-10");
+  await page.locator("#aluno-responsavel").fill("Responsável Teste E2E");
+  await page.locator("#aluno-telefone").fill("(11) 91234-5678");
   await page.getByRole("button", { name: "Salvar" }).click();
   await expect(page.getByText("Aluno Teste E2E")).toBeVisible();
   await page.screenshot({ path: "e2e/students/evidencias/aluno-criado.png", fullPage: true });

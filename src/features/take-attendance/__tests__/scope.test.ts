@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type { Group } from "@/entities/group/model";
-import { groupsForRegente } from "./scope";
+import { groupsForRegente } from "../scope";
 
 const groups: Group[] = [
   { id: "g1", name: "A", shift: "manhã", teacherId: "t1" },

@@ -210,7 +210,7 @@ export function StudentList() {
                         <TableCell className={td}>
                           <div className="flex items-center gap-1">
                             <Link
-                              href={"/reports/" + aluno.id}
+                              href={"/reports?studentId=" + aluno.id}
                               className={acaoBtn}
                               aria-label={`Ver relatório de ${aluno.name}`}
                               title="Ver relatório"
