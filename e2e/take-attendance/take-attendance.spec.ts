@@ -14,8 +14,7 @@ async function semOverflowHorizontal(page: Page) {
 
 async function loginProfessor(page: Page) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill("ricardo");
-  await page.getByLabel("Senha").fill("prof123");
+  await page.getByLabel("Perfil").selectOption("ricardo");
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 

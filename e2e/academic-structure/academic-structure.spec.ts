@@ -1,9 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function login(page: Page, user: string, password: string) {
+async function login(page: Page, user: string) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill(user);
-  await page.getByLabel("Senha").fill(password);
+  await page.getByLabel("Perfil").selectOption(user);
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
@@ -13,7 +12,7 @@ function sidebar(page: Page) {
 
 test.describe("academic structure admin", () => {
   test("admin creates a subject", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
     await sidebar(page).getByRole("link", { name: "Matérias", exact: true }).click();
     await page.getByRole("button", { name: "Adicionar matéria" }).click();
     await page.getByLabel("Nome").fill("Filosofia");
@@ -23,7 +22,7 @@ test.describe("academic structure admin", () => {
   });
 
   test("admin creates a turma and assigns a matéria to a teacher", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
     await sidebar(page).getByRole("link", { name: "Turmas", exact: true }).click();
 
     await page.getByRole("button", { name: "Adicionar turma" }).click();
@@ -44,7 +43,7 @@ test.describe("academic structure admin", () => {
 
 test.describe("roll-call scoping", () => {
   test("ricardo sees only his regência turmas in the roll-call select", async ({ page }) => {
-    await login(page, "ricardo", "prof123");
+    await login(page, "ricardo");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
     const select = page.getByLabel("Selecionar turma");
@@ -58,7 +57,7 @@ test.describe("roll-call scoping", () => {
   });
 
   test("bruno sees only Ciências Gerais in the roll-call select", async ({ page }) => {
-    await login(page, "bruno", "prof123");
+    await login(page, "bruno");
     await sidebar(page).getByRole("link", { name: "Chamada", exact: true }).click();
 
     const select = page.getByLabel("Selecionar turma");

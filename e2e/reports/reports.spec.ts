@@ -2,8 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 async function loginAdmin(page: Page) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill("ana");
-  await page.getByLabel("Senha").fill("admin123");
+  await page.getByLabel("Perfil").selectOption("ana");
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 

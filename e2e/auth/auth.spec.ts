@@ -10,36 +10,30 @@ async function openMenu(page: Page) {
   await page.getByRole("button", { name: "Alternar menu" }).click();
 }
 
-async function login(page: Page, usuario: string, senha: string) {
+async function login(page: Page, usuario: string) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill(usuario);
-  await page.getByLabel("Senha").fill(senha);
+  await page.getByLabel("Perfil").selectOption(usuario);
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
 test.use({ viewport: MOBILE_VIEWPORT });
 
 test.describe("login", () => {
-  test("usuário ou senha inválidos mostra alerta e não tem seletor de persona", async ({ page }) => {
+  test("lista os perfis semeados no select, com a senha já preenchida e travada", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page.getByRole("button", { name: "Professor" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Coordenação" })).toHaveCount(0);
+    const perfil = page.getByLabel("Perfil");
+    await expect(perfil.getByRole("option")).toHaveCount(4);
+    await expect(perfil).toHaveValue("ricardo");
+    await expect(page.getByLabel("Senha")).toBeDisabled();
 
-    await login(page, "ricardo", "senha-errada");
-
-    await expect(
-      page.getByRole("alert").filter({ hasText: "Usuário ou senha inválidos." }),
-    ).toBeVisible();
-    await expect(page).toHaveURL("/login");
-
-    await page.screenshot({ path: "e2e/auth/evidencias/login-invalido.png", fullPage: true });
+    await page.screenshot({ path: "e2e/auth/evidencias/login-select-perfil.png", fullPage: true });
   });
 });
 
 test.describe("visão por papel", () => {
   test("professor vê apenas Chamada e Alunos, home mostra lista de alunos", async ({ page }) => {
-    await login(page, "ricardo", "prof123");
+    await login(page, "ricardo");
 
     await expect(page.getByText("Meus alunos")).toBeVisible();
 
@@ -55,7 +49,7 @@ test.describe("visão por papel", () => {
   });
 
   test("admin vê Painel, Alunos, Relatórios e Perfis, e abre /users", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
 
     const nav = sidebar(page);
     await expect(nav.getByRole("link")).toHaveCount(4);
@@ -77,7 +71,7 @@ test.describe("visão por papel", () => {
   test("coordenador vê Painel, Alunos, Relatórios sem Perfis, e deep link /users volta pra home", async ({
     page,
   }) => {
-    await login(page, "carla", "coord123");
+    await login(page, "carla");
 
     const nav = sidebar(page);
     await expect(nav.getByRole("link")).toHaveCount(3);
@@ -107,14 +101,14 @@ test.describe("guard de auth", () => {
   });
 
   test("professor não acessa /reports (redireciona pra home)", async ({ page }) => {
-    await login(page, "ricardo", "prof123");
+    await login(page, "ricardo");
     await page.goto("/reports");
     await expect(page).toHaveURL("/");
     await expect(page.getByText("Meus alunos")).toBeVisible();
   });
 
   test("coordenador não acessa /attendance (redireciona pra home)", async ({ page }) => {
-    await login(page, "carla", "coord123");
+    await login(page, "carla");
     await page.goto("/attendance");
     await expect(page).toHaveURL("/");
   });
@@ -122,13 +116,13 @@ test.describe("guard de auth", () => {
 
 test.describe("gestão de perfis (admin)", () => {
   test("admin cria perfil de professor e o novo usuário consegue logar", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
     await page.goto("/users");
 
     await page.getByLabel("Nome").fill("Perfil de Teste");
     await page.getByLabel("Login de usuário").fill("teste");
     await page.getByLabel("Papel").selectOption("teacher");
-    await page.getByLabel("Senha").fill("teste123");
+    await page.getByLabel("Senha").fill("123456");
     await page.getByRole("button", { name: "Criar perfil" }).click();
 
     const item = page.getByRole("listitem").filter({ hasText: "Perfil de Teste" });
@@ -140,15 +134,15 @@ test.describe("gestão de perfis (admin)", () => {
     await page.getByRole("button", { name: "Sair" }).click();
     await expect(page).toHaveURL("/login");
 
-    await login(page, "teste", "teste123");
+    await login(page, "teste");
     await expect(page.getByText("Meus alunos")).toBeVisible();
     await expect(sidebar(page).getByRole("link")).toHaveCount(2);
 
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-criado-login.png", fullPage: true });
   });
 
-  test("admin edita papel e senha de um perfil, e a mudança vale no login", async ({ page }) => {
-    await login(page, "ana", "admin123");
+  test("admin edita o papel de um perfil, e a mudança vale no login", async ({ page }) => {
+    await login(page, "ana");
     await page.goto("/users");
 
     const item = page.getByRole("listitem").filter({ hasText: "Ricardo Alves" });
@@ -157,7 +151,7 @@ test.describe("gestão de perfis (admin)", () => {
 
     const modal = page.locator("form").filter({ hasText: "Editar perfil" });
     await modal.getByLabel("Papel").selectOption("admin");
-    await modal.getByLabel("Nova senha").fill("novasenha1");
+    await modal.getByLabel("Nova senha").fill("123456");
     await modal.getByRole("button", { name: "Salvar" }).click();
 
     await expect(item.getByText("Administrador")).toBeVisible();
@@ -165,12 +159,12 @@ test.describe("gestão de perfis (admin)", () => {
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-editado.png", fullPage: true });
 
     await page.getByRole("button", { name: "Sair" }).click();
-    await login(page, "ricardo", "novasenha1");
+    await login(page, "ricardo");
     await expect(sidebar(page).getByRole("link")).toHaveCount(4);
   });
 
   test("admin desativa um perfil e o badge vira Inativo", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
     await page.goto("/users");
 
     const item = page.getByRole("listitem").filter({ hasText: "Carla Dias" });
@@ -182,9 +176,9 @@ test.describe("gestão de perfis (admin)", () => {
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-desativado.png", fullPage: true });
 
     await page.getByRole("button", { name: "Sair" }).click();
-    await login(page, "carla", "coord123");
+    await login(page, "carla");
     await expect(
-      page.getByRole("alert").filter({ hasText: "Usuário ou senha inválidos." }),
+      page.getByRole("alert").filter({ hasText: "Não foi possível entrar com este perfil." }),
     ).toBeVisible();
   });
 });

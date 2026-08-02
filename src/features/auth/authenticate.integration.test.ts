@@ -9,9 +9,9 @@ describe("profile management + auth (integration, over the store)", () => {
   });
 
   it("logs in a seeded profile and rejects wrong credentials", async () => {
-    expect(await authenticate("ricardo", "prof123")).not.toBeNull();
+    expect(await authenticate("ricardo", "123456")).not.toBeNull();
     expect(await authenticate("ricardo", "errada")).toBeNull();
-    expect(await authenticate("fantasma", "prof123")).toBeNull();
+    expect(await authenticate("fantasma", "123456")).toBeNull();
   });
 
   it("creates a profile that can then log in", async () => {
@@ -56,6 +56,6 @@ describe("profile management + auth (integration, over the store)", () => {
   it("blocks login for a deactivated profile", async () => {
     const [ricardo] = (await fetchProfiles()).filter((profile) => profile.username === "ricardo");
     await setProfileActive(ricardo.id, false);
-    expect(await authenticate("ricardo", "prof123")).toBeNull();
+    expect(await authenticate("ricardo", "123456")).toBeNull();
   });
 });

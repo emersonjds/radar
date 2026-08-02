@@ -1,20 +1,12 @@
 # Credenciais de Acesso - Radar (Demo)
 
-## 👩‍💼 Product Owner / Admin
-
-**Vanessa Moreira**
-- **Usuário**: `vanessa`
-- **Senha**: `123456`
-- **Perfil**: Administrador
-- **Acesso**: Todas as funcionalidades (dashboard completo, gestão de alunos, aulas, matrículas, relatórios)
-
----
+A tela de login lista os perfis num select e já preenche a senha (`123456` para todos, campo desabilitado) — basta escolher o perfil e entrar.
 
 ## 👨‍💼 Administração
 
 **Ana Vance**
 - **Usuário**: `ana`
-- **Senha**: `admin123`
+- **Senha**: `123456`
 - **Perfil**: Administrador
 - **Acesso**: Todas as funcionalidades
 
@@ -24,7 +16,7 @@
 
 ### Ricardo Alves (Professor Titular)
 - **Usuário**: `ricardo`
-- **Senha**: `prof123`
+- **Senha**: `123456`
 - **Perfil**: Professor
 - **Aulas**:
   - Reforço de Matemática — Segunda (tarde)
@@ -33,7 +25,7 @@
 
 ### Bruno Farias (Professor)
 - **Usuário**: `bruno`
-- **Senha**: `prof123`
+- **Senha**: `123456`
 - **Perfil**: Professor
 - **Aulas**:
   - Reforço de Ciências — Quarta (tarde)
@@ -45,7 +37,7 @@
 
 **Carla Dias**
 - **Usuário**: `carla`
-- **Senha**: `coord123`
+- **Senha**: `123456`
 - **Perfil**: Coordenador Pedagógico
 - **Acesso**: Visualização de relatórios e acompanhamento
 
@@ -53,9 +45,9 @@
 
 ## 🎯 Como Testar
 
-### Para a PO (Vanessa):
+### Testar como Administração:
 
-1. **Login**: Use `vanessa` / `123456`
+1. **Login**: escolha `Ana Vance — Administração` no select
 2. **Dashboard**: Veja KPIs, gráficos de frequência, alunos em risco
 3. **Alunos**:
    - Liste todos os alunos (18 cadastrados)
@@ -76,7 +68,7 @@
 
 ### Testar como Professor:
 
-1. **Login**: Use `ricardo` / `prof123` ou `bruno` / `prof123`
+1. **Login**: escolha `Ricardo Alves` ou `Bruno Farias` no select
 2. **Chamada**:
    - Selecione uma aula
    - Marque presença/falta/atraso/justificado

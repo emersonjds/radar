@@ -1,9 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
-async function login(page: Page, usuario: string, senha: string) {
+async function login(page: Page, usuario: string) {
   await page.goto("/login");
-  await page.getByLabel("Usuário").fill(usuario);
-  await page.getByLabel("Senha").fill(senha);
+  await page.getByLabel("Perfil").selectOption(usuario);
   await page.getByRole("button", { name: "Entrar" }).click();
 }
 
@@ -11,7 +10,7 @@ test.describe("painel admin", () => {
   test.use({ viewport: { width: 1280, height: 900 } });
 
   test("KPIs e gráficos ApexCharts renderizam", async ({ page }) => {
-    await login(page, "ana", "admin123");
+    await login(page, "ana");
     await expect(page.getByText("Total de alunos")).toBeVisible();
     await expect(page.getByText("Total de professores")).toBeVisible();
     await expect(page.getByText("Frequência geral")).toBeVisible();
@@ -26,7 +25,7 @@ test.describe("painel coordenação", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test("coordenador vê o painel", async ({ page }) => {
-    await login(page, "carla", "coord123");
+    await login(page, "carla");
 
     await expect(page.getByText("Total de alunos")).toBeVisible();
     await expect(page.locator(".apexcharts-canvas").first()).toBeVisible({ timeout: 15000 });
