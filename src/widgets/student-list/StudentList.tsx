@@ -217,7 +217,7 @@ export function StudentList() {
                             <IconButton
                               icon={Eye}
                               label={`Ver relatório de ${aluno.name}`}
-                              href={"/reports/" + aluno.id}
+                              href={"/reports?studentId=" + aluno.id}
                             />
                             <IconButton
                               icon={Pencil}
