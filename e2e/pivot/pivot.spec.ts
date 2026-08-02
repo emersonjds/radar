@@ -22,7 +22,7 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
 
     // 3. Cria um novo aluno com ficha completa
     await page.getByRole("button", { name: "Adicionar aluno" }).click();
-    await page.getByLabel("Nome completo").fill("João Pedro Silva");
+    await page.getByLabel("Nome", { exact: true }).fill("João Pedro Silva");
     await page.getByLabel("Data de nascimento").fill("2010-03-15");
     await page.getByLabel("Nome do responsável").fill("Maria Silva");
     await page.getByLabel("Telefone do responsável").fill("(11) 98765-4321");
@@ -36,8 +36,8 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await sidebar(page).then((nav) => nav.getByRole("link", { name: "Aulas", exact: true }).click());
     await expect(page.getByRole("heading", { name: "Aulas" })).toBeVisible();
 
-    // Encontra a card da aula "Matemática Avançada II" e clica em "Ver detalhes"
-    const aulaCard = page.locator("li", { hasText: "Matemática Avançada II" });
+    // Encontra a card da aula "Reforço de Matemática — Segunda" e clica em "Ver detalhes"
+    const aulaCard = page.locator("li", { hasText: "Reforço de Matemática — Segunda" });
     await aulaCard.getByRole("button", { name: "Ver detalhes" }).click();
 
     // Verifica se o painel de alunos matriculados apareceu
@@ -58,8 +58,8 @@ test.describe("ong reforço pivot: ficha cadastral e matrícula N:N", () => {
     await login(page, "ricardo");
     await sidebar(page).then((nav) => nav.getByRole("link", { name: "Chamada", exact: true }).click());
 
-    // Seleciona a aula "Matemática Avançada II"
-    await page.getByLabel("Selecionar aula").selectOption({ label: "Matemática Avançada II" });
+    // Seleciona a aula "Reforço de Matemática — Segunda"
+    await page.getByLabel("Selecionar aula").selectOption({ label: "Reforço de Matemática — Segunda" });
 
     // Verifica que João Pedro aparece na lista de alunos
     await expect(page.getByText("João Pedro Silva")).toBeVisible({ timeout: 5000 });

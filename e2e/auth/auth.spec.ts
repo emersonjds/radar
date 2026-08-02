@@ -32,31 +32,38 @@ test.describe("login", () => {
 });
 
 test.describe("visão por papel", () => {
-  test("professor vê apenas Chamada e Alunos, home mostra lista de alunos", async ({ page }) => {
+  test("professor vê apenas Chamada, Alunos e Notas, home mostra lista de alunos", async ({ page }) => {
     await login(page, "ricardo");
 
     await expect(page.getByText("Meus alunos")).toBeVisible();
 
     const nav = sidebar(page);
-    await expect(nav.getByRole("link")).toHaveCount(2);
+    await expect(nav.getByRole("link")).toHaveCount(3);
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Notas", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Painel" })).toHaveCount(0);
     await expect(nav.getByRole("link", { name: "Relatórios" })).toHaveCount(0);
     await expect(nav.getByRole("link", { name: "Perfis" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Aulas" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Matérias" })).toHaveCount(0);
 
     await page.screenshot({ path: "e2e/auth/evidencias/professor-home.png", fullPage: true });
   });
 
-  test("admin vê Painel, Alunos, Relatórios e Perfis, e abre /users", async ({ page }) => {
+  test("admin vê Painel, Alunos, Relatórios, Aulas, Matérias e Perfis, e abre /users", async ({ page }) => {
     await login(page, "ana");
 
     const nav = sidebar(page);
-    await expect(nav.getByRole("link")).toHaveCount(4);
+    await expect(nav.getByRole("link")).toHaveCount(6);
     await expect(nav.getByRole("link", { name: "Painel" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Relatórios" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Aulas" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Matérias" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Perfis" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Chamada" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Notas" })).toHaveCount(0);
 
     await page.screenshot({ path: "e2e/auth/evidencias/admin-home.png", fullPage: true });
 
@@ -79,6 +86,8 @@ test.describe("visão por papel", () => {
     await expect(nav.getByRole("link", { name: "Alunos", exact: true })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Relatórios" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Perfis" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Aulas" })).toHaveCount(0);
+    await expect(nav.getByRole("link", { name: "Matérias" })).toHaveCount(0);
 
     await page.screenshot({ path: "e2e/auth/evidencias/coordenador-home.png", fullPage: true });
 
@@ -136,7 +145,7 @@ test.describe("gestão de perfis (admin)", () => {
 
     await login(page, "teste");
     await expect(page.getByText("Meus alunos")).toBeVisible();
-    await expect(sidebar(page).getByRole("link")).toHaveCount(2);
+    await expect(sidebar(page).getByRole("link")).toHaveCount(3);
 
     await page.screenshot({ path: "e2e/auth/evidencias/perfil-criado-login.png", fullPage: true });
   });
@@ -160,7 +169,7 @@ test.describe("gestão de perfis (admin)", () => {
 
     await page.getByRole("button", { name: "Sair" }).click();
     await login(page, "ricardo");
-    await expect(sidebar(page).getByRole("link")).toHaveCount(4);
+    await expect(sidebar(page).getByRole("link")).toHaveCount(6);
   });
 
   test("admin desativa um perfil e o badge vira Inativo", async ({ page }) => {

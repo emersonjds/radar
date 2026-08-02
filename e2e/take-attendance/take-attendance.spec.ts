@@ -25,7 +25,7 @@ test.describe("chamada mobile (cards)", () => {
     await loginProfessor(page);
     await page.goto("/attendance");
 
-    await expect(page.getByLabel("Selecionar turma")).toBeVisible();
+    await expect(page.getByLabel("Selecionar aula")).toBeVisible();
     await expect(page.getByPlaceholder("Buscar aluno por nome ou matrícula...")).toBeVisible();
 
     const linhas = page.locator('[aria-label^="Status de presença de"]');
@@ -80,7 +80,7 @@ test.describe("chamada desktop", () => {
 
     const nav = page.getByRole("navigation", { name: "Navegação principal" });
     await expect(nav.getByRole("link", { name: "Chamada", exact: true })).toBeVisible();
-    await expect(page.getByLabel("Selecionar turma")).toBeVisible();
+    await expect(page.getByLabel("Selecionar aula")).toBeVisible();
 
     await page.screenshot({ path: "e2e/take-attendance/evidencias/chamada-desktop.png", fullPage: true });
   });
