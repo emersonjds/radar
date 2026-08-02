@@ -10,7 +10,6 @@ const PROFESSOR_ID = "perfil-ricardo";
 const TEACHER_TWO_ID = "perfil-bruno";
 const ADMIN_ID = "perfil-ana";
 const COORDINATOR_ID = "perfil-carla";
-const PO_ID = "perfil-vanessa";
 
 const TURMAS = [
   { id: "turma-mat-b", name: "Reforço de Matemática — Segunda", shift: "afternoon" },
@@ -84,10 +83,11 @@ function statusFor(alunoIdx: number, dataIdx: number): SeedStatus {
   return "present";
 }
 
+/** Every demo profile shares the password 123456 — SHA-256 hex (shared/lib/auth/password).
+    Temporary until Supabase Auth; the login screen picks a profile and fills it in. */
+const DEMO_PASSWORD_HASH = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92";
+
 export function seedDb(): Db {
-  // Demo credentials (username / password):
-  // ricardo / prof123, bruno / prof123, ana / admin123, carla / coord123, vanessa / 123456
-  // passwordHash is the SHA-256 hex of the password (shared/lib/auth/password) — temporary until Supabase Auth.
   const perfis = [
     {
       id: PROFESSOR_ID,
@@ -96,7 +96,7 @@ export function seedDb(): Db {
       role: "teacher",
       jobTitle: "Professor Titular",
       username: "ricardo",
-      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
+      passwordHash: DEMO_PASSWORD_HASH,
       active: true,
     },
     {
@@ -106,7 +106,7 @@ export function seedDb(): Db {
       role: "admin",
       jobTitle: "Administração",
       username: "ana",
-      passwordHash: "240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9",
+      passwordHash: DEMO_PASSWORD_HASH,
       active: true,
     },
     {
@@ -116,7 +116,7 @@ export function seedDb(): Db {
       role: "coordinator",
       jobTitle: "Coordenação Pedagógica",
       username: "carla",
-      passwordHash: "8c63a2fc2b14d8ae6f9d0bf2e2c4227ac2dc4bd84768e1259226b0c3d84f1c65",
+      passwordHash: DEMO_PASSWORD_HASH,
       active: true,
     },
     {
@@ -126,17 +126,7 @@ export function seedDb(): Db {
       role: "teacher",
       jobTitle: "Professor",
       username: "bruno",
-      passwordHash: "00624b02e1f9b996a3278f559d5d55313552ad2c0bafc82adfd975c12df61eaf",
-      active: true,
-    },
-    {
-      id: PO_ID,
-      name: "Vanessa Moreira",
-      email: "vanessa@radar.escola",
-      role: "admin",
-      jobTitle: "Product Owner",
-      username: "vanessa",
-      passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      passwordHash: DEMO_PASSWORD_HASH,
       active: true,
     },
   ];
